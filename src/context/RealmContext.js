@@ -23,6 +23,8 @@ export default class ContextContainer extends React.Component {
             user: null,
             filter: {region: ''},
             regionsList: [],
+            loadProcessing: false,
+            projects: null,
             projectWithCurrentMilestone: null
         };
         this.funcs = {
@@ -33,6 +35,8 @@ export default class ContextContainer extends React.Component {
             getUserAccessToken: this.getUserAccessToken,
             logOut: this.logOut,
             fetchRegionsList: this.fetchRegionsList,
+            setLoadProcessing: this.setLoadProcessing,
+            setProjects: this.setProjects,
             setFilter: this.setFilter,
             setProjectWithCurrentMilestone: this.setProjectWithCurrentMilestone
         }
@@ -76,6 +80,14 @@ export default class ContextContainer extends React.Component {
             const fetchedRegions = await this.state.user.functions.getRegionsList();
             this.setState({regionsList: fetchedRegions.regions || []});
         }
+    }
+
+    setLoadProcessing = loadProcessing => {
+        this.setState({loadProcessing});
+    }
+
+    setProjects = projects => {
+        this.setState({projects});
     }
 
     logOut = async () => {

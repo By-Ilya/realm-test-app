@@ -1,9 +1,11 @@
-import React from 'react';
+import React, {useContext, useEffect} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 
 import ProjectsList from "./projects/ProjectsList";
 import MilestonesInfo from "./projects/MilestonesInfo";
 import {useQuery} from "@apollo/client";
+
+import {RealmContext} from "../context/RealmContext";
 import {FIND_PROJECTS} from "../graphql/graphql-operations";
 
 const useStyles = makeStyles((theme) => ({
@@ -34,14 +36,26 @@ const useStyles = makeStyles((theme) => ({
 export default function ProjectsContainer() {
     const classes = useStyles();
 
-    const { loading, data } = useQuery(
+    const {setLoadProcessing, setProjects} = useContext(RealmContext);
+
+    useEffect(() => {
+        setLoadProcessing(true);
+    }, []);
+
+    useQuery(
         FIND_PROJECTS,
-        {variables: {query: {active: true}}}
+        {
+            variables: {query: {active: true}},
+            onCompleted: data => {
+                setProjects(data.psprojects);
+                setLoadProcessing(false);
+            }
+        }
     );
 
     return (
         <div className={classes.container}>
-            <ProjectsList classes={{listRoot: classes.root}} loading={loading} data={data} />
+            <ProjectsList classes={{listRoot: classes.root}} />
             <MilestonesInfo classes={{paper: classes.paper}} />
         </div>
     )
