@@ -22,7 +22,8 @@ export default class ContextContainer extends React.Component {
             app: new Realm.App(REALM_APP_ID),
             user: null,
             filter: {region: ''},
-            regionsList: []
+            regionsList: [],
+            projectWithCurrentMilestone: null
         };
         this.funcs = {
             setUser: this.setUser,
@@ -32,7 +33,8 @@ export default class ContextContainer extends React.Component {
             getUserAccessToken: this.getUserAccessToken,
             logOut: this.logOut,
             fetchRegionsList: this.fetchRegionsList,
-            setFilter: this.setFilter
+            setFilter: this.setFilter,
+            setProjectWithCurrentMilestone: this.setProjectWithCurrentMilestone
         }
     };
 
@@ -84,6 +86,10 @@ export default class ContextContainer extends React.Component {
     setFilter = (newFilter) => {
         const filter = {...this.state.filter, ...newFilter};
         this.setState({filter});
+    }
+
+    setProjectWithCurrentMilestone = (projectWithCurrentMilestone) => {
+        this.setState({projectWithCurrentMilestone})
     }
 
     render() {

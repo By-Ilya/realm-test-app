@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
@@ -9,6 +9,8 @@ import List from "@material-ui/core/List";
 import ListSubheader from "@material-ui/core/ListSubheader";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
+
+import {RealmContext} from "../../context/RealmContext";
 
 const useStyles = makeStyles({
     root: {
@@ -41,6 +43,14 @@ export default function ProjectCard(props) {
     const classes = useStyles();
 
     const {psproject} = props;
+    const {setProjectWithCurrentMilestone} = useContext(RealmContext);
+
+    const handleOnClickMilestone = (milestone) => {
+        setProjectWithCurrentMilestone({
+            ...psproject,
+            currentMilestone: milestone
+        });
+    }
 
     return (
         <Card className={classes.root}>
@@ -86,21 +96,24 @@ export default function ProjectCard(props) {
                 </Typography>
                 <Divider />
 
-                <MilestonesList milestones={psproject.milestones} />
+                <MilestonesList
+                    milestones={psproject.milestones}
+                    onClickMilestone={handleOnClickMilestone}
+                />
             </CardContent>
         </Card>
     );
 }
 
 function MilestonesList(props) {
-    const {milestones} = props;
+    const {milestones, onClickMilestone} = props;
 
     return (
         <List subheader={<li />}>
             <ListSubheader>Milestones</ListSubheader>
             {milestones.map(milestone => {
                 return (
-                    <ListItem button>
+                    <ListItem button onClick={() => onClickMilestone(milestone)}>
                         <ListItemText primary={milestone.name} />
                     </ListItem>
                 )

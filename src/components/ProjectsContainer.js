@@ -3,6 +3,8 @@ import { makeStyles } from '@material-ui/core/styles';
 
 import ProjectsList from "./projects/ProjectsList";
 import MilestonesInfo from "./projects/MilestonesInfo";
+import {useQuery} from "@apollo/client";
+import {FIND_PROJECTS} from "../graphql/graphql-operations";
 
 const useStyles = makeStyles((theme) => ({
     container: {
@@ -32,9 +34,14 @@ const useStyles = makeStyles((theme) => ({
 export default function ProjectsContainer() {
     const classes = useStyles();
 
+    const { loading, data } = useQuery(
+        FIND_PROJECTS,
+        {variables: {query: {active: true}}}
+    );
+
     return (
         <div className={classes.container}>
-            <ProjectsList classes={{listRoot: classes.root}} />
+            <ProjectsList classes={{listRoot: classes.root}} loading={loading} data={data} />
             <MilestonesInfo classes={{paper: classes.paper}} />
         </div>
     )

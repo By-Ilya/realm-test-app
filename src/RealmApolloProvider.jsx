@@ -3,7 +3,7 @@ import {
     ApolloProvider,
     ApolloClient,
     HttpLink,
-    InMemoryCache,
+    InMemoryCache
 } from "@apollo/client";
 
 import {RealmContext} from "./context/RealmContext";
