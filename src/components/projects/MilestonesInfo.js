@@ -69,6 +69,9 @@ export default function MilestonesInfo(props) {
                         header={tableHeader}
                         rows={tableData}
                     />}
+                    {tableData.length === 0 && <Typography variant="body1">
+                        Click on project milestone to see overview...
+                    </Typography>}
                 </Paper>
             </Grid>
         </Grid>
