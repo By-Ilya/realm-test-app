@@ -19,7 +19,8 @@ const useStyles = makeStyles((theme) => ({
         backgroundColor: theme.palette.background.paper,
         position: 'relative',
         overflow: 'auto',
-        maxHeight: '90vh'
+        minHeight: '90vh',
+        height: '90vh'
     },
     paper: {
         padding: theme.spacing(1),
@@ -29,7 +30,8 @@ const useStyles = makeStyles((theme) => ({
         marginBottom: theme.spacing(1),
         marginLeft: theme.spacing(2),
         marginRight: theme.spacing(1),
-        height: '90vh'
+        maxHeight: '90vh',
+        overflow: 'auto'
     },
 }));
 

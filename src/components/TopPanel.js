@@ -62,6 +62,9 @@ const useStyles = makeStyles((theme) => ({
             width: '20ch',
         },
     },
+    formContainer: {
+        marginLeft: theme.spacing(2)
+    },
     formControl: {
         margin: theme.spacing(1),
         minWidth: 120,
@@ -103,6 +106,7 @@ export default function TopPanel() {
             }
         }
     ];
+
     const onApplyFilters = () => {
         // TODO: fetch projects with filters
         console.log('Filters applied:', filter);
@@ -155,13 +159,25 @@ export default function TopPanel() {
                     />
                     <FilterButton
                         classes={{
-                            formContainer: classes.container,
+                            formContainer: classes.formContainer,
                             formControl: classes.formControl
                         }}
                         filterButtonText={'Filters'}
                         filterDialogTitle={'Filter projects'}
                         filtersObject={filtersObject}
+                        applyButtonText={'Apply filters'}
                         onApplyFilters={onApplyFilters}
+                    />
+                    <FilterButton
+                        classes={{
+                            formContainer: classes.formContainer,
+                            formControl: classes.formControl
+                        }}
+                        filterButtonText={'Sort'}
+                        filterDialogTitle={'Sort projects'}
+                        filtersObject={[]}
+                        applyButtonText={'Sort'}
+                        onApplyFilters={() => console.log('coming soon')}
                     />
                     <div className={classes.grow} />
                     <Profile

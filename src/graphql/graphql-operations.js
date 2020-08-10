@@ -12,9 +12,9 @@ query FindProject($query: PsprojectQueryInput!) {
       product_end_date
     }
     opportunity {
-        name
-        owner
-        engagement_manager
+      name
+      owner
+      engagement_manager
     }
     milestones {
       _id
@@ -24,6 +24,11 @@ query FindProject($query: PsprojectQueryInput!) {
       base {
         milestone_amount
         gap_hours
+      }
+      schedule {
+        week
+        revenue
+        hours
       }
     }
     name

@@ -16,6 +16,7 @@ FilterButton.propTypes = {
     filterButtonText: PropTypes.string.isRequired,
     filterDialogTitle: PropTypes.string.isRequired,
     filtersObject: PropTypes.object.isRequired,
+    applyButtonText: PropTypes.string.isRequired,
     onApplyFilters: PropTypes.func.isRequired
 }
 
@@ -25,6 +26,7 @@ export default function FilterButton(props) {
         filterButtonText,
         filterDialogTitle,
         filtersObject,
+        applyButtonText,
         onApplyFilters
     } = props;
 
@@ -43,7 +45,7 @@ export default function FilterButton(props) {
     }
 
     return (
-        <div>
+        <div className={formContainer}>
             <Button onClick={handleClickOpenDialog} variant="contained">
                 {filterButtonText}
             </Button>
@@ -72,7 +74,7 @@ export default function FilterButton(props) {
                         Cancel
                     </Button>
                     <Button onClick={handleClickApplyFilters} color="primary">
-                        Apply filters
+                        {applyButtonText}
                     </Button>
                 </DialogActions>
             </Dialog>
