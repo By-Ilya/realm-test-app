@@ -91,6 +91,8 @@ export default function SignInPage(props) {
                         buttonText="Sign in with Google"
                         onSuccess={onSuccess}
                         onFailure={onFailure}
+                        scope={'email profile'}
+                        responseType={'code'}
                     />
                 </div>
                 <div className={classes.signInForm}>

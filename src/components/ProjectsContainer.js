@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 
 import ProjectsList from "./projects/ProjectsList";
 import MilestonesInfo from "./projects/MilestonesInfo";
-import {useQuery} from "@apollo/client";
+import {useLazyQuery} from "@apollo/client";
 
 import {RealmContext} from "../context/RealmContext";
 import {FIND_PROJECTS} from "../graphql/graphql-operations";
@@ -38,22 +38,28 @@ const useStyles = makeStyles((theme) => ({
 export default function ProjectsContainer() {
     const classes = useStyles();
 
-    const {setLoadProcessing, setProjects} = useContext(RealmContext);
+    const {setLoadProcessing, setProjects, filter} = useContext(RealmContext);
 
-    useEffect(() => {
-        setLoadProcessing(true);
-    }, []);
-
-    useQuery(
+    const getQueryFilters = () => {
+        const regionFilter = filter.region ? {region: filter.region} : {};
+        const nameFilter = filter.name ? {name: filter.name} : {};
+        return {...regionFilter, ...nameFilter, active: true};
+    }
+    const [fetchProjects] = useLazyQuery(
         FIND_PROJECTS,
         {
-            variables: {query: {active: true}},
+            variables: {query: getQueryFilters()},
             onCompleted: data => {
                 setProjects(data.psprojects);
                 setLoadProcessing(false);
             }
         }
-    );
+    )
+
+    useEffect(() => {
+        setLoadProcessing(true);
+        fetchProjects();
+    }, [filter]);
 
     return (
         <div className={classes.container}>

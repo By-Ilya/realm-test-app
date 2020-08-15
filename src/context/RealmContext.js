@@ -21,7 +21,7 @@ export default class ContextContainer extends React.Component {
             copyrightLink: COPYRIGHT_LINK,
             app: new Realm.App(REALM_APP_ID),
             user: null,
-            filter: {region: ''},
+            filter: {region: '', name: ''},
             regionsList: [],
             loadProcessing: false,
             projects: null,
@@ -57,7 +57,7 @@ export default class ContextContainer extends React.Component {
     };
 
     onGoogleSuccessSignIn = (response) => {
-        const credentials = Realm.Credentials.google(response.accessToken);
+        const credentials = Realm.Credentials.google(response.code);
         this.state.app.logIn(credentials).then(user => {
             console.log(`Logged in with id: ${user.id}`);
             this.setUser(user);

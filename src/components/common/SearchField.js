@@ -5,11 +5,12 @@ import InputBase from "@material-ui/core/InputBase";
 
 SearchField.propTypes = {
     classes: PropTypes.object.isRequired,
-    inputPlaceHolder: PropTypes.string.isRequired
+    inputPlaceHolder: PropTypes.string.isRequired,
+    onKeyDown: PropTypes.func.isRequired
 }
 
 export default function SearchField(props) {
-    const {classes, inputPlaceHolder} = props;
+    const {classes, inputPlaceHolder, onKeyDown} = props;
     const {
         searchContainer,
         searchIcon,
@@ -30,6 +31,7 @@ export default function SearchField(props) {
                     input: inputBaseInput
                 }}
                 inputProps={{'aria-label': 'search'}}
+                onKeyDown={onKeyDown}
             />
         </div>
     )

@@ -1,4 +1,4 @@
-import React, {useContext, useEffect} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import { fade, makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -96,20 +96,26 @@ export default function TopPanel() {
         fetchRegionsList();
     }, []);
 
+    const [localFilter, setLocalFilter] = useState(filter);
     const filtersObject = [
         {
             label: 'Region',
-            currentValue: filter.region,
+            currentValue: localFilter.region,
             values: regionsList,
             setValue: event => {
-                setFilter({region: event.target.value});
+                setLocalFilter({region: event.target.value});
             }
         }
     ];
 
     const onApplyFilters = () => {
-        // TODO: fetch projects with filters
-        console.log('Filters applied:', filter);
+        setFilter(localFilter);
+    }
+
+    const handleSearchKeyDown = (event) => {
+        if (event.key === 'Enter') {
+            setFilter({name: event.target.value});
+        }
     }
 
     const menuId = 'primary-search-account-menu';
@@ -156,6 +162,7 @@ export default function TopPanel() {
                             inputBaseInput: classes.inputInput
                         }}
                         inputPlaceHolder={'Search projects'}
+                        onKeyDown={handleSearchKeyDown}
                     />
                     <FilterButton
                         classes={{
