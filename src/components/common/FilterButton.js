@@ -27,7 +27,8 @@ export default function FilterButton(props) {
         filterDialogTitle,
         filtersObject,
         applyButtonText,
-        onApplyFilters
+        onApplyFilters,
+        showEmptyValue
     } = props;
 
     const {formContainer} = classes;
@@ -65,6 +66,7 @@ export default function FilterButton(props) {
                             currentValue={obj.currentValue}
                             values={obj.values}
                             setValue={obj.setValue}
+                            showEmptyValue={showEmptyValue}
                         />)}
                     </form>
                 </DialogContent>
@@ -85,7 +87,8 @@ export default function FilterButton(props) {
 function FilterOption(props) {
     const {
         classes,
-        label, currentValue, values, setValue
+        label, currentValue, values, setValue,
+        showEmptyValue
     } = props;
 
     const {formControl} = classes;
@@ -99,7 +102,7 @@ function FilterOption(props) {
                 onChange={setValue}
                 input={<Input id="demo-dialog-native" />}
             >
-                <option value='' />
+                {showEmptyValue && <option value='' />}
                 {values.map(v => <option value={v}>{v}</option>)}
             </Select>
         </FormControl>
