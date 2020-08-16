@@ -83,17 +83,20 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export default function TopPanel() {
+export default function TopPanel(props) {
     const classes = useStyles();
 
+    const {fetchProjects} = props;
     const {
         filter, setFilter,
-        regionsList, fetchRegionsList,
+        regionsList, ownersList, projectManagersList,
+        fetchFiltersDefaultValues,
+        setLoadProcessing,
         logOut
     } = useContext(RealmContext);
 
     useEffect(() => {
-        fetchRegionsList();
+        fetchFiltersDefaultValues();
     }, []);
 
     const [localFilter, setLocalFilter] = useState(filter);
@@ -103,18 +106,37 @@ export default function TopPanel() {
             currentValue: localFilter.region,
             values: regionsList,
             setValue: event => {
-                setLocalFilter({region: event.target.value});
+                setLocalFilter({...localFilter, region: event.target.value});
+            }
+        },
+        {
+            label: 'Owner',
+            currentValue: localFilter.owner,
+            values: ownersList,
+            setValue: event => {
+                setLocalFilter({...localFilter, owner: event.target.value});
+            }
+        },
+        {
+            label: 'PM',
+            currentValue: localFilter.project_manager,
+            values: projectManagersList,
+            setValue: event => {
+                setLocalFilter({...localFilter, project_manager: event.target.value});
             }
         }
     ];
 
     const onApplyFilters = () => {
         setFilter(localFilter);
+        setLoadProcessing(true);
+        fetchProjects();
     }
 
     const handleSearchKeyDown = (event) => {
         if (event.key === 'Enter') {
-            setFilter({name: event.target.value});
+            // setFilter({name: event.target.value});
+            // TODO: implement search index
         }
     }
 

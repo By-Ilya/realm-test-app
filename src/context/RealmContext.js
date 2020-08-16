@@ -21,8 +21,11 @@ export default class ContextContainer extends React.Component {
             copyrightLink: COPYRIGHT_LINK,
             app: new Realm.App(REALM_APP_ID),
             user: null,
-            filter: {region: '', name: ''},
+            wasFirstFetchHappened: false,
+            filter: {region: '', owner: '', project_manager: ''},
             regionsList: [],
+            ownersList: [],
+            projectManagersList: [],
             loadProcessing: false,
             projects: null,
             projectWithCurrentMilestone: null
@@ -34,9 +37,10 @@ export default class ContextContainer extends React.Component {
             onGoogleSignInFailure: this.onGoogleSignInFailure,
             getUserAccessToken: this.getUserAccessToken,
             logOut: this.logOut,
-            fetchRegionsList: this.fetchRegionsList,
+            fetchFiltersDefaultValues: this.fetchFiltersDefaultValues,
             setLoadProcessing: this.setLoadProcessing,
             setProjects: this.setProjects,
+            setWasFirstFetchHappened: this.setWasFirstFetchHappened,
             setFilter: this.setFilter,
             setProjectWithCurrentMilestone: this.setProjectWithCurrentMilestone
         }
@@ -75,10 +79,17 @@ export default class ContextContainer extends React.Component {
         return this.state.app.currentUser.accessToken;
     };
 
-    fetchRegionsList = async () => {
+    fetchFiltersDefaultValues = async () => {
         if (this.state.user) {
-            const fetchedRegions = await this.state.user.functions.getRegionsList();
-            this.setState({regionsList: fetchedRegions.regions || []});
+            const fetchedData = await this.state.user.functions.getFiltersDefaultValues();
+            console.log(fetchedData);
+            this.setState(
+                {
+                    regionsList: fetchedData.regions || [],
+                    ownersList: fetchedData.owners || [],
+                    projectManagersList: fetchedData.projectManagers || [],
+                }
+            );
         }
     }
 
@@ -88,6 +99,10 @@ export default class ContextContainer extends React.Component {
 
     setProjects = projects => {
         this.setState({projects});
+    }
+
+    setWasFirstFetchHappened = wasFirstFetchHappened => {
+        this.setState({wasFirstFetchHappened});
     }
 
     logOut = async () => {
