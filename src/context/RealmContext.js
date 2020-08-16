@@ -23,6 +23,7 @@ export default class ContextContainer extends React.Component {
             user: null,
             wasFirstFetchHappened: false,
             filter: {region: '', owner: '', project_manager: ''},
+            sort: {field: 'name', order: 'ASC'},
             regionsList: [],
             ownersList: [],
             projectManagersList: [],
@@ -42,6 +43,7 @@ export default class ContextContainer extends React.Component {
             setProjects: this.setProjects,
             setWasFirstFetchHappened: this.setWasFirstFetchHappened,
             setFilter: this.setFilter,
+            setSorting: this.setSorting,
             setProjectWithCurrentMilestone: this.setProjectWithCurrentMilestone
         }
     };
@@ -85,9 +87,9 @@ export default class ContextContainer extends React.Component {
             console.log(fetchedData);
             this.setState(
                 {
-                    regionsList: fetchedData.regions || [],
-                    ownersList: fetchedData.owners || [],
-                    projectManagersList: fetchedData.projectManagers || [],
+                    regionsList: fetchedData.regions.sort() || [],
+                    ownersList: fetchedData.owners.sort() || [],
+                    projectManagersList: fetchedData.projectManagers.sort() || [],
                 }
             );
         }
@@ -113,6 +115,10 @@ export default class ContextContainer extends React.Component {
     setFilter = (newFilter) => {
         const filter = {...this.state.filter, ...newFilter};
         this.setState({filter});
+    }
+
+    setSorting = (newSort) => {
+        this.setState({sort: newSort});
     }
 
     setProjectWithCurrentMilestone = (projectWithCurrentMilestone) => {

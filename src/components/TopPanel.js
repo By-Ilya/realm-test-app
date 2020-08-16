@@ -88,12 +88,18 @@ export default function TopPanel(props) {
 
     const {fetchProjects} = props;
     const {
-        filter, setFilter,
+        filter, setFilter, sort, setSorting,
         regionsList, ownersList, projectManagersList,
-        fetchFiltersDefaultValues,
-        setLoadProcessing,
+        fetchFiltersDefaultValues, setLoadProcessing,
         logOut
     } = useContext(RealmContext);
+
+    const handleSearchKeyDown = (event) => {
+        if (event.key === 'Enter') {
+            // setFilter({name: event.target.value});
+            // TODO: implement search index
+        }
+    }
 
     useEffect(() => {
         fetchFiltersDefaultValues();
@@ -133,11 +139,30 @@ export default function TopPanel(props) {
         fetchProjects();
     }
 
-    const handleSearchKeyDown = (event) => {
-        if (event.key === 'Enter') {
-            // setFilter({name: event.target.value});
-            // TODO: implement search index
+    const [localSort, setLocalSorting] = useState(sort);
+    const sortObject = [
+        {
+            label: 'Field',
+            currentValue: localSort.field,
+            values: ['name', 'region', 'owner'],
+            setValue: event => {
+                setLocalSorting({...localSort, field: event.target.value});
+            }
+        },
+        {
+            label: 'Order',
+            currentValue: localSort.order,
+            values: ['ASC', 'DESC'],
+            setValue: event => {
+                setLocalSorting({...localSort, order: event.target.value});
+            }
         }
+    ];
+
+    const onApplySorting = () => {
+        setSorting(localSort);
+        setLoadProcessing(true);
+        fetchProjects();
     }
 
     const menuId = 'primary-search-account-menu';
@@ -204,11 +229,12 @@ export default function TopPanel(props) {
                         }}
                         filterButtonText={'Sort'}
                         filterDialogTitle={'Sort projects'}
-                        filtersObject={[]}
+                        filtersObject={sortObject}
                         applyButtonText={'Sort'}
-                        onApplyFilters={() => console.log('coming soon')}
+                        onApplyFilters={onApplySorting}
                     />
                     <div className={classes.grow} />
+
                     <Profile
                         classes={{
                             sectionDesktop: classes.sectionDesktop,

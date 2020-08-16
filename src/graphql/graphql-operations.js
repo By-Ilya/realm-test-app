@@ -1,8 +1,8 @@
 import gql from 'graphql-tag'
 
 export const FIND_PROJECTS = gql`
-query FindProject($query: PsprojectQueryInput!) {
-  psprojects(query: $query) {
+query FindProject($query: PsprojectQueryInput!, $sortBy: PsprojectSortByInput!) {
+  psprojects(query: $query, sortBy: $sortBy) {
     _id
     account
     active

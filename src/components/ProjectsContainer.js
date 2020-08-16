@@ -43,7 +43,7 @@ export default function ProjectsContainer(props) {
         if (!wasFirstFetchHappened) {
             setLoadProcessing(true);
             fetchProjects();
-            setWasFirstFetchHappened(false);
+            setWasFirstFetchHappened(true);
         }
     }, [wasFirstFetchHappened]);
 

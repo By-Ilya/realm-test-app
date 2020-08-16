@@ -7,7 +7,7 @@ import ProjectsContainer from "../components/ProjectsContainer";
 import {FIND_PROJECTS} from "../graphql/graphql-operations";
 
 export default function MainPage() {
-    const {setProjects, setLoadProcessing, filter} = useContext(RealmContext);
+    const {setProjects, setLoadProcessing, filter, sort} = useContext(RealmContext);
 
     const getQueryFilters = () => {
         const regionFilter = filter.region ? {region: filter.region} : {};
@@ -15,11 +15,14 @@ export default function MainPage() {
         const projectManagerFilter = filter.project_manager ? {project_manager: filter.project_manager} : {};
         return {...regionFilter, ...ownerFilter, ...projectManagerFilter, active: true};
     }
+    const getSorting = () => {
+        return `${sort.field.toUpperCase()}_${sort.order}`;
+    }
 
     const [fetchProjects] = useLazyQuery(
         FIND_PROJECTS,
         {
-            variables: {query: getQueryFilters()},
+            variables: {query: getQueryFilters(), sortBy: getSorting()},
             onCompleted: data => {
                 setProjects(data.psprojects);
                 setLoadProcessing(false);
