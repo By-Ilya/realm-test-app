@@ -1,75 +1,74 @@
-import React, {useContext} from 'react';
-import { makeStyles } from "@material-ui/core/styles";
+import React, {useState, useEffect} from 'react';
+import {useMutation} from "@apollo/client";
 import PropTypes from 'prop-types';
-import Grid from "@material-ui/core/Grid";
-import Paper from "@material-ui/core/Paper";
-import Typography from "@material-ui/core/Typography";
-import Divider from "@material-ui/core/Divider";
 
-import {RealmContext} from "../../context/RealmContext";
 import SimpleTable from "../common/SimpleTable";
 import {toEnUsDate} from "../../helpers/dateFormatter";
-
-const useStyles = makeStyles({
-    tableContainer: {
-        marginTop: '20px'
-    },
-    table: {
-        minWidth: 500,
-    },
-});
+import {UPDATE_PROJECT} from "../../graphql/graphql-operations";
 
 MilestonesInfo.propTypes = {
-    classes: PropTypes.object.isRequired
+    classes: PropTypes.object.isRequired,
+    project: PropTypes.object.isRequired
 };
 
 export default function MilestonesInfo(props) {
-    const tableClasses = useStyles();
-    const {classes} = props;
-    const {projectWithCurrentMilestone} = useContext(RealmContext);
+    const {classes, project} = props;
 
-    const milestoneTableHeader = ['Projects / Milestones Fields', 'Value'];
-    const milestoneTableData = createMilestoneTableData(projectWithCurrentMilestone);
+    const {
+        milestonesTableColumns,
+        milestonesTableRows
+    } = createMilestoneTableData(project);
 
-    const scheduleTableHeader = ['Date', 'Scheduled', 'Hours'];
-    const scheduleTableData = createScheduleTableData(projectWithCurrentMilestone);
+    const {
+        scheduleTableColumns,
+        scheduleTableRows
+    } = createScheduleTableData(project);
 
-    return (
-        <Grid container>
-            <Grid item xs={12}>
-                <Paper className={classes.paper}>
-                    <Typography variant="h4" gutterBottom>
-                        Milestones overview
-                    </Typography>
-                    <Divider />
-                    {milestoneTableData.length !== 0 && <div className={tableClasses.tableContainer}>
-                        <SimpleTable
-                            classes={{table: classes.table}}
-                            header={milestoneTableHeader}
-                            rows={milestoneTableData}
-                        />
-                    </div>}
-                    {scheduleTableData.length !== 0 && <div className={tableClasses.tableContainer}>
-                        <SimpleTable
-                            classes={{table: classes.table}}
-                            header={scheduleTableHeader}
-                            rows={scheduleTableData}
-                        />
-                    </div>}
+    const {pm_stage, pm_project_status, product_end_date} = project.details;
+    const [localProjectDetails, setLocalProjectDetails] = useState({
+        pm_stage, pm_project_status, product_end_date
+    });
+    const [updateProject] = useMutation(
+        UPDATE_PROJECT,
+        {
+            variables: {
+                query: {_id: project._id},
+                set: {details: localProjectDetails}
+            }
+        }
+    );
+    useEffect(() => {
+        updateProject();
+    },[localProjectDetails]);
 
-                    {milestoneTableData.length === 0 && <div className={tableClasses.tableContainer}>
-                        <Typography variant="body1">
-                            Click on project milestone to see an overview...
-                        </Typography>
-                    </div>}
-                </Paper>
-            </Grid>
-        </Grid>
-    )
+    const handleUpdateDetails = async (newDetailsObject) => {
+        setLocalProjectDetails({...localProjectDetails, ...newDetailsObject});
+    };
+
+    return (<>
+        {milestonesTableRows.length !== 0 && <div className={classes.tableContainer}>
+            <SimpleTable
+                tableName='Milestone info'
+                currentColumns={milestonesTableColumns}
+                currentData={milestonesTableRows}
+                onUpdate={handleUpdateDetails}
+            />
+        </div>}
+        {scheduleTableRows.length !== 0 && <div className={classes.tableContainer}>
+            <SimpleTable
+                tableName='Schedule'
+                currentColumns={scheduleTableColumns}
+                currentData={scheduleTableRows}
+            />
+        </div>}
+    </>)
 }
 
 function createMilestoneTableData(project) {
-    if (!project) return [];
+    if (!project) return {
+        milestonesTableColumns: [],
+        milestonesTableRows: []
+    };
 
     const {
         owner, region,
@@ -79,27 +78,48 @@ function createMilestoneTableData(project) {
         currentMilestone
     } = project;
 
-    return [
-        ['Project Owner', owner],
-        ['Region', region],
-        ['Project Manager', project_manager],
-        ['PM Stage', details.pm_stage],
-        ['Account', account],
-        ['Opportunity', opportunity.name],
-        ['PS Project Name', name],
-        ['Milestone Name', currentMilestone.name],
-        ['Country', currentMilestone.country],
-        ['Milestone amount', currentMilestone.base.milestone_amount],
-        ['Gap Hours', currentMilestone.base.gap_hours]
+    const milestonesTableColumns = [
+        {title: 'Projects / Milestones Fields', field: 'name', editable: 'never'},
+        {title: 'Value', field: 'value', editable: 'onUpdate'}
     ];
+    const milestonesTableRows = [
+        {name: 'Project Owner', value: owner, editable: false},
+        {name: 'Region', value: region, editable: false},
+        {name: 'Project Manager', value: project_manager, editable: false},
+        {name: 'PM Stage', value: details.pm_stage, editable: true, updateKey: 'pm_stage'},
+        {name: 'Account', value: account, editable: false},
+        {name: 'Opportunity', value: opportunity.name, editable: false},
+        {name: 'PS Project Name', value: name, editable: false},
+        {name: 'Milestone Name', value: currentMilestone.name, editable: false},
+        {name: 'Country', value: currentMilestone.country, editable: false},
+        {name: 'Milestone amount', value: currentMilestone.base.milestone_amount, editable: false},
+        {name: 'Gap Hours', value: currentMilestone.base.gap_hours, editable: false}
+    ]
+
+    return {milestonesTableColumns, milestonesTableRows}
 }
 
 function createScheduleTableData(project) {
-    if (!project) return [];
+    if (!project) return {
+        scheduleTableColumns: [],
+        scheduleTableRows: []
+    };
 
     const {currentMilestone} = project;
 
-    return currentMilestone.schedule.map(s => {
-        return [toEnUsDate(s.week), s.revenue ? `$ ${s.revenue}` : '-', s.hours ? s.hours : '-'];
+    const scheduleTableColumns = [
+        {title: 'Date', field: 'date', editable: 'never'},
+        {title: 'Scheduled', field: 'scheduled', editable: 'never'},
+        {title: 'Hours', field: 'hours', editable: 'never'}
+    ];
+    const scheduleTableRows = currentMilestone.schedule.map(s => {
+        return {
+            date: toEnUsDate(s.week),
+            scheduled: s.revenue ? `$ ${s.revenue}` : '-',
+            hours: s.hours ? s.hours : '-',
+            editable: false
+        };
     });
+
+    return {scheduleTableColumns, scheduleTableRows}
 }

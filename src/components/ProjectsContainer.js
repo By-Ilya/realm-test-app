@@ -2,7 +2,7 @@ import React, {useContext, useEffect} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 
 import ProjectsList from "./projects/ProjectsList";
-import MilestonesInfo from "./projects/MilestonesInfo";
+import MilestonesInfoPaper from "./projects/MilestonesInfoPaper";
 
 import {RealmContext} from "../context/RealmContext";
 
@@ -37,7 +37,10 @@ export default function ProjectsContainer(props) {
     const classes = useStyles();
 
     const {fetchProjects} = props;
-    const {setLoadProcessing, wasFirstFetchHappened, setWasFirstFetchHappened} = useContext(RealmContext);
+    const {
+        setLoadProcessing,
+        wasFirstFetchHappened, setWasFirstFetchHappened
+    } = useContext(RealmContext);
 
     useEffect(() => {
         if (!wasFirstFetchHappened) {
@@ -50,7 +53,7 @@ export default function ProjectsContainer(props) {
     return (
         <div className={classes.container}>
             <ProjectsList classes={{listRoot: classes.root}} />
-            <MilestonesInfo classes={{paper: classes.paper}} />
+            <MilestonesInfoPaper classes={{paper: classes.paper}} />
         </div>
     )
 }

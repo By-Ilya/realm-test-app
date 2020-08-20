@@ -84,7 +84,6 @@ export default class ContextContainer extends React.Component {
     fetchFiltersDefaultValues = async () => {
         if (this.state.user) {
             const fetchedData = await this.state.user.functions.getFiltersDefaultValues();
-            console.log(fetchedData);
             this.setState(
                 {
                     regionsList: fetchedData.regions.sort() || [],

@@ -39,3 +39,11 @@ query FindProject($query: PsprojectQueryInput!, $sortBy: PsprojectSortByInput!) 
   }
 }
 `;
+
+export const UPDATE_PROJECT = gql`
+    mutation UpdateProject($query: PsprojectQueryInput!, $set: PsprojectUpdateInput!) {
+        updateOnePsproject(query: $query, set: $set) {
+            _id
+        }
+    }
+`;
