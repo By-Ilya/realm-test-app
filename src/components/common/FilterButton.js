@@ -1,4 +1,4 @@
-import React, {useState, useContext} from 'react';
+import React, {useState} from 'react';
 import PropTypes from 'prop-types';
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
