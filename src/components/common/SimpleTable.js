@@ -27,7 +27,7 @@ export default function SimpleTable(props) {
             setColumns(currentColumns);
             setCurrentProjectId(projectId);
         }
-    }, [projectId, currentColumns])
+    }, [projectId, currentColumns]);
 
     useEffect(() => {
         if (currentProjectId !== projectId) {
@@ -46,14 +46,11 @@ export default function SimpleTable(props) {
                 isEditable: rowData => rowData.editable,
                 onRowUpdate: (newData, oldData) =>
                     new Promise((resolve, reject) => {
-                        const {updateKey, updateTableKey} = newData;
-                        onUpdate(
-                            newData.updateFuncType,
-                            {
-                                key: updateKey,
-                                value: newData[updateTableKey]
-                            }
-                        ).then(() => {
+                        const {updateFuncType, updateTableKey} = newData;
+                        onUpdate({
+                            funcType: updateFuncType,
+                            value: newData[updateTableKey]
+                        }).then(() => {
                             const dataUpdate = [...data];
                             const index = oldData.tableData.id;
                             dataUpdate[index] = newData;

@@ -26,9 +26,8 @@ export function generateMilestoneTableData(project) {
             name: 'PM Stage',
             value: details.pm_stage,
             editable: true,
-            updateKey: 'pm_stage',
-            updateTableKey: 'value',
-            updateFuncType: 'details'
+            updateFuncType: 'pmStage',
+            updateTableKey: 'value'
         },
         {name: 'Account', value: account, editable: false},
         {name: 'Opportunity', value: opportunity.name, editable: false},

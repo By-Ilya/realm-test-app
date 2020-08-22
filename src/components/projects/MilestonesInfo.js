@@ -1,13 +1,12 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import PropTypes from 'prop-types';
-import {useMutation} from "@apollo/client";
 
 import SimpleTable from "../common/SimpleTable";
 import {
     generateMilestoneTableData,
     generateScheduleTableData
 } from "../common/helpers/generateTablesData";
-import {UPDATE_PROJECT_DETAILS} from "../../graphql/graphql-operations";
+import {RealmContext} from "../../context/RealmContext";
 
 MilestonesInfo.propTypes = {
     classes: PropTypes.object.isRequired,
@@ -16,41 +15,9 @@ MilestonesInfo.propTypes = {
 
 export default function MilestonesInfo(props) {
     const {classes, project} = props;
+    const {user} = useContext(RealmContext);
 
-    const [updateProjectDetails] = useMutation(UPDATE_PROJECT_DETAILS);
-    const handleUpdateProjectDetails = async (data) => {
-        const {key, value} = data;
-        const {
-            pm_stage,
-            pm_project_status,
-            product_end_date
-        } = project.details;
-
-        return await updateProjectDetails(
-            {
-                variables:
-                    {
-                        query: {_id: project._id},
-                        set: {
-                            details: {
-                                pm_stage,
-                                pm_project_status,
-                                product_end_date,
-                                [key]: value
-                            }
-                        }
-                    }
-                }
-            );
-    }
-
-    const handleRowUpdateResolver = async (funcType, data) => {
-        if (funcType === 'details') {
-            return await handleUpdateProjectDetails(data);
-        }
-
-        return null;
-    }
+    console.log('user:', user);
 
     const {
         milestonesTableColumns,
@@ -62,6 +29,18 @@ export default function MilestonesInfo(props) {
         scheduleTableRows
     } = generateScheduleTableData(project);
 
+    const handleUpdateRowsResolver = async ({funcType, value}) => {
+        console.log(funcType, value);
+        if (funcType === 'pmStage') {
+            return await user.functions.changePmStage({
+                projectId: project._id,
+                pmStage: value
+            });
+        }
+
+        return null;
+    }
+
     return (<>
         {milestonesTableRows.length !== 0 && <div className={classes.tableContainer}>
             <SimpleTable
@@ -69,7 +48,7 @@ export default function MilestonesInfo(props) {
                 tableName='Project milestone info'
                 currentColumns={milestonesTableColumns}
                 currentData={milestonesTableRows}
-                onUpdate={handleRowUpdateResolver}
+                onUpdate={handleUpdateRowsResolver}
             />
         </div>}
         {scheduleTableRows.length !== 0 && <div className={classes.tableContainer}>
