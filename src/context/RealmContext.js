@@ -21,8 +21,8 @@ export default class ContextContainer extends React.Component {
             copyrightLink: COPYRIGHT_LINK,
             app: new Realm.App(REALM_APP_ID),
             user: null,
-            wasFirstFetchHappened: false,
-            filter: {region: '', owner: '', project_manager: ''},
+            client: null,
+            filter: {region: '', owner: '', project_manager: '', name: ''},
             sort: {field: 'name', order: 'ASC'},
             regionsList: [],
             ownersList: [],
@@ -33,6 +33,7 @@ export default class ContextContainer extends React.Component {
         };
         this.funcs = {
             setUser: this.setUser,
+            setClient: this.setClient,
             anonymousSignIn: this.anonymousSignIn,
             onGoogleSuccessSignIn: this.onGoogleSuccessSignIn,
             onGoogleSignInFailure: this.onGoogleSignInFailure,
@@ -41,7 +42,6 @@ export default class ContextContainer extends React.Component {
             fetchFiltersDefaultValues: this.fetchFiltersDefaultValues,
             setLoadProcessing: this.setLoadProcessing,
             setProjects: this.setProjects,
-            setWasFirstFetchHappened: this.setWasFirstFetchHappened,
             setFilter: this.setFilter,
             setSorting: this.setSorting,
             setProjectWithCurrentMilestone: this.setProjectWithCurrentMilestone
@@ -51,6 +51,10 @@ export default class ContextContainer extends React.Component {
     setUser = (user) => {
         this.setState({user});
     };
+
+    setClient = (client) => {
+        this.setState({client});
+    }
 
     anonymousSignIn = async () => {
         const credentials = Realm.Credentials.anonymous();
@@ -99,11 +103,8 @@ export default class ContextContainer extends React.Component {
     }
 
     setProjects = projects => {
+        console.log('setProjects:', projects);
         this.setState({projects});
-    }
-
-    setWasFirstFetchHappened = wasFirstFetchHappened => {
-        this.setState({wasFirstFetchHappened});
     }
 
     logOut = async () => {

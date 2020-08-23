@@ -1,10 +1,8 @@
-import React, {useContext, useEffect} from 'react';
+import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 
 import ProjectsList from "./projects/ProjectsList";
 import MilestonesInfoPaper from "./projects/MilestonesInfoPaper";
-
-import {RealmContext} from "../context/RealmContext";
 
 const useStyles = makeStyles((theme) => ({
     container: {
@@ -33,22 +31,8 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export default function ProjectsContainer(props) {
+export default function ProjectsContainer() {
     const classes = useStyles();
-
-    const {fetchProjects} = props;
-    const {
-        setLoadProcessing,
-        wasFirstFetchHappened, setWasFirstFetchHappened
-    } = useContext(RealmContext);
-
-    useEffect(() => {
-        if (!wasFirstFetchHappened) {
-            setLoadProcessing(true);
-            fetchProjects();
-            setWasFirstFetchHappened(true);
-        }
-    }, [wasFirstFetchHappened]);
 
     return (
         <div className={classes.container}>

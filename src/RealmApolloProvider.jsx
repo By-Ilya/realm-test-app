@@ -11,11 +11,11 @@ import MainPage from "./containers/MainPage";
 
 export default function RealmApolloProvider() {
     const {
-        realmAppId, user,
+        realmAppId,
         getUserAccessToken
     } = useContext(RealmContext);
 
-    const client = createApolloClient(realmAppId, user, getUserAccessToken);
+    const client = createApolloClient(realmAppId, getUserAccessToken);
 
     return (
         <ApolloProvider client={client}>
@@ -24,7 +24,7 @@ export default function RealmApolloProvider() {
     )
 }
 
-function createApolloClient(realmAppId, user, getUserAccessToken) {
+function createApolloClient(realmAppId, getUserAccessToken) {
     const graphQlUrl = `https://realm.mongodb.com/api/client/v2.0/app/${realmAppId}/graphql`;
 
     return new ApolloClient({

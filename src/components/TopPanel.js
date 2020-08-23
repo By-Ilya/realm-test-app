@@ -86,7 +86,10 @@ const useStyles = makeStyles((theme) => ({
 export default function TopPanel(props) {
     const classes = useStyles();
 
-    const {fetchProjects} = props;
+    const {
+        fetchProjects,
+        fetchProjectsByName
+    } = props;
     const {
         filter, setFilter, sort, setSorting,
         regionsList, ownersList, projectManagersList,
@@ -94,16 +97,16 @@ export default function TopPanel(props) {
         logOut
     } = useContext(RealmContext);
 
-    const handleSearchKeyDown = (event) => {
-        if (event.key === 'Enter') {
-            // setFilter({name: event.target.value});
-            // TODO: implement search index
-        }
-    }
-
     useEffect(() => {
         fetchFiltersDefaultValues();
     }, []);
+
+    useEffect(() => {
+        setLoadProcessing(true);
+        filter.name !== ''
+            ? fetchProjectsByName()
+            : fetchProjects();
+    }, [filter, sort]);
 
     const [localFilter, setLocalFilter] = useState(filter);
     const filtersObject = [
@@ -133,10 +136,13 @@ export default function TopPanel(props) {
         }
     ];
 
-    const onApplyFilters = () => {
-        setFilter(localFilter);
-        setLoadProcessing(true);
-        fetchProjects();
+    const onApplyFilters = (searchQuery = undefined) => {
+        if (searchQuery !== undefined) {
+            setLocalFilter({...localFilter, name: searchQuery});
+            setFilter({...localFilter, name: searchQuery});
+        } else {
+            setFilter(localFilter);
+        }
     }
 
     const [localSort, setLocalSorting] = useState(sort);
@@ -161,8 +167,12 @@ export default function TopPanel(props) {
 
     const onApplySorting = () => {
         setSorting(localSort);
-        setLoadProcessing(true);
-        fetchProjects();
+    }
+
+    const handleSearchKeyDown = async (event) => {
+        if (event.key === 'Enter') {
+            onApplyFilters(event.target.value);
+        }
     }
 
     const menuId = 'primary-search-account-menu';
