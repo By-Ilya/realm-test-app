@@ -1,53 +1,67 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import PropTypes from 'prop-types';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import Paper from '@material-ui/core/Paper';
+import MaterialTable from "material-table";
+
+import {TABLE_ICONS} from "./helpers/TableIcons";
 
 SimpleTable.propTypes = {
-    classes: PropTypes.object.isRequired,
-    header: PropTypes.array.isRequired,
-    rows: PropTypes.array.isRequired
+    projectId: PropTypes.string.isRequired,
+    tableName: PropTypes.string.isRequired,
+    currentColumns: PropTypes.array.isRequired,
+    currentData: PropTypes.array.isRequired
 }
 
 export default function SimpleTable(props) {
     const {
-        classes,
-        header, rows
+        projectId, tableName,
+        currentColumns, currentData,
+        onUpdate
     } = props;
 
+    const [currentProjectId, setCurrentProjectId] = useState(projectId);
+    const [columns, setColumns] = useState(currentColumns);
+    const [data, setData] = useState(currentData);
+
+    useEffect(() => {
+        if (currentProjectId !== projectId) {
+            setColumns(currentColumns);
+            setCurrentProjectId(projectId);
+        }
+    }, [projectId, currentColumns]);
+
+    useEffect(() => {
+        if (currentProjectId !== projectId) {
+            setData(currentData);
+            setCurrentProjectId(projectId)
+        }
+    }, [projectId, currentData]);
+
     return (
-        <TableContainer component={Paper}>
-            <Table className={classes.table} size="small" aria-label="a dense table">
-                <TableHead>
-                    <TableRow>
-                        {header.map((name, index) => {
-                            if (index === 0) {
-                                return <TableCell><b>{name}</b></TableCell>;
-                            }
-                            return <TableCell align="right"><b>{name}</b></TableCell>;
-                        })}
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {rows.map(row => {
-                        return (
-                            <TableRow>
-                                {row.map((value, index) => {
-                                    if (index === 0) {
-                                        return <TableCell component="th" scope="row">{value}</TableCell>
-                                    }
-                                    return <TableCell align="right">{value}</TableCell>
-                                })}
-                            </TableRow>
-                        )
-                    })}
-                </TableBody>
-            </Table>
-        </TableContainer>
+        <MaterialTable
+            title={tableName}
+            icons={TABLE_ICONS}
+            columns={columns}
+            data={data}
+            editable={{
+                isEditable: rowData => rowData.editable,
+                onRowUpdate: (newData, oldData) =>
+                    new Promise((resolve, reject) => {
+                        const {updateFuncType, updateTableKey} = newData;
+                        onUpdate({
+                            funcType: updateFuncType,
+                            value: newData[updateTableKey]
+                        }).then(() => {
+                            const dataUpdate = [...data];
+                            const index = oldData.tableData.id;
+                            dataUpdate[index] = newData;
+                            setData([...dataUpdate]);
+                            resolve();
+                        }).catch(err => {
+                            console.error(err);
+                            reject();
+                        });
+                    }),
+            }}
+        />
     );
 }
