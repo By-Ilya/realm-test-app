@@ -24,10 +24,11 @@ export default function MainPage() {
         {
             variables: {query: getQueryFilters(), sortBy: getSortOrder()},
             onCompleted: data => {
+                // TODO: Due to onCompleted is called on each rerender
                 if (!filter.name) {
                     setProjects(data.psprojects);
+                    setLoadProcessing(false);
                 }
-                setLoadProcessing(false);
             }
         }
     );

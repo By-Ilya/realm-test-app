@@ -103,7 +103,6 @@ export default class ContextContainer extends React.Component {
     }
 
     setProjects = projects => {
-        console.log('setProjects:', projects);
         this.setState({projects});
     }
 
