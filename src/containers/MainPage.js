@@ -1,4 +1,4 @@
-import React, {useContext, useEffect} from 'react';
+import React, {useContext} from 'react';
 import {useLazyQuery} from "@apollo/client";
 
 import {RealmContext} from "../context/RealmContext";
@@ -24,21 +24,14 @@ export default function MainPage() {
         {
             variables: {query: getQueryFilters(), sortBy: getSortOrder()},
             onCompleted: data => {
-                // TODO: Due to onCompleted is called on each rerender
                 if (!filter.name) {
                     setProjects(data.psprojects);
                     setLoadProcessing(false);
                 }
-            }
+            },
+            fetchPolicy: 'network-only'
         }
     );
-
-    useEffect(() => {
-        setLoadProcessing(true);
-        filter.name !== ''
-            ? fetchProjectsByName()
-            : fetchProjects();
-    }, []);
 
     const fetchProjectsByName = async () => {
         const data = await user.functions.searchProjects({
@@ -49,11 +42,12 @@ export default function MainPage() {
         setLoadProcessing(false);
     }
 
+    const fetchProjectsResolver = async () => {
+        filter.name ? await fetchProjectsByName() : fetchProjects()
+    }
+
     return (<>
-        <TopPanel
-            fetchProjects={fetchProjects}
-            fetchProjectsByName={fetchProjectsByName}
-        />
-        <ProjectsContainer />
+        <TopPanel fetchProjectsResolver={fetchProjectsResolver} />
+        <ProjectsContainer fetchProjectsResolver={fetchProjectsResolver} />
     </>)
 }

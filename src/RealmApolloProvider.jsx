@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {
     ApolloProvider,
     ApolloClient,
@@ -12,10 +12,16 @@ import MainPage from "./containers/MainPage";
 export default function RealmApolloProvider() {
     const {
         realmAppId,
-        getUserAccessToken
+        getUserAccessToken,
+        user
     } = useContext(RealmContext);
 
-    const client = createApolloClient(realmAppId, getUserAccessToken);
+    const [client, setClient] = useState(createApolloClient(realmAppId, getUserAccessToken));
+    useEffect(() => {
+        setClient(
+            createApolloClient(realmAppId, getUserAccessToken)
+        );
+    }, [user]);
 
     return (
         <ApolloProvider client={client}>

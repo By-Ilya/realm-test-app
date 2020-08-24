@@ -86,10 +86,7 @@ const useStyles = makeStyles((theme) => ({
 export default function TopPanel(props) {
     const classes = useStyles();
 
-    const {
-        fetchProjects,
-        fetchProjectsByName
-    } = props;
+    const {fetchProjectsResolver} = props;
     const {
         filter, setFilter, sort, setSorting,
         regionsList, ownersList, projectManagersList,
@@ -103,9 +100,7 @@ export default function TopPanel(props) {
 
     useEffect(() => {
         setLoadProcessing(true);
-        filter.name !== ''
-            ? fetchProjectsByName()
-            : fetchProjects();
+        fetchProjectsResolver();
     }, [filter, sort]);
 
     const [localFilter, setLocalFilter] = useState(filter);

@@ -10,14 +10,13 @@ import {RealmContext} from "../../context/RealmContext";
 
 MilestonesInfo.propTypes = {
     classes: PropTypes.object.isRequired,
-    project: PropTypes.object.isRequired
+    project: PropTypes.object.isRequired,
+    fetchProjectsResolver: PropTypes.func
 };
 
 export default function MilestonesInfo(props) {
-    const {classes, project} = props;
+    const {classes, project, fetchProjectsResolver} = props;
     const {user} = useContext(RealmContext);
-
-    console.log('user:', user);
 
     const {
         milestonesTableColumns,
@@ -30,7 +29,6 @@ export default function MilestonesInfo(props) {
     } = generateScheduleTableData(project);
 
     const handleUpdateRowsResolver = async ({funcType, value}) => {
-        console.log(funcType, value);
         if (funcType === 'pmStage') {
             return await user.functions.changePmStage({
                 projectId: project._id,
@@ -49,6 +47,7 @@ export default function MilestonesInfo(props) {
                 currentColumns={milestonesTableColumns}
                 currentData={milestonesTableRows}
                 onUpdate={handleUpdateRowsResolver}
+                fetchProjectsResolver={fetchProjectsResolver}
             />
         </div>}
         {scheduleTableRows.length !== 0 && <div className={classes.tableContainer}>

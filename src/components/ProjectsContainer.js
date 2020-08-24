@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 
 import ProjectsList from "./projects/ProjectsList";
@@ -31,13 +32,22 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export default function ProjectsContainer() {
+ProjectsContainer.propTypes = {
+    fetchProjectsResolver: PropTypes.func
+}
+
+export default function ProjectsContainer(props) {
     const classes = useStyles();
+
+    const {fetchProjectsResolver} = props;
 
     return (
         <div className={classes.container}>
             <ProjectsList classes={{listRoot: classes.root}} />
-            <MilestonesInfoPaper classes={{paper: classes.paper}} />
+            <MilestonesInfoPaper
+                classes={{paper: classes.paper}}
+                fetchProjectsResolver={fetchProjectsResolver}
+            />
         </div>
     )
 }

@@ -21,7 +21,6 @@ export default class ContextContainer extends React.Component {
             copyrightLink: COPYRIGHT_LINK,
             app: new Realm.App(REALM_APP_ID),
             user: null,
-            client: null,
             filter: {region: '', owner: '', project_manager: '', name: ''},
             sort: {field: 'name', order: 'ASC'},
             regionsList: [],
@@ -51,10 +50,6 @@ export default class ContextContainer extends React.Component {
     setUser = (user) => {
         this.setState({user});
     };
-
-    setClient = (client) => {
-        this.setState({client});
-    }
 
     anonymousSignIn = async () => {
         const credentials = Realm.Credentials.anonymous();

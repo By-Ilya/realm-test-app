@@ -8,14 +8,16 @@ SimpleTable.propTypes = {
     projectId: PropTypes.string.isRequired,
     tableName: PropTypes.string.isRequired,
     currentColumns: PropTypes.array.isRequired,
-    currentData: PropTypes.array.isRequired
+    currentData: PropTypes.array.isRequired,
+    onUpdate: PropTypes.func,
+    fetchProjectsResolver: PropTypes.func
 }
 
 export default function SimpleTable(props) {
     const {
         projectId, tableName,
         currentColumns, currentData,
-        onUpdate
+        onUpdate, fetchProjectsResolver
     } = props;
 
     const [currentProjectId, setCurrentProjectId] = useState(projectId);
@@ -55,6 +57,7 @@ export default function SimpleTable(props) {
                             const index = oldData.tableData.id;
                             dataUpdate[index] = newData;
                             setData([...dataUpdate]);
+                            fetchProjectsResolver();
                             resolve();
                         }).catch(err => {
                             console.error(err);

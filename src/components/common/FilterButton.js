@@ -102,7 +102,7 @@ function FilterOption(props) {
                 onChange={setValue}
                 input={<Input id="demo-dialog-native" />}
             >
-                {showEmptyValue && <option value='' />}
+                {showEmptyValue && <option value=''/>}
                 {values.map(v => <option value={v}>{v}</option>)}
             </Select>
         </FormControl>

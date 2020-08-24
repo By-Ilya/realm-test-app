@@ -1,6 +1,6 @@
 import React, {useContext} from 'react';
-import { makeStyles } from "@material-ui/core/styles";
 import PropTypes from 'prop-types';
+import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
@@ -16,12 +16,13 @@ const useStyles = makeStyles({
 });
 
 MilestonesInfoPaper.propTypes = {
-    classes: PropTypes.object.isRequired
+    classes: PropTypes.object.isRequired,
+    fetchProjectsResolver: PropTypes.func
 };
 
 export default function MilestonesInfoPaper(props) {
     const containerClasses = useStyles();
-    const {classes} = props;
+    const {classes, fetchProjectsResolver} = props;
     const {projectWithCurrentMilestone} = useContext(RealmContext);
 
     return (
@@ -42,6 +43,7 @@ export default function MilestonesInfoPaper(props) {
                     {projectWithCurrentMilestone && <MilestonesInfo
                         classes={containerClasses}
                         project={projectWithCurrentMilestone}
+                        fetchProjectsResolver={fetchProjectsResolver}
                     />}
                 </Paper>
             </Grid>
