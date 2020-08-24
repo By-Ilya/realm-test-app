@@ -43,7 +43,9 @@ export default function MainPage() {
     }
 
     const fetchProjectsResolver = async () => {
-        filter.name ? await fetchProjectsByName() : fetchProjects()
+        filter.name
+            ? await fetchProjectsByName()
+            : fetchProjects()
     }
 
     return (<>
