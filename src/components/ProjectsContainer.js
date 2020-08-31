@@ -1,10 +1,9 @@
-import React, {useContext, useEffect} from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 
 import ProjectsList from "./projects/ProjectsList";
 import MilestonesInfoPaper from "./projects/MilestonesInfoPaper";
-
-import {RealmContext} from "../context/RealmContext";
 
 const useStyles = makeStyles((theme) => ({
     container: {
@@ -33,27 +32,22 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
+ProjectsContainer.propTypes = {
+    fetchProjectsResolver: PropTypes.func
+}
+
 export default function ProjectsContainer(props) {
     const classes = useStyles();
 
-    const {fetchProjects} = props;
-    const {
-        setLoadProcessing,
-        wasFirstFetchHappened, setWasFirstFetchHappened
-    } = useContext(RealmContext);
-
-    useEffect(() => {
-        if (!wasFirstFetchHappened) {
-            setLoadProcessing(true);
-            fetchProjects();
-            setWasFirstFetchHappened(true);
-        }
-    }, [wasFirstFetchHappened]);
+    const {fetchProjectsResolver} = props;
 
     return (
         <div className={classes.container}>
             <ProjectsList classes={{listRoot: classes.root}} />
-            <MilestonesInfoPaper classes={{paper: classes.paper}} />
+            <MilestonesInfoPaper
+                classes={{paper: classes.paper}}
+                fetchProjectsResolver={fetchProjectsResolver}
+            />
         </div>
     )
 }
