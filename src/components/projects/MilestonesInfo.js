@@ -16,7 +16,7 @@ MilestonesInfo.propTypes = {
 
 export default function MilestonesInfo(props) {
     const {classes, project, fetchProjectsResolver} = props;
-    const {user} = useContext(RealmContext);
+    const {dbCollection} = useContext(RealmContext);
 
     const {
         milestonesTableColumns,
@@ -30,10 +30,11 @@ export default function MilestonesInfo(props) {
 
     const handleUpdateRowsResolver = async ({funcType, value}) => {
         if (funcType === 'pmStage') {
-            return await user.functions.changePmStage({
-                projectId: project._id,
-                pmStage: value
-            });
+            const query = {_id: project._id};
+            const update = {'$set': {'details.pm_stage': value}};
+            const options = {'upsert': false};
+
+            return await dbCollection.updateOne(query, update, options);
         }
 
         return null;

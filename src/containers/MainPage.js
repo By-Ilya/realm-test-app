@@ -35,8 +35,9 @@ export default function MainPage() {
 
     const fetchProjectsByName = async () => {
         const data = await user.functions.searchProjects({
-            ...filter,
-            sortData: {[sort.field]: sort.order === 'DESC' ? -1 : 1}
+            name: filter.name,
+            filters: getQueryFilters(),
+            sort: {[sort.field]: sort.order === 'DESC' ? -1 : 1}
         });
         setProjects(data.psprojects);
         setLoadProcessing(false);
@@ -44,8 +45,8 @@ export default function MainPage() {
 
     const fetchProjectsResolver = async () => {
         filter.name
-            ? await fetchProjectsByName()
-            : fetchProjects()
+            ? setInterval(async () => await fetchProjectsByName(), 5000)
+            : setInterval(fetchProjects, 5000)
     }
 
     return (<>

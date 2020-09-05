@@ -14,7 +14,7 @@ export default function RealmApp() {
     const appRef = useRef(app);
 
     useEffect(() => {
-        setUser(app.currentUser)
+        setUser(app.currentUser);
     }, [appRef.current.currentUser]);
 
     return (

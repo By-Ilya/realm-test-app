@@ -9,6 +9,9 @@ const GOOGLE_CLIENT_ID = `${process.env.REACT_APP_GOOGLE_CLIENT_ID}` || '';
 const APP_NAME = `${process.env.REACT_APP_NAME}` || 'Realm Test App';
 const COPYRIGHT_LINK = `${process.env.REACT_APP_COPYRIGHT_LINK}` || 'http://localhost:3000';
 const REALM_APP_ID = `${process.env.REACT_APP_REALM_APP_ID}` || '';
+const REALM_SERVICE_NAME = `${process.env.REACT_APP_SERVICE_NAME}` || 'mongodb-atlas';
+const REALM_DATABASE_NAME = `${process.env.REACT_APP_DATABASE_NAME}` || '';
+const REALM_COLLECTION_NAME = `${process.env.REACT_APP_COLLECTION_NAME}` || '';
 
 export default class ContextContainer extends React.Component {
     constructor(props) {
@@ -21,6 +24,7 @@ export default class ContextContainer extends React.Component {
             copyrightLink: COPYRIGHT_LINK,
             app: new Realm.App(REALM_APP_ID),
             user: null,
+            dbCollection: null,
             filter: {region: '', owner: '', project_manager: '', name: ''},
             sort: {field: 'name', order: 'ASC'},
             regionsList: [],
@@ -49,6 +53,13 @@ export default class ContextContainer extends React.Component {
 
     setUser = (user) => {
         this.setState({user});
+        if (this.state.app && user) {
+            const dbCollection = this.state.app.services
+                .mongodb(REALM_SERVICE_NAME)
+                .db(REALM_DATABASE_NAME)
+                .collection(REALM_COLLECTION_NAME);
+            this.setState({dbCollection});
+        }
     };
 
     anonymousSignIn = async () => {
