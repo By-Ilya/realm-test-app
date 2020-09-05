@@ -25,17 +25,13 @@ export default function SimpleTable(props) {
     const [data, setData] = useState(currentData);
 
     useEffect(() => {
-        if (currentProjectId !== projectId) {
-            setColumns(currentColumns);
-            setCurrentProjectId(projectId);
-        }
+        setColumns(currentColumns);
+        setCurrentProjectId(projectId);
     }, [projectId, currentColumns]);
 
     useEffect(() => {
-        if (currentProjectId !== projectId) {
-            setData(currentData);
-            setCurrentProjectId(projectId)
-        }
+        setData(currentData);
+        setCurrentProjectId(projectId);
     }, [projectId, currentData]);
 
     return (
