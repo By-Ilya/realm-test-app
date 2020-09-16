@@ -17,12 +17,12 @@ const useStyles = makeStyles({
 
 MilestonesInfoPaper.propTypes = {
     classes: PropTypes.object.isRequired,
-    fetchProjectsResolver: PropTypes.func
+    fetchProjects: PropTypes.func
 };
 
 export default function MilestonesInfoPaper(props) {
     const containerClasses = useStyles();
-    const {classes, fetchProjectsResolver} = props;
+    const {classes, fetchProjects} = props;
     const {projectWithCurrentMilestone} = useContext(RealmContext);
 
     return (
@@ -43,7 +43,7 @@ export default function MilestonesInfoPaper(props) {
                     {projectWithCurrentMilestone && <MilestonesInfo
                         classes={containerClasses}
                         project={projectWithCurrentMilestone}
-                        fetchProjectsResolver={fetchProjectsResolver}
+                        fetchProjects={fetchProjects}
                     />}
                 </Paper>
             </Grid>

@@ -1,4 +1,5 @@
 import React, {useContext, useEffect, useState} from 'react';
+import PropTypes from 'prop-types';
 import { fade, makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -12,6 +13,10 @@ import {RealmContext} from "../context/RealmContext";
 import SearchField from "./common/SearchField";
 import FilterButton from "./common/FilterButton";
 import Profile from "./common/Profile";
+
+TopPanel.propTypes = {
+    fetchProjects: PropTypes.func.isRequired
+};
 
 const useStyles = makeStyles((theme) => ({
     grow: {
@@ -86,7 +91,7 @@ const useStyles = makeStyles((theme) => ({
 export default function TopPanel(props) {
     const classes = useStyles();
 
-    const {fetchProjectsResolver} = props;
+    const {fetchProjects} = props;
     const {
         filter, setFilter, sort, setSorting,
         regionsList, ownersList, projectManagersList,
@@ -100,7 +105,7 @@ export default function TopPanel(props) {
 
     useEffect(() => {
         setLoadProcessing(true);
-        fetchProjectsResolver();
+        fetchProjects({needToClean: true});
     }, [filter, sort]);
 
     const [localFilter, setLocalFilter] = useState(filter);

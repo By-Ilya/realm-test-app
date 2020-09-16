@@ -45,6 +45,7 @@ export default class ContextContainer extends React.Component {
             fetchFiltersDefaultValues: this.fetchFiltersDefaultValues,
             setLoadProcessing: this.setLoadProcessing,
             setProjects: this.setProjects,
+            cleanLocalProjects: this.cleanLocalProjects,
             setFilter: this.setFilter,
             setSorting: this.setSorting,
             setProjectWithCurrentMilestone: this.setProjectWithCurrentMilestone
@@ -59,6 +60,8 @@ export default class ContextContainer extends React.Component {
                 .db(REALM_DATABASE_NAME)
                 .collection(REALM_COLLECTION_NAME);
             this.setState({dbCollection});
+
+            console.log('watch function:', dbCollection.watch);
         }
     };
 
@@ -78,12 +81,12 @@ export default class ContextContainer extends React.Component {
             console.log(`Logged in with id: ${user.id}`);
             this.setUser(user);
         }).catch(err => {
-            console.error(err);
+            console.error('onGoogleSuccessSignIn:', err);
         });
     };
 
     onGoogleSignInFailure = (response) => {
-        console.error('Google OAuth:', response);
+        console.error('onGoogleSignInFailure:', response);
     }
 
     getUserAccessToken = async () => {
@@ -127,6 +130,10 @@ export default class ContextContainer extends React.Component {
                 } else this.setProjectWithCurrentMilestone(null);
             } else this.setProjectWithCurrentMilestone(null);
         }
+    }
+
+    cleanLocalProjects = async () => {
+        this.setState({projects: []});
     }
 
     logOut = async () => {
