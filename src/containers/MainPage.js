@@ -36,13 +36,10 @@ export default function MainPage() {
         }
     );
 
-    const fetchProjectsByTime = ({needToClean}) => {
-        if (needToClean) cleanLocalProjects();
-        setInterval(fetchProjects, 5000);
-    }
+    setInterval(fetchProjects, 5000);
 
     return (<>
-        <TopPanel fetchProjects={fetchProjectsByTime} />
-        <ProjectsContainer fetchProjects={fetchProjectsByTime} />
+        <TopPanel fetchProjects={fetchProjects} />
+        <ProjectsContainer fetchProjects={fetchProjects} />
     </>)
 }

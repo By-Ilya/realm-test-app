@@ -20,18 +20,22 @@ export default function SimpleTable(props) {
         onUpdate, fetchProjects
     } = props;
 
-    const [currentProjectId, setCurrentProjectId] = useState(projectId);
     const [columns, setColumns] = useState(currentColumns);
     const [data, setData] = useState(currentData);
+    const [currentProjectId, setCurrentProjectId] = useState(projectId);
 
     useEffect(() => {
-        setColumns(currentColumns);
-        setCurrentProjectId(projectId);
+        if (currentProjectId !== projectId) {
+            setColumns(currentColumns);
+            setCurrentProjectId(projectId);
+        }
     }, [projectId, currentColumns]);
 
     useEffect(() => {
-        setData(currentData);
-        setCurrentProjectId(projectId);
+        if (currentProjectId !== projectId) {
+            setData(currentData);
+            setCurrentProjectId(projectId);
+        }
     }, [projectId, currentData]);
 
     return (
@@ -42,24 +46,19 @@ export default function SimpleTable(props) {
             data={data}
             editable={{
                 isEditable: rowData => rowData.editable,
-                onRowUpdate: (newData, oldData) =>
-                    new Promise((resolve, reject) => {
-                        const {updateFuncType, updateTableKey} = newData;
-                        onUpdate({
-                            funcType: updateFuncType,
-                            value: newData[updateTableKey]
-                        }).then(() => {
-                            const dataUpdate = [...data];
-                            const index = oldData.tableData.id;
-                            dataUpdate[index] = newData;
-                            setData([...dataUpdate]);
-                            fetchProjects({needToClean: false});
-                            resolve();
-                        }).catch(err => {
-                            console.error(err);
-                            reject();
-                        });
-                    }),
+                onRowUpdate: async (newData, oldData) => {
+                    try {
+                        const {tableKey, updateKey} = newData;
+                        await onUpdate({updateKey, value: newData[tableKey]});
+                        const dataUpdate = [...data];
+                        const index = oldData.tableData.id;
+                        dataUpdate[index] = newData;
+                        setData([...dataUpdate]);
+                        fetchProjects({needToClean: false});
+                    } catch (e) {
+                        console.error(e);
+                    }
+                }
             }}
         />
     );
