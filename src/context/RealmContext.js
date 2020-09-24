@@ -115,27 +115,10 @@ export default class ContextContainer extends React.Component {
 
     setProjects = projects => {
         this.setState({projects});
-
-        const {projectWithCurrentMilestone} = this.state;
-        if (projectWithCurrentMilestone) {
-            const {_id, currentMilestone} = projectWithCurrentMilestone;
-            const foundProjects = projects.filter(p => p._id === _id);
-            if (foundProjects.length > 0) {
-                const currentProject = foundProjects[0];
-                const foundMilestones = currentProject.milestones
-                    .filter(m => m._id === currentMilestone._id);
-                if (foundMilestones.length > 0) {
-                    this.setProjectWithCurrentMilestone({
-                        ...currentProject,
-                        currentMilestone: foundMilestones[0]
-                    });
-                } else this.setProjectWithCurrentMilestone(null);
-            } else this.setProjectWithCurrentMilestone(null);
-        }
     }
 
     cleanLocalProjects = async () => {
-        this.setState({projects: []});
+        this.setState({projects: [], projectWithCurrentMilestone: null});
     }
 
     logOut = async () => {

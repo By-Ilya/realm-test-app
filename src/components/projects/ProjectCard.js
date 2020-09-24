@@ -48,8 +48,8 @@ export default function ProjectCard(props) {
 
     const handleOnClickMilestone = (milestone) => {
         setProjectWithCurrentMilestone({
-            ...psproject,
-            currentMilestone: milestone
+            projectId: psproject._id,
+            milestoneId: milestone._id
         });
     }
 
