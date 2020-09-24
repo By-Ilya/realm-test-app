@@ -32,7 +32,8 @@ export default class ContextContainer extends React.Component {
             projectManagersList: [],
             loadProcessing: false,
             projects: null,
-            projectWithCurrentMilestone: null
+            projectWithCurrentMilestone: null,
+            isEditing: false
         };
         this.funcs = {
             setUser: this.setUser,
@@ -48,7 +49,8 @@ export default class ContextContainer extends React.Component {
             cleanLocalProjects: this.cleanLocalProjects,
             setFilter: this.setFilter,
             setSorting: this.setSorting,
-            setProjectWithCurrentMilestone: this.setProjectWithCurrentMilestone
+            setProjectWithCurrentMilestone: this.setProjectWithCurrentMilestone,
+            setIsEditing: this.setIsEditing
         }
     };
 
@@ -153,6 +155,11 @@ export default class ContextContainer extends React.Component {
     setProjectWithCurrentMilestone = (projectWithCurrentMilestone) => {
         this.setState({projectWithCurrentMilestone})
     }
+
+    setIsEditing = (isEditing) => {
+        this.setState({isEditing});
+    }
+
 
     render() {
         return (

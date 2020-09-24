@@ -1,8 +1,9 @@
-import React, {useState, useEffect} from 'react';
+import React, {useContext, useState, useEffect} from 'react';
 import PropTypes from 'prop-types';
 import MaterialTable from "material-table";
 
-import {TABLE_ICONS} from "./helpers/TableIcons";
+import generateTableIcons from "./helpers/TableIcons";
+import {RealmContext} from "../../context/RealmContext";
 
 SimpleTable.propTypes = {
     projectId: PropTypes.string.isRequired,
@@ -20,28 +21,29 @@ export default function SimpleTable(props) {
         onUpdate, fetchProjects
     } = props;
 
+    const {isEditing, setIsEditing} = useContext(RealmContext);
+
     const [columns, setColumns] = useState(currentColumns);
     const [data, setData] = useState(currentData);
-    const [currentProjectId, setCurrentProjectId] = useState(projectId);
 
     useEffect(() => {
-        if (currentProjectId !== projectId) {
+        if (!isEditing) {
             setColumns(currentColumns);
-            setCurrentProjectId(projectId);
         }
-    }, [projectId, currentColumns]);
+    }, [isEditing, projectId, currentColumns]);
 
     useEffect(() => {
-        if (currentProjectId !== projectId) {
+        if (!isEditing) {
             setData(currentData);
-            setCurrentProjectId(projectId);
         }
-    }, [projectId, currentData]);
+    }, [isEditing, projectId, currentData]);
+
+    const onClickEditButton = () => setIsEditing(true);
 
     return (
         <MaterialTable
             title={tableName}
-            icons={TABLE_ICONS}
+            icons={generateTableIcons({onClickEditButton})}
             columns={columns}
             data={data}
             editable={{
@@ -55,10 +57,13 @@ export default function SimpleTable(props) {
                         dataUpdate[index] = newData;
                         setData([...dataUpdate]);
                         fetchProjects({needToClean: false});
+                        setIsEditing(false);
                     } catch (e) {
                         console.error(e);
+                        setIsEditing(false);
                     }
-                }
+                },
+                onRowUpdateCancelled: () => setIsEditing(false)
             }}
         />
     );
