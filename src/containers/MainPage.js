@@ -1,5 +1,5 @@
 import React, {useContext} from 'react';
-import {useLazyQuery} from "@apollo/client";
+import {useQuery, useLazyQuery} from "@apollo/client";
 
 import {RealmContext} from "../context/RealmContext";
 import TopPanel from "../components/TopPanel";
@@ -19,30 +19,49 @@ export default function MainPage() {
         return {field, order: order === 'DESC' ? -1 : 1};
     }
 
+    const queryOptions = {
+        variables: {
+            filtersInput: {
+                filter: {...filter, active: true},
+                sort: getSortOrder()
+            }
+        }
+    };
+
+    let timerId = null;
+    const {refetch} = useQuery(
+        FIND_PROJECTS,
+        {
+            ...queryOptions,
+            notifyOnNetworkStatusChange: true,
+            onCompleted: data => {
+                setProjects(data.psprojectsData);
+                timerId = setTimeout(refetch, 5000);
+            }
+        }
+    );
+
     const [fetchProjects] = useLazyQuery(
         FIND_PROJECTS,
         {
-            variables: {
-                filtersInput: {
-                    filter: {...filter, active: true},
-                    sort: getSortOrder()
-                }
-            },
+            ...queryOptions,
             onCompleted: data => {
                 setProjects(data.psprojectsData);
                 setLoadProcessing(false);
+                timerId = setTimeout(refetch, 5000);
             },
             fetchPolicy: 'network-only'
         }
     );
 
-    const fetchProjectsResolver = async ({needToClean}) => {
+    const fetchProjectsByTrigger = async ({needToClean}) => {
+        timerId && clearTimeout(timerId);
         needToClean && await cleanLocalProjects();
         await fetchProjects();
     }
 
     return (<>
-        <TopPanel fetchProjects={fetchProjectsResolver} />
-        <ProjectsContainer fetchProjects={fetchProjectsResolver} />
+        <TopPanel fetchProjects={fetchProjectsByTrigger} />
+        <ProjectsContainer fetchProjects={fetchProjectsByTrigger} />
     </>)
 }
