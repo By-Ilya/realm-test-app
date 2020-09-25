@@ -25,7 +25,6 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - run: npm ci
-    - run: npm run build --if-present
     - run: npm start
       env:
         REACT_APP_GOOGLE_CLIENT_ID: 557365268660-ss6m5j9pf6nlmbojiitp36avqcf1pov6.apps.googleusercontent.com
