@@ -1,0 +1,37 @@
+# This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+
+name: Node.js CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [12.x]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - run: npm ci
+    - run: npm run build --if-present
+    - run: npm start
+      env:
+        REACT_APP_GOOGLE_CLIENT_ID: 557365268660-ss6m5j9pf6nlmbojiitp36avqcf1pov6.apps.googleusercontent.com
+        REACT_APP_NAME: Realm Test App
+        REACT_APP_COPYRIGHT_LINK: http://localhost:3000
+        REACT_APP_REALM_APP_ID: realm-test-app-nmyei
+        REACT_APP_SERVICE_NAME: mongodb-atlas
+        REACT_APP_DATABASE_NAME: shf
+        REACT_APP_COLLECTION_NAME: psproject
