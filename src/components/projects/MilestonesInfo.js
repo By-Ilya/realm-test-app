@@ -11,11 +11,11 @@ import {RealmContext} from "../../context/RealmContext";
 MilestonesInfo.propTypes = {
     classes: PropTypes.object.isRequired,
     project: PropTypes.object.isRequired,
-    fetchProjectsResolver: PropTypes.func
+    fetchProjects: PropTypes.func
 };
 
 export default function MilestonesInfo(props) {
-    const {classes, project, fetchProjectsResolver} = props;
+    const {classes, project, fetchProjects} = props;
     const {dbCollection} = useContext(RealmContext);
 
     const {
@@ -28,16 +28,11 @@ export default function MilestonesInfo(props) {
         scheduleTableRows
     } = generateScheduleTableData(project);
 
-    const handleUpdateRowsResolver = async ({funcType, value}) => {
-        if (funcType === 'pmStage') {
-            const query = {_id: project._id};
-            const update = {'$set': {'details.pm_stage': value}};
-            const options = {'upsert': false};
-
-            return await dbCollection.updateOne(query, update, options);
-        }
-
-        return null;
+    const handleUpdateRow = async ({updateKey, value}) => {
+        const query = {_id: project._id};
+        const update = {'$set': {[updateKey]: value}};
+        const options = {'upsert': false};
+        await dbCollection.updateOne(query, update, options);
     }
 
     return (<>
@@ -47,8 +42,8 @@ export default function MilestonesInfo(props) {
                 tableName='Project milestone info'
                 currentColumns={milestonesTableColumns}
                 currentData={milestonesTableRows}
-                onUpdate={handleUpdateRowsResolver}
-                fetchProjectsResolver={fetchProjectsResolver}
+                onUpdate={handleUpdateRow}
+                fetchProjects={fetchProjects}
             />
         </div>}
         {scheduleTableRows.length !== 0 && <div className={classes.tableContainer}>

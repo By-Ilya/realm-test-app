@@ -17,13 +17,25 @@ const useStyles = makeStyles({
 
 MilestonesInfoPaper.propTypes = {
     classes: PropTypes.object.isRequired,
-    fetchProjectsResolver: PropTypes.func
+    fetchProjects: PropTypes.func
 };
 
 export default function MilestonesInfoPaper(props) {
     const containerClasses = useStyles();
-    const {classes, fetchProjectsResolver} = props;
-    const {projectWithCurrentMilestone} = useContext(RealmContext);
+    const {classes, fetchProjects} = props;
+    const {projectWithCurrentMilestone, projects} = useContext(RealmContext);
+
+    let project = null;
+    let currentMilestone = null;
+    if (projectWithCurrentMilestone) {
+        const {projectId, milestoneId} = projectWithCurrentMilestone;
+        const foundProjects = projects.filter(p => p._id === projectId);
+        if (foundProjects && foundProjects.length) {
+            project = foundProjects[0];
+            const foundMilestones = project.milestones.filter(m => m._id === milestoneId);
+            currentMilestone = foundMilestones && foundMilestones.length ? foundMilestones[0] : null;
+        }
+    }
 
     return (
         <Grid container>
@@ -34,17 +46,18 @@ export default function MilestonesInfoPaper(props) {
                     </Typography>
                     <Divider />
 
-                    {!projectWithCurrentMilestone && <div className={containerClasses.tableContainer}>
-                        <Typography variant="body1">
-                            Click on project milestone to see an overview...
-                        </Typography>
-                    </div>}
-
-                    {projectWithCurrentMilestone && <MilestonesInfo
-                        classes={containerClasses}
-                        project={projectWithCurrentMilestone}
-                        fetchProjectsResolver={fetchProjectsResolver}
-                    />}
+                    {project && currentMilestone
+                        ? <MilestonesInfo
+                            classes={containerClasses}
+                            project={{...project, currentMilestone}}
+                            fetchProjects={fetchProjects}
+                        />
+                        : <div className={containerClasses.tableContainer}>
+                            <Typography variant="body1">
+                                Click on project milestone to see an overview...
+                            </Typography>
+                        </div>
+                    }
                 </Paper>
             </Grid>
         </Grid>

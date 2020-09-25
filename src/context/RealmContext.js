@@ -32,7 +32,8 @@ export default class ContextContainer extends React.Component {
             projectManagersList: [],
             loadProcessing: false,
             projects: null,
-            projectWithCurrentMilestone: null
+            projectWithCurrentMilestone: null,
+            isEditing: false
         };
         this.funcs = {
             setUser: this.setUser,
@@ -45,9 +46,11 @@ export default class ContextContainer extends React.Component {
             fetchFiltersDefaultValues: this.fetchFiltersDefaultValues,
             setLoadProcessing: this.setLoadProcessing,
             setProjects: this.setProjects,
+            cleanLocalProjects: this.cleanLocalProjects,
             setFilter: this.setFilter,
             setSorting: this.setSorting,
-            setProjectWithCurrentMilestone: this.setProjectWithCurrentMilestone
+            setProjectWithCurrentMilestone: this.setProjectWithCurrentMilestone,
+            setIsEditing: this.setIsEditing
         }
     };
 
@@ -59,6 +62,8 @@ export default class ContextContainer extends React.Component {
                 .db(REALM_DATABASE_NAME)
                 .collection(REALM_COLLECTION_NAME);
             this.setState({dbCollection});
+
+            console.log('watch function:', dbCollection.watch);
         }
     };
 
@@ -78,12 +83,12 @@ export default class ContextContainer extends React.Component {
             console.log(`Logged in with id: ${user.id}`);
             this.setUser(user);
         }).catch(err => {
-            console.error(err);
+            console.error('onGoogleSuccessSignIn:', err);
         });
     };
 
     onGoogleSignInFailure = (response) => {
-        console.error('Google OAuth:', response);
+        console.error('onGoogleSignInFailure:', response);
     }
 
     getUserAccessToken = async () => {
@@ -110,23 +115,10 @@ export default class ContextContainer extends React.Component {
 
     setProjects = projects => {
         this.setState({projects});
+    }
 
-        const {projectWithCurrentMilestone} = this.state;
-        if (projectWithCurrentMilestone) {
-            const {_id, currentMilestone} = projectWithCurrentMilestone;
-            const foundProjects = projects.filter(p => p._id === _id);
-            if (foundProjects.length > 0) {
-                const currentProject = foundProjects[0];
-                const foundMilestones = currentProject.milestones
-                    .filter(m => m._id === currentMilestone._id);
-                if (foundMilestones.length > 0) {
-                    this.setProjectWithCurrentMilestone({
-                        ...currentProject,
-                        currentMilestone: foundMilestones[0]
-                    });
-                } else this.setProjectWithCurrentMilestone(null);
-            } else this.setProjectWithCurrentMilestone(null);
-        }
+    cleanLocalProjects = async () => {
+        this.setState({projects: [], projectWithCurrentMilestone: null});
     }
 
     logOut = async () => {
@@ -146,6 +138,11 @@ export default class ContextContainer extends React.Component {
     setProjectWithCurrentMilestone = (projectWithCurrentMilestone) => {
         this.setState({projectWithCurrentMilestone})
     }
+
+    setIsEditing = (isEditing) => {
+        this.setState({isEditing});
+    }
+
 
     render() {
         return (

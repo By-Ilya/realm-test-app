@@ -39,14 +39,14 @@ ProjectsContainer.propTypes = {
 export default function ProjectsContainer(props) {
     const classes = useStyles();
 
-    const {fetchProjectsResolver} = props;
+    const {fetchProjects} = props;
 
     return (
         <div className={classes.container}>
             <ProjectsList classes={{listRoot: classes.root}} />
             <MilestonesInfoPaper
                 classes={{paper: classes.paper}}
-                fetchProjectsResolver={fetchProjectsResolver}
+                fetchProjects={fetchProjects}
             />
         </div>
     )
