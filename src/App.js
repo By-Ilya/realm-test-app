@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 
 import RealmContextContainer from "./context/RealmContext";
-import RealmApp from "RealmApp";
+import RealmApp from "./RealmApp";
 
 import './App.css';
 
