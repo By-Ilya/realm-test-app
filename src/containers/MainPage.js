@@ -29,18 +29,6 @@ export default function MainPage() {
     };
 
     let timerId = null;
-    const {refetch} = useQuery(
-        FIND_PROJECTS,
-        {
-            ...queryOptions,
-            notifyOnNetworkStatusChange: true,
-            onCompleted: data => {
-                setProjects(data.psprojectsData);
-                timerId = setTimeout(refetch, 5000);
-            }
-        }
-    );
-
     const [fetchProjects] = useLazyQuery(
         FIND_PROJECTS,
         {
@@ -48,7 +36,15 @@ export default function MainPage() {
             onCompleted: data => {
                 setProjects(data.psprojectsData);
                 setLoadProcessing(false);
-                timerId = setTimeout(refetch, 5000);
+                timerId = setTimeout(async () => {
+                    await fetchProjectsByTrigger({needToClean: false})
+                }, 5000);
+            },
+            onError: error => {
+                console.error(error);
+                timerId = setTimeout(async () => {
+                    await fetchProjectsByTrigger({needToClean: false})
+                }, 5000);
             },
             fetchPolicy: 'network-only'
         }
