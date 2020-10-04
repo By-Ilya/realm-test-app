@@ -50,20 +50,26 @@ export default class ContextContainer extends React.Component {
             setFilter: this.setFilter,
             setSorting: this.setSorting,
             setProjectWithCurrentMilestone: this.setProjectWithCurrentMilestone,
-            setIsEditing: this.setIsEditing
-        }
+            setIsEditing: this.setIsEditing,
+            watcher: this.watcher
+        };
+
+        this.lastUpdateTime = null;
     };
+
+    componentDidMount() {
+        console.log('component did mount');
+        this.watcher();
+    }
 
     setUser = (user) => {
         this.setState({user});
         if (this.state.app && user) {
-            const dbCollection = this.state.app.services
-                .mongodb(REALM_SERVICE_NAME)
+            const dbCollection = user
+                .mongoClient(REALM_SERVICE_NAME)
                 .db(REALM_DATABASE_NAME)
                 .collection(REALM_COLLECTION_NAME);
             this.setState({dbCollection});
-
-            console.log('watch function:', dbCollection.watch);
         }
     };
 
@@ -143,6 +149,32 @@ export default class ContextContainer extends React.Component {
         this.setState({isEditing});
     }
 
+    watcher = async () => {
+        if (!this.state.dbCollection) return;
+
+        for await (let event of this.state.dbCollection.watch()) {
+            const {clusterTime, operationType, fullDocument} = event;
+
+            if (
+                (!this.lastUpdateTime || this.lastUpdateTime < clusterTime) &&
+                fullDocument
+            ) {
+                this.lastUpdateTime = clusterTime;
+                let {projects} = this.state;
+
+                if (operationType === 'replace' || operationType === 'update') {
+                    const {_id} = event.fullDocument;
+                    projects = projects.map(
+                        p => (p._id === _id) ? event.fullDocument : p
+                    );
+                } else if (operationType === 'insert') {
+                    projects.push(event.fullDocument);
+                }
+
+                this.setState({projects});
+            }
+        }
+    }
 
     render() {
         return (

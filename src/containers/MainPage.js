@@ -11,7 +11,7 @@ export default function MainPage() {
         setProjects,
         setLoadProcessing,
         cleanLocalProjects,
-        filter, sort
+        filter, sort, watcher
     } = useContext(RealmContext);
 
     const getSortOrder = () => {
@@ -28,7 +28,6 @@ export default function MainPage() {
         }
     };
 
-    let timerId = null;
     const [fetchProjects] = useLazyQuery(
         FIND_PROJECTS,
         {
@@ -36,28 +35,27 @@ export default function MainPage() {
             onCompleted: data => {
                 setProjects(data.psprojectsData);
                 setLoadProcessing(false);
-                timerId = setTimeout(async () => {
-                    await fetchProjectsByTrigger({needToClean: false})
-                }, 5000);
             },
             onError: error => {
                 console.error(error);
-                timerId = setTimeout(async () => {
-                    await fetchProjectsByTrigger({needToClean: false})
-                }, 5000);
             },
             fetchPolicy: 'network-only'
         }
     );
 
     const fetchProjectsByTrigger = async ({needToClean}) => {
-        timerId && clearTimeout(timerId);
         needToClean && await cleanLocalProjects();
         await fetchProjects();
     }
 
+    let timerId = setTimeout(async function watchForUpdates() {
+        timerId && clearTimeout(timerId);
+        await watcher();
+        timerId = setTimeout(watchForUpdates, 5000);
+    }, 5000);
+
     return (<>
         <TopPanel fetchProjects={fetchProjectsByTrigger} />
-        <ProjectsContainer fetchProjects={fetchProjectsByTrigger} />
+        <ProjectsContainer />
     </>)
 }
