@@ -57,11 +57,6 @@ export default class ContextContainer extends React.Component {
         this.lastUpdateTime = null;
     };
 
-    componentDidMount() {
-        console.log('component did mount');
-        this.watcher();
-    }
-
     setUser = (user) => {
         this.setState({user});
         if (this.state.app && user) {
