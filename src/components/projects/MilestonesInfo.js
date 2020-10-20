@@ -11,11 +11,10 @@ import {RealmContext} from "../../context/RealmContext";
 MilestonesInfo.propTypes = {
     classes: PropTypes.object.isRequired,
     project: PropTypes.object.isRequired,
-    fetchProjects: PropTypes.func
 };
 
 export default function MilestonesInfo(props) {
-    const {classes, project, fetchProjects} = props;
+    const {classes, project} = props;
     const {dbCollection} = useContext(RealmContext);
 
     const {
@@ -43,7 +42,6 @@ export default function MilestonesInfo(props) {
                 currentColumns={milestonesTableColumns}
                 currentData={milestonesTableRows}
                 onUpdate={handleUpdateRow}
-                fetchProjects={fetchProjects}
             />
         </div>}
         {scheduleTableRows.length !== 0 && <div className={classes.tableContainer}>

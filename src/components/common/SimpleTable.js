@@ -10,15 +10,14 @@ SimpleTable.propTypes = {
     tableName: PropTypes.string.isRequired,
     currentColumns: PropTypes.array.isRequired,
     currentData: PropTypes.array.isRequired,
-    onUpdate: PropTypes.func,
-    fetchProjects: PropTypes.func
+    onUpdate: PropTypes.func
 }
 
 export default function SimpleTable(props) {
     const {
         projectId, tableName,
         currentColumns, currentData,
-        onUpdate, fetchProjects
+        onUpdate
     } = props;
 
     const {isEditing, setIsEditing} = useContext(RealmContext);
@@ -27,15 +26,11 @@ export default function SimpleTable(props) {
     const [data, setData] = useState(currentData);
 
     useEffect(() => {
-        if (!isEditing) {
-            setColumns(currentColumns);
-        }
+        !isEditing && setColumns(currentColumns);
     }, [isEditing, projectId, currentColumns]);
 
     useEffect(() => {
-        if (!isEditing) {
-            setData(currentData);
-        }
+        !isEditing && setData(currentData);
     }, [isEditing, projectId, currentData]);
 
     const onClickEditButton = () => setIsEditing(true);
@@ -56,7 +51,6 @@ export default function SimpleTable(props) {
                         const index = oldData.tableData.id;
                         dataUpdate[index] = newData;
                         setData([...dataUpdate]);
-                        fetchProjects({needToClean: false});
                         setIsEditing(false);
                     } catch (e) {
                         console.error(e);
