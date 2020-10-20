@@ -21,14 +21,19 @@ export const FIND_PROJECTS = gql`
                 country
                 currency
                 name
-                base {
-                    milestone_amount
+                summary {
+                    planned_hours
+                    sold_hours
+                    delivered_hours
                     gap_hours
+                    unscheduled_hours
                 }
-                schedule {
-                    week
-                    revenue
-                    hours
+                details {
+                    first_scheduled_date
+                    last_scheduled_date
+                    bill_rate
+                    milestone_amount
+                    delivered_amount
                 }
             }
             name

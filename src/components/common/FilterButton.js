@@ -15,7 +15,7 @@ FilterButton.propTypes = {
     classes: PropTypes.object.isRequired,
     filterButtonText: PropTypes.string.isRequired,
     filterDialogTitle: PropTypes.string.isRequired,
-    filtersObject: PropTypes.object.isRequired,
+    filtersObject: PropTypes.array.isRequired,
     applyButtonText: PropTypes.string.isRequired,
     onApplyFilters: PropTypes.func.isRequired
 }

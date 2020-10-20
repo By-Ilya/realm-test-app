@@ -34,8 +34,8 @@ export function generateMilestoneTableData(project) {
         {name: 'PS Project Name', value: name, editable: false},
         {name: 'Milestone Name', value: currentMilestone.name, editable: false},
         {name: 'Country', value: currentMilestone.country, editable: false},
-        {name: 'Milestone amount', value: currentMilestone.base.milestone_amount, editable: false},
-        {name: 'Gap Hours', value: currentMilestone.base.gap_hours, editable: false}
+        {name: 'Milestone amount', value: currentMilestone.details.milestone_amount, editable: false},
+        {name: 'Gap Hours', value: currentMilestone.summary.gap_hours, editable: false}
     ]
 
     return {milestonesTableColumns, milestonesTableRows}
