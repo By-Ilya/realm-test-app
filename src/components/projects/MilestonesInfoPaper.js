@@ -17,12 +17,11 @@ const useStyles = makeStyles({
 
 MilestonesInfoPaper.propTypes = {
     classes: PropTypes.object.isRequired,
-    fetchProjects: PropTypes.func
 };
 
 export default function MilestonesInfoPaper(props) {
     const containerClasses = useStyles();
-    const {classes, fetchProjects} = props;
+    const {classes} = props;
     const {projectWithCurrentMilestone, projects} = useContext(RealmContext);
 
     let project = null;
@@ -50,7 +49,6 @@ export default function MilestonesInfoPaper(props) {
                         ? <MilestonesInfo
                             classes={containerClasses}
                             project={{...project, currentMilestone}}
-                            fetchProjects={fetchProjects}
                         />
                         : <div className={containerClasses.tableContainer}>
                             <Typography variant="body1">
