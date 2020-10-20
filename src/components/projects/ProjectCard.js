@@ -44,12 +44,15 @@ export default function ProjectCard(props) {
     const classes = useStyles();
 
     const {psproject} = props;
-    const {setProjectWithCurrentMilestone} = useContext(RealmContext);
+    const {user, setProjectWithCurrentMilestone} = useContext(RealmContext);
 
-    const handleOnClickMilestone = (milestone) => {
+    const handleOnClickMilestone = async (milestone) => {
+        var schedule = await user.functions.getMilestoneScheduleOnwards(milestone._id);
         setProjectWithCurrentMilestone({
-            projectId: psproject._id,
-            milestoneId: milestone._id
+            // projectId: psproject._id,
+            // milestoneId: milestone._id
+            project: psproject,
+            milestone: {...milestone, schedule}
         });
     }
 

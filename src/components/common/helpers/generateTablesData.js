@@ -1,4 +1,4 @@
-import {toEnUsDate} from "../../../helpers/dateFormatter";
+import {toEnUsDate,toDateOnly} from "../../../helpers/dateFormatter";
 
 export function generateMilestoneTableData(project) {
     if (!project) return {
@@ -56,8 +56,8 @@ export function generateScheduleTableData(project) {
     ];
     const scheduleTableRows = currentMilestone.schedule.map(s => {
         return {
-            date: toEnUsDate(s.week),
-            scheduled: s.revenue ? `$ ${s.revenue}` : '-',
+            date: toDateOnly(s.week),
+            scheduled: s.revenue ? `$ ${s.revenue.toFixed(0)}` : '-',
             hours: s.hours ? s.hours : '-',
             editable: false
         };

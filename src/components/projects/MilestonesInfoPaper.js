@@ -27,13 +27,15 @@ export default function MilestonesInfoPaper(props) {
     let project = null;
     let currentMilestone = null;
     if (projectWithCurrentMilestone) {
-        const {projectId, milestoneId} = projectWithCurrentMilestone;
-        const foundProjects = projects.filter(p => p._id === projectId);
-        if (foundProjects && foundProjects.length) {
-            project = foundProjects[0];
-            const foundMilestones = project.milestones.filter(m => m._id === milestoneId);
-            currentMilestone = foundMilestones && foundMilestones.length ? foundMilestones[0] : null;
-        }
+        // const {projectId, milestoneId} = projectWithCurrentMilestone;
+        // const foundProjects = projects.filter(p => p._id === projectId);
+        // if (foundProjects && foundProjects.length) {
+        //     project = foundProjects[0];
+        //     const foundMilestones = project.milestones.filter(m => m._id === milestoneId);
+        //     currentMilestone = foundMilestones && foundMilestones.length ? foundMilestones[0] : null;
+        // }
+        project = projectWithCurrentMilestone.project
+        currentMilestone = projectWithCurrentMilestone.milestone
     }
 
     return (
