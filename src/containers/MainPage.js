@@ -22,7 +22,7 @@ export default function MainPage() {
     const queryOptions = {
         variables: {
             filtersInput: {
-                filter: {...filter, active: true},
+                filter: {...filter},
                 sort: getSortOrder()
             }
         }

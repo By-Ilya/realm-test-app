@@ -109,6 +109,7 @@ export default function TopPanel(props) {
     }, [filter, sort]);
 
     const [localFilter, setLocalFilter] = useState(filter);
+
     const filtersObject = [
         {
             label: 'Region',
@@ -132,6 +133,14 @@ export default function TopPanel(props) {
             values: projectManagersList,
             setValue: event => {
                 setLocalFilter({...localFilter, project_manager: event.target.value});
+            }
+        },
+        {
+            label: 'Only Active',
+            currentValue: localFilter.active ? "Yes" : "No",
+            values: ["Yes","No"],
+            setValue: event => {
+                setLocalFilter({...localFilter, active: (event.target.value === "Yes") ? true : false});
             }
         }
     ];

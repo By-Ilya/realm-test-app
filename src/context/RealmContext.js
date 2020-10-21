@@ -25,7 +25,7 @@ export default class ContextContainer extends React.Component {
             app: new Realm.App(REALM_APP_ID),
             user: null,
             dbCollection: null,
-            filter: {region: '', owner: '', project_manager: '', name: ''},
+            filter: {region: '', owner: '', project_manager: '', name: '', active: true},
             sort: {field: 'name', order: 'ASC'},
             regionsList: [],
             ownersList: [],
