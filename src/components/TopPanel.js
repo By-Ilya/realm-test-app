@@ -96,6 +96,7 @@ export default function TopPanel(props) {
         filter, setFilter, sort, setSorting,
         regionsList, ownersList, projectManagersList,
         fetchFiltersDefaultValues, setLoadProcessing,
+        getActiveUserName,
         logOut
     } = useContext(RealmContext);
 
@@ -141,6 +142,14 @@ export default function TopPanel(props) {
             values: ["Yes","No"],
             setValue: event => {
                 setLocalFilter({...localFilter, active: (event.target.value === "Yes") ? true : false});
+            }
+        },
+        {
+            label: 'Only my projects',
+            currentValue: localFilter.active_user_filter ? "Yes" : "No",
+            values: ["Yes","No"],
+            setValue: event => {
+                setLocalFilter({...localFilter, active_user_filter: (event.target.value === "Yes") ? getActiveUserName() : ''});
             }
         }
     ];

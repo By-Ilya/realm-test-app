@@ -25,7 +25,7 @@ export default class ContextContainer extends React.Component {
             app: new Realm.App(REALM_APP_ID),
             user: null,
             dbCollection: null,
-            filter: {region: '', owner: '', project_manager: '', name: '', active: true},
+            filter: {region: '', owner: '', project_manager: '', name: '', active: true, active_user_filter: ''},
             sort: {field: 'name', order: 'ASC'},
             regionsList: [],
             ownersList: [],
@@ -51,7 +51,8 @@ export default class ContextContainer extends React.Component {
             setSorting: this.setSorting,
             setProjectWithCurrentMilestone: this.setProjectWithCurrentMilestone,
             setIsEditing: this.setIsEditing,
-            watcher: this.watcher
+            watcher: this.watcher,
+            getActiveUserName: this.getActiveUserName
         };
 
         this.lastUpdateTime = null;
@@ -169,6 +170,10 @@ export default class ContextContainer extends React.Component {
                 this.setState({projects});
             }
         }
+    }
+
+    getActiveUserName = () => {
+        return "Alex Komyagin"; //TODO: should be dynamic based on the user (Google has 'em)
     }
 
     render() {
