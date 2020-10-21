@@ -12,6 +12,7 @@ const REALM_APP_ID = `${process.env.REACT_APP_REALM_APP_ID}` || '';
 const REALM_SERVICE_NAME = `${process.env.REACT_APP_SERVICE_NAME}` || 'mongodb-atlas';
 const REALM_DATABASE_NAME = `${process.env.REACT_APP_DATABASE_NAME}` || '';
 const REALM_COLLECTION_NAME = `${process.env.REACT_APP_COLLECTION_NAME}` || '';
+const GOOGLE_REDIRECT_URI = `${process.env.REACT_APP_GOOGLE_REDIRECT_URI}` ||'http://localhost:3000/google-callback';
 
 export default class ContextContainer extends React.Component {
     constructor(props) {
@@ -39,6 +40,8 @@ export default class ContextContainer extends React.Component {
             setUser: this.setUser,
             setClient: this.setClient,
             anonymousSignIn: this.anonymousSignIn,
+            googleSignIn: this.googleSignIn,
+            googleHandleRedirect: this.googleHandleRedirect,
             onGoogleSuccessSignIn: this.onGoogleSuccessSignIn,
             onGoogleSignInFailure: this.onGoogleSignInFailure,
             getUserAccessToken: this.getUserAccessToken,
@@ -61,6 +64,7 @@ export default class ContextContainer extends React.Component {
     setUser = (user) => {
         this.setState({user});
         if (this.state.app && user) {
+            this.setFilter({active_user_filter : user.profile.email})
             const dbCollection = user
                 .mongoClient(REALM_SERVICE_NAME)
                 .db(REALM_DATABASE_NAME)
@@ -71,6 +75,20 @@ export default class ContextContainer extends React.Component {
 
     anonymousSignIn = async () => {
         const credentials = Realm.Credentials.anonymous();
+        try {
+            const user = await this.state.app.logIn(credentials);
+            this.setUser(user);
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    googleHandleRedirect = async () => {
+        Realm.handleAuthRedirect();
+    };
+
+    googleSignIn = async () => {
+        const credentials = Realm.Credentials.google(GOOGLE_REDIRECT_URI);
         try {
             const user = await this.state.app.logIn(credentials);
             this.setUser(user);
@@ -173,7 +191,7 @@ export default class ContextContainer extends React.Component {
     }
 
     getActiveUserName = () => {
-        return "Alex Komyagin"; //TODO: should be dynamic based on the user (Google has 'em)
+        return this.state.user.profile.email;
     }
 
     render() {

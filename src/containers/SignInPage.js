@@ -61,6 +61,7 @@ export default function SignInPage(props) {
         onSuccess,
         onFailure,
         anonymousSignIn,
+        googleSignIn,
         signInError
     } = props;
 
@@ -82,8 +83,18 @@ export default function SignInPage(props) {
                     color="primary"
                     className={classes.submit}
                     onClick={anonymousSignIn}
+                    disabled="true"
                 >
                     Anonymous user
+                </Button>
+                <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    className={classes.submit}
+                    onClick={googleSignIn}
+                >
+                    Google Sign in
                 </Button>
                 <div className={classes.signInForm}>
                     <GoogleLogin
@@ -93,6 +104,7 @@ export default function SignInPage(props) {
                         onFailure={onFailure}
                         scope={'email profile'}
                         responseType={'code'}
+                        disabled="true"
                     />
                 </div>
                 <div className={classes.signInForm}>
