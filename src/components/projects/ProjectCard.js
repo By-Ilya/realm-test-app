@@ -115,7 +115,7 @@ function MilestonesList(props) {
     return (
         <List subheader={<li />}>
             <ListSubheader>Milestones</ListSubheader>
-            {milestones.map(milestone => {
+            {milestones && milestones.map(milestone => {
                 return (
                     <ListItem button onClick={() => onClickMilestone(milestone)}>
                         <ListItemText primary={milestone.name} />
