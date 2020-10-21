@@ -165,6 +165,7 @@ export default class ContextContainer extends React.Component {
 
     watcher = async () => {
         if (!this.state.dbCollection) return;
+        if (!this.state.user || !this.state.app.currentUser.isLoggedIn) return;
 
         for await (let event of this.state.dbCollection.watch()) {
             const {clusterTime, operationType, fullDocument} = event;
