@@ -48,11 +48,41 @@ export default function ProjectCard(props) {
 
     const handleOnClickMilestone = async (milestone) => {
         var schedule = await user.functions.getMilestoneScheduleOnwards(milestone._id);
+        var forecast = {
+            delivered_qtd : 15000,
+            expired_qtd : 500,
+            scheduled : {
+                "0": 600,
+                "1": 1500,
+                "2":400
+            },
+            expiring : {
+                "0": 0,
+                "1": 0,
+                "2": 0
+            },
+            most_likely : {
+                "0": 600,
+                "1": 1500,
+                "2":400
+            },
+            risk : {
+                "0": 600,
+                "1":1500,
+                "2":400
+            },
+            upside : {
+                "0": 600,
+                "1":1500,
+                "2":400
+            }
+        };
         setProjectWithCurrentMilestone({
             // projectId: psproject._id,
             // milestoneId: milestone._id
             project: psproject,
-            milestone: {...milestone, schedule}
+            milestone: {...milestone, schedule},
+            forecast: forecast
         });
     }
 
