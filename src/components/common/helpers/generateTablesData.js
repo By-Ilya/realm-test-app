@@ -65,3 +65,37 @@ export function generateScheduleTableData(project) {
 
     return {scheduleTableColumns, scheduleTableRows}
 }
+
+export function generateForecastTableData(project) {
+    if (!project) return {
+        scheduleTableColumns: [],
+        scheduleTableRows: []
+    };
+
+    const {currentMilestone} = project;
+
+    const forecastTableColumns = [
+        {title: 'N3M', field: 'name'},
+        {title: 'Month + 0', field: '0'},
+        {title: 'Month + 1', field: '1'},
+        {title: 'Month + 2', field: '2'},
+        {title: 'Current Quarter', field: 'cq_field'},
+        {title: 'Quarter Call', field: 'cq_call'},
+    ];
+
+    const forecastTableRows = [
+        {name: "Delivered", "0": 15000, cq_field:"Delivered QTD", cq_call: 15000},
+        {name: "Expired", "0": 500, cq_field:"Expired QTD", cq_call: 500},
+        {name: "Scheduled", "0": 600, "1": 1500, "2": 400, cq_field:"Delivered Call", cq_call: 18000},
+    ];
+    // const scheduleTableRows = currentMilestone.schedule.map(s => {
+    //     return {
+    //         date: toDateOnly(s.week),
+    //         scheduled: s.revenue ? `$ ${s.revenue.toFixed(0)}` : '-',
+    //         hours: s.hours ? s.hours : '-',
+    //         editable: false
+    //     };
+    // });
+
+    return {forecastTableColumns, forecastTableRows}
+}
