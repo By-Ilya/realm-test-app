@@ -13,7 +13,7 @@ function getThisMonth(now) {
 
 function getNextMonth(now, utc=true) {
   var current;
-  if (now.getMonth() == 11) {
+  if (now.getMonth() === 11) {
       current = new Date(now.getFullYear() + 1, 0, 1);
   } else {
       current = new Date(now.getFullYear(), now.getMonth() + 1, 1);

@@ -11,7 +11,7 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 
 import {RealmContext} from "../../context/RealmContext";
-import {toEnUsDate} from "../../helpers/dateFormatter";
+import {toEnUsDate,toDateOnly} from "../../helpers/dateFormatter";
 
 const useStyles = makeStyles({
     root: {
@@ -98,7 +98,7 @@ export default function ProjectCard(props) {
                     <b>Status:</b> {psproject.details.pm_project_status}
                 </Typography>
                 <Typography variant="body2" component="p">
-                    <b>Expires:</b> {toEnUsDate(psproject.details.product_end_date)}
+                    <b>Expires:</b> {toDateOnly(psproject.details.product_end_date)}
                 </Typography>
                 <Divider />
 

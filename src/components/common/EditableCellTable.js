@@ -69,13 +69,17 @@ export default function EditableCellTable(props) {
                         case 1: month = getThisMonth(new Date()); break;
                         case 2: month = getNextMonth(new Date()); break;
                         case 3: month = getNextMonth(getNextMonth(new Date(), false)); break;
+                        default: month = null; break;
                     }
 
                     switch (rowData.tableData.id) {
                         case 5: updateKey = "risk"; break;
                         case 6: updateKey = "upside"; break;
+                        default: updateKey = null; break;
                     }
                     //console.log({month, updateKey, value: parseFloat(newValue)})
+                    if (!month || !updateKey)
+                        return Promise.reject();
 
                     const dataUpdate = [...data];
                     const row = rowData.tableData.id;
