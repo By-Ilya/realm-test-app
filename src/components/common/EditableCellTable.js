@@ -50,11 +50,12 @@ export default function EditableCellTable(props) {
             }}
             cellEditable={{
                 isCellEditable: (rowData, columnDef) => {
-                    return typeof rowData[columnDef.field] === "number";
+                    return (rowData.tableData.id > 4) && 
+                            (columnDef.tableData.columnOrder >= 1) && (columnDef.tableData.columnOrder <= 3);
                 },
                 onCellEditApproved: (newValue, oldValue, rowData, columnDef) => {
-                    //console.log(rowData)
-                    //console.log(columnDef)
+                    console.log(rowData)
+                    console.log(columnDef)
                     return new Promise((resolve, reject) => {
                         console.log('newValue: ' + newValue);
                         setTimeout(resolve, 1000);
