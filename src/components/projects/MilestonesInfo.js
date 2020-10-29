@@ -17,7 +17,7 @@ MilestonesInfo.propTypes = {
 
 export default function MilestonesInfo(props) {
     const {classes, project} = props;
-    const {dbCollection} = useContext(RealmContext);
+    const {dbCollection, fcstCollection} = useContext(RealmContext);
 
     const {
         milestonesTableColumns,
@@ -39,6 +39,13 @@ export default function MilestonesInfo(props) {
         const update = {'$set': {[updateKey]: value}};
         const options = {'upsert': false};
         await dbCollection.updateOne(query, update, options);
+    }
+
+    const handleUpdateForecast = async ({month, updateKey, value}) => {
+        const query = {milestoneId: project.currentMilestone._id};
+        const update = {'$set': {[updateKey]: value, "month": month}};
+        const options = {'upsert': true};
+        await fcstCollection.updateOne(query, update, options);
     }
 
     return (<>
@@ -66,6 +73,7 @@ export default function MilestonesInfo(props) {
                 tableName='Forecast'
                 currentColumns={forecastTableColumns}
                 currentData={forecastTableRows}
+                onUpdate={handleUpdateForecast}
             />
         </div>}
     </>)

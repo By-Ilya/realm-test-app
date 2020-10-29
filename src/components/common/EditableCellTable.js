@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import MaterialTable from "material-table";
 
 import generateTableIcons from "./helpers/TableIcons";
+import {getThisMonth,getNextMonth} from "../../helpers/date-util";
 import {RealmContext} from "../../context/RealmContext";
 
 EditableCellTable.propTypes = {
@@ -54,12 +55,23 @@ export default function EditableCellTable(props) {
                             (columnDef.tableData.columnOrder >= 1) && (columnDef.tableData.columnOrder <= 3);
                 },
                 onCellEditApproved: (newValue, oldValue, rowData, columnDef) => {
-                    console.log(rowData)
-                    console.log(columnDef)
-                    return new Promise((resolve, reject) => {
-                        console.log('newValue: ' + newValue);
-                        setTimeout(resolve, 1000);
-                    });
+                    // console.log(rowData)
+                    // console.log(columnDef)
+                    var month, updateKey;
+                    switch (columnDef.tableData.columnOrder) {
+                        case 1: month = getThisMonth(new Date()); break;
+                        case 2: month = getNextMonth(getThisMonth(new Date())); break;
+                        case 3: month = getNextMonth(getNextMonth(getThisMonth(new Date()))); break;
+                    }
+
+                    switch (rowData.tableData.id) {
+                        case 5: updateKey = "risk"; break;
+                        case 6: updateKey = "upside"; break;
+                    }
+
+                    var promise = onUpdate({month, updateKey, value: parseFloat(newValue)});
+
+                    return promise;
                 }
             }}
             // editable={{

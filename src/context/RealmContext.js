@@ -12,6 +12,7 @@ const REALM_APP_ID = `${process.env.REACT_APP_REALM_APP_ID}` || '';
 const REALM_SERVICE_NAME = `${process.env.REACT_APP_SERVICE_NAME}` || 'mongodb-atlas';
 const REALM_DATABASE_NAME = `${process.env.REACT_APP_DATABASE_NAME}` || '';
 const REALM_COLLECTION_NAME = `${process.env.REACT_APP_COLLECTION_NAME}` || '';
+const REALM_FCST_COLLECTION_NAME = `${process.env.REACT_APP_FCST_COLLECTION_NAME}` || '';
 const GOOGLE_REDIRECT_URI = `${process.env.REACT_APP_GOOGLE_REDIRECT_URI}` ||'http://localhost:3000/google-callback';
 
 export default class ContextContainer extends React.Component {
@@ -26,6 +27,7 @@ export default class ContextContainer extends React.Component {
             app: new Realm.App(REALM_APP_ID),
             user: null,
             dbCollection: null,
+            fcstCollection: null,
             filter: {region: '', owner: '', project_manager: '', name: '', active: true, active_user_filter: ''},
             sort: {field: 'name', order: 'ASC'},
             regionsList: [],
@@ -70,6 +72,11 @@ export default class ContextContainer extends React.Component {
                 .db(REALM_DATABASE_NAME)
                 .collection(REALM_COLLECTION_NAME);
             this.setState({dbCollection});
+            const fcstCollection = user
+                .mongoClient(REALM_SERVICE_NAME)
+                .db(REALM_DATABASE_NAME)
+                .collection(REALM_FCST_COLLECTION_NAME);
+            this.setState({fcstCollection});
         }
     };
 
