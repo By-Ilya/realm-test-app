@@ -50,9 +50,12 @@ export default function EditableCellTable(props) {
                 //padding:"dense"
             }}
             cellEditable={{
-                isCellEditable: (rowData, columnDef) => {
+                isCellEditable: (rowData, columnDef) => { //our hacked material table
                     return (rowData.tableData.id > 4) && 
                             (columnDef.tableData.columnOrder >= 1) && (columnDef.tableData.columnOrder <= 3);
+                },
+                onCellEditStarted: (rowData, columnDef) => { //our hacked material table
+                    setIsEditing(true);
                 },
                 onCellEditApproved: (newValue, oldValue, rowData, columnDef) => {
                     // console.log(rowData)
@@ -70,6 +73,8 @@ export default function EditableCellTable(props) {
                     }
 
                     var promise = onUpdate({month, updateKey, value: parseFloat(newValue)});
+
+                    setIsEditing(false); //will generate a warning but that's ok I guess
 
                     return promise;
                 }
