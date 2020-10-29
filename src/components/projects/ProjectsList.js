@@ -32,8 +32,8 @@ export default function ProjectsList(props) {
 
             {!loadProcessing && projects && projects.map(project => {
                 return (
-                    <ListItem>
-                        <ProjectCard psproject={project} />
+                    <ListItem key={project._id}>
+                        <ProjectCard psproject={project}/>
                     </ListItem>
                 )
             })}

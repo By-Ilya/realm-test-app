@@ -119,7 +119,7 @@ function MilestonesList(props) {
             <ListSubheader>Milestones</ListSubheader>
             {milestones && milestones.map(milestone => {
                 return (
-                    <ListItem button onClick={() => onClickMilestone(milestone)}>
+                    <ListItem button onClick={() => onClickMilestone(milestone)} key={milestone._id}>
                         <ListItemText primary={milestone.name} />
                     </ListItem>
                 )

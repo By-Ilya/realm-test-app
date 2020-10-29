@@ -83,7 +83,7 @@ export default function SignInPage(props) {
                     color="primary"
                     className={classes.submit}
                     onClick={anonymousSignIn}
-                    disabled="true"
+                    disabled={true}
                 >
                     Anonymous user
                 </Button>
@@ -104,7 +104,7 @@ export default function SignInPage(props) {
                         onFailure={onFailure}
                         scope={'email profile'}
                         responseType={'code'}
-                        disabled="true"
+                        disabled={true}
                     />
                 </div>
                 <div className={classes.signInForm}>
