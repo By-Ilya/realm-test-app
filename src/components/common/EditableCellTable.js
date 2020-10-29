@@ -48,6 +48,17 @@ export default function EditableCellTable(props) {
                 paging:false,
                 //padding:"dense"
             }}
+            cellEditable={{
+                isCellEditable: (rowData, columnDef) => {
+                    return true;
+                },
+                onCellEditApproved: (newValue, oldValue, rowData, columnDef) => {
+                    return new Promise((resolve, reject) => {
+                        console.log('newValue: ' + newValue);
+                        setTimeout(resolve, 1000);
+                    });
+                }
+            }}
             // editable={{
             //     isEditable: rowData => rowData.editable,
             //     onRowUpdate: async (newData, oldData) => {
