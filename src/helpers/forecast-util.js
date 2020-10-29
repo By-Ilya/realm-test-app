@@ -1,5 +1,6 @@
 module.exports = {
     convertForecastIntoRows,
+    getCallFromThree
 };
 
 //calculate the call based on three months rolling window

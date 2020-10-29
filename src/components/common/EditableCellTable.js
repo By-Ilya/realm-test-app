@@ -5,6 +5,7 @@ import MaterialTable from "material-table";
 import generateTableIcons from "./helpers/TableIcons";
 import {getThisMonth,getNextMonth} from "../../helpers/date-util";
 import {RealmContext} from "../../context/RealmContext";
+import {getCallFromThree} from "../../helpers/forecast-util";
 
 EditableCellTable.propTypes = {
     projectId: PropTypes.string.isRequired,
@@ -55,26 +56,38 @@ export default function EditableCellTable(props) {
                             (columnDef.tableData.columnOrder >= 1) && (columnDef.tableData.columnOrder <= 3);
                 },
                 onCellEditStarted: (rowData, columnDef) => { //our hacked material table
-                    setIsEditing(true);
+                    //setIsEditing(true);
                 },
                 onCellEditApproved: (newValue, oldValue, rowData, columnDef) => {
                     // console.log(rowData)
-                    // console.log(columnDef)
+                    // console.log(columnDef);
+                    // console.log(getThisMonth(new Date()));
+                    // console.log(getNextMonth(getThisMonth(new Date())));
+                    // console.log(getNextMonth(getNextMonth(getThisMonth(new Date()))));
                     var month, updateKey;
                     switch (columnDef.tableData.columnOrder) {
                         case 1: month = getThisMonth(new Date()); break;
-                        case 2: month = getNextMonth(getThisMonth(new Date())); break;
-                        case 3: month = getNextMonth(getNextMonth(getThisMonth(new Date()))); break;
+                        case 2: month = getNextMonth(new Date()); break;
+                        case 3: month = getNextMonth(getNextMonth(new Date(), false)); break;
                     }
 
                     switch (rowData.tableData.id) {
                         case 5: updateKey = "risk"; break;
                         case 6: updateKey = "upside"; break;
                     }
+                    //console.log({month, updateKey, value: parseFloat(newValue)})
+
+                    const dataUpdate = [...data];
+                    const row = rowData.tableData.id;
+                    const column = columnDef.field;
+                    dataUpdate[row][column] = parseFloat(newValue);
+                    dataUpdate[row]["cq_call"] = getCallFromThree([dataUpdate[row][0], dataUpdate[row][1], dataUpdate[row][2]]);
+                    setData([...dataUpdate]);
+                    //console.log(data);
 
                     var promise = onUpdate({month, updateKey, value: parseFloat(newValue)});
 
-                    setIsEditing(false); //will generate a warning but that's ok I guess
+                    //setIsEditing(false); //will generate a warning but that's ok I guess
 
                     return promise;
                 }

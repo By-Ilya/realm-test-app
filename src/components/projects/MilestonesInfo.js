@@ -42,8 +42,8 @@ export default function MilestonesInfo(props) {
     }
 
     const handleUpdateForecast = async ({month, updateKey, value}) => {
-        const query = {milestoneId: project.currentMilestone._id};
-        const update = {'$set': {[updateKey]: value, "month": month}};
+        const query = {milestoneId: project.currentMilestone._id, "month": month};
+        const update = {'$set': {[updateKey]: value}};
         const options = {'upsert': true};
         await fcstCollection.updateOne(query, update, options);
     }
