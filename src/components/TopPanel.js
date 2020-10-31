@@ -7,12 +7,12 @@ import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
-import AccountCircle from '@material-ui/icons/AccountCircle';
 
 import {RealmContext} from "../context/RealmContext";
 import SearchField from "./common/SearchField";
 import FilterButton from "./common/FilterButton";
 import Profile from "./common/Profile";
+import Avatar from "./common/Avatar";
 
 TopPanel.propTypes = {
     fetchProjects: PropTypes.func.isRequired
@@ -96,8 +96,7 @@ export default function TopPanel(props) {
         filter, setFilter, sort, setSorting,
         regionsList, ownersList, projectManagersList,
         fetchFiltersDefaultValues, setLoadProcessing,
-        getActiveUserName,
-        logOut
+        getActiveUserName, user, logOut
     } = useContext(RealmContext);
 
     useEffect(() => {
@@ -109,6 +108,7 @@ export default function TopPanel(props) {
         fetchProjects({needToClean: true});
     }, [filter, sort]);
 
+    const {profile} = user;
     const [localFilter, setLocalFilter] = useState(filter);
 
     const filtersObject = [
@@ -141,7 +141,10 @@ export default function TopPanel(props) {
             currentValue: localFilter.active ? "Yes" : "No",
             values: ["Yes","No"],
             setValue: event => {
-                setLocalFilter({...localFilter, active: (event.target.value === "Yes") ? true : false});
+                setLocalFilter({
+                    ...localFilter,
+                    active: (event.target.value === "Yes")
+                });
             }
         },
         {
@@ -149,7 +152,12 @@ export default function TopPanel(props) {
             currentValue: localFilter.active_user_filter ? "Yes" : "No",
             values: ["Yes","No"],
             setValue: event => {
-                setLocalFilter({...localFilter, active_user_filter: (event.target.value === "Yes") ? getActiveUserName() : ''});
+                setLocalFilter({
+                    ...localFilter,
+                    active_user_filter: (event.target.value === "Yes")
+                        ? getActiveUserName()
+                        : ''
+                });
             }
         }
     ];
@@ -270,6 +278,7 @@ export default function TopPanel(props) {
                             sectionDesktop: classes.sectionDesktop,
                             sectionMobile: classes.sectionMobile
                         }}
+                        profile={profile}
                         menuId={menuId}
                         mobileMenuId={mobileMenuId}
                         onProfileMenuOpen={handleProfileMenuOpen}
@@ -284,6 +293,7 @@ export default function TopPanel(props) {
                 isMobileMenuOpen={isMobileMenuOpen}
                 onMobileMenuClose={handleMobileMenuClose}
                 onProfileMenuOpen={handleProfileMenuOpen}
+                profile={profile}
             />
 
             <ProfileMenu
@@ -320,9 +330,12 @@ function ProfileMenu(props) {
 
 function MobileMenu(props) {
     const {
-        mobileMoreAnchorEl, mobileMenuId, isMobileMenuOpen,
-        onMobileMenuClose, onProfileMenuOpen
+        mobileMoreAnchorEl, mobileMenuId,
+        isMobileMenuOpen, onMobileMenuClose,
+        onProfileMenuOpen, profile
     } = props;
+
+    const {name, email, pictureUrl} = profile;
 
     return (
         <Menu
@@ -341,9 +354,12 @@ function MobileMenu(props) {
                     aria-haspopup="true"
                     color="inherit"
                 >
-                    <AccountCircle />
+                    <Avatar
+                        avatarImage={pictureUrl}
+                        accountName={name}
+                        accountEmail={email}
+                    />
                 </IconButton>
-                <p>Profile</p>
             </MenuItem>
         </Menu>
     )
