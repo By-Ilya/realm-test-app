@@ -1,22 +1,22 @@
 {
   "files": {
     "main.css": "/realm-test-app/static/css/main.5f361e03.chunk.css",
-    "main.js": "/realm-test-app/static/js/main.9e854db7.chunk.js",
-    "main.js.map": "/realm-test-app/static/js/main.9e854db7.chunk.js.map",
+    "main.js": "/realm-test-app/static/js/main.4146cc08.chunk.js",
+    "main.js.map": "/realm-test-app/static/js/main.4146cc08.chunk.js.map",
     "runtime-main.js": "/realm-test-app/static/js/runtime-main.7f8e8675.js",
     "runtime-main.js.map": "/realm-test-app/static/js/runtime-main.7f8e8675.js.map",
-    "static/js/2.ce7ebf77.chunk.js": "/realm-test-app/static/js/2.ce7ebf77.chunk.js",
-    "static/js/2.ce7ebf77.chunk.js.map": "/realm-test-app/static/js/2.ce7ebf77.chunk.js.map",
+    "static/js/2.32e4df57.chunk.js": "/realm-test-app/static/js/2.32e4df57.chunk.js",
+    "static/js/2.32e4df57.chunk.js.map": "/realm-test-app/static/js/2.32e4df57.chunk.js.map",
     "index.html": "/realm-test-app/index.html",
-    "precache-manifest.263fecc4ee0f0bed963350d8a9dcce4d.js": "/realm-test-app/precache-manifest.263fecc4ee0f0bed963350d8a9dcce4d.js",
+    "precache-manifest.4905566914b916ff13f694ba92e496f7.js": "/realm-test-app/precache-manifest.4905566914b916ff13f694ba92e496f7.js",
     "service-worker.js": "/realm-test-app/service-worker.js",
     "static/css/main.5f361e03.chunk.css.map": "/realm-test-app/static/css/main.5f361e03.chunk.css.map",
-    "static/js/2.ce7ebf77.chunk.js.LICENSE.txt": "/realm-test-app/static/js/2.ce7ebf77.chunk.js.LICENSE.txt"
+    "static/js/2.32e4df57.chunk.js.LICENSE.txt": "/realm-test-app/static/js/2.32e4df57.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.7f8e8675.js",
-    "static/js/2.ce7ebf77.chunk.js",
+    "static/js/2.32e4df57.chunk.js",
     "static/css/main.5f361e03.chunk.css",
-    "static/js/main.9e854db7.chunk.js"
+    "static/js/main.4146cc08.chunk.js"
   ]
 }
