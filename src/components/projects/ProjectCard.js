@@ -11,7 +11,7 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 
 import {RealmContext} from "../../context/RealmContext";
-import {toEnUsDate} from "../../helpers/dateFormatter";
+import {toEnUsDate,toDateOnly} from "../../helpers/dateFormatter";
 
 const useStyles = makeStyles({
     root: {
@@ -44,12 +44,17 @@ export default function ProjectCard(props) {
     const classes = useStyles();
 
     const {psproject} = props;
-    const {setProjectWithCurrentMilestone} = useContext(RealmContext);
+    const {user, setProjectWithCurrentMilestone} = useContext(RealmContext);
 
-    const handleOnClickMilestone = (milestone) => {
+    const handleOnClickMilestone = async (milestone) => {
+        var schedule = await user.functions.getMilestoneScheduleOnwards(milestone._id);
+        var forecast = await user.functions.getMilestoneForecast(milestone._id);
         setProjectWithCurrentMilestone({
-            projectId: psproject._id,
-            milestoneId: milestone._id
+            // projectId: psproject._id,
+            // milestoneId: milestone._id
+            project: psproject,
+            milestone: {...milestone, schedule},
+            forecast: forecast
         });
     }
 
@@ -93,7 +98,7 @@ export default function ProjectCard(props) {
                     <b>Status:</b> {psproject.details.pm_project_status}
                 </Typography>
                 <Typography variant="body2" component="p">
-                    <b>Expires:</b> {toEnUsDate(psproject.details.product_end_date)}
+                    <b>Expires:</b> {toDateOnly(psproject.details.product_end_date)}
                 </Typography>
                 <Divider />
 
@@ -112,9 +117,9 @@ function MilestonesList(props) {
     return (
         <List subheader={<li />}>
             <ListSubheader>Milestones</ListSubheader>
-            {milestones.map(milestone => {
+            {milestones && milestones.map(milestone => {
                 return (
-                    <ListItem button onClick={() => onClickMilestone(milestone)}>
+                    <ListItem button onClick={() => onClickMilestone(milestone)} key={milestone._id}>
                         <ListItemText primary={milestone.name} />
                     </ListItem>
                 )

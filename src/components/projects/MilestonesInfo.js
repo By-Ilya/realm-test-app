@@ -2,9 +2,11 @@ import React, {useContext} from 'react';
 import PropTypes from 'prop-types';
 
 import SimpleTable from "../common/SimpleTable";
+import EditableCellTable from "../common/EditableCellTable";
 import {
     generateMilestoneTableData,
-    generateScheduleTableData
+    generateScheduleTableData,
+    generateForecastTableData
 } from "../common/helpers/generateTablesData";
 import {RealmContext} from "../../context/RealmContext";
 
@@ -15,7 +17,7 @@ MilestonesInfo.propTypes = {
 
 export default function MilestonesInfo(props) {
     const {classes, project} = props;
-    const {dbCollection} = useContext(RealmContext);
+    const {dbCollection, fcstCollection} = useContext(RealmContext);
 
     const {
         milestonesTableColumns,
@@ -27,11 +29,23 @@ export default function MilestonesInfo(props) {
         scheduleTableRows
     } = generateScheduleTableData(project);
 
+    const {
+        forecastTableColumns,
+        forecastTableRows
+    } = generateForecastTableData(project);
+
     const handleUpdateRow = async ({updateKey, value}) => {
         const query = {_id: project._id};
         const update = {'$set': {[updateKey]: value}};
         const options = {'upsert': false};
         await dbCollection.updateOne(query, update, options);
+    }
+
+    const handleUpdateForecast = async ({month, updateKey, value}) => {
+        const query = {milestoneId: project.currentMilestone._id, "month": month};
+        const update = {'$set': {[updateKey]: value}};
+        const options = {'upsert': true};
+        await fcstCollection.updateOne(query, update, options);
     }
 
     return (<>
@@ -50,6 +64,16 @@ export default function MilestonesInfo(props) {
                 tableName='Schedule'
                 currentColumns={scheduleTableColumns}
                 currentData={scheduleTableRows}
+            />
+        </div>}
+        {forecastTableRows.length !== 0 && <div className={classes.tableContainer}>
+            <EditableCellTable
+                projectId={project._id}
+                milestoneId={project.currentMilestone._id}
+                tableName='Forecast'
+                currentColumns={forecastTableColumns}
+                currentData={forecastTableRows}
+                onUpdate={handleUpdateForecast}
             />
         </div>}
     </>)

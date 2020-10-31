@@ -12,6 +12,8 @@ const REALM_APP_ID = `${process.env.REACT_APP_REALM_APP_ID}` || '';
 const REALM_SERVICE_NAME = `${process.env.REACT_APP_SERVICE_NAME}` || 'mongodb-atlas';
 const REALM_DATABASE_NAME = `${process.env.REACT_APP_DATABASE_NAME}` || '';
 const REALM_COLLECTION_NAME = `${process.env.REACT_APP_COLLECTION_NAME}` || '';
+const REALM_FCST_COLLECTION_NAME = `${process.env.REACT_APP_FCST_COLLECTION_NAME}` || '';
+const GOOGLE_REDIRECT_URI = `${process.env.REACT_APP_GOOGLE_REDIRECT_URI}` ||'http://localhost:3000/google-callback';
 
 export default class ContextContainer extends React.Component {
     constructor(props) {
@@ -25,7 +27,8 @@ export default class ContextContainer extends React.Component {
             app: new Realm.App(REALM_APP_ID),
             user: null,
             dbCollection: null,
-            filter: {region: '', owner: '', project_manager: '', name: ''},
+            fcstCollection: null,
+            filter: {region: '', owner: '', project_manager: '', name: '', active: true, active_user_filter: ''},
             sort: {field: 'name', order: 'ASC'},
             regionsList: [],
             ownersList: [],
@@ -39,6 +42,8 @@ export default class ContextContainer extends React.Component {
             setUser: this.setUser,
             setClient: this.setClient,
             anonymousSignIn: this.anonymousSignIn,
+            googleSignIn: this.googleSignIn,
+            googleHandleRedirect: this.googleHandleRedirect,
             onGoogleSuccessSignIn: this.onGoogleSuccessSignIn,
             onGoogleSignInFailure: this.onGoogleSignInFailure,
             getUserAccessToken: this.getUserAccessToken,
@@ -51,7 +56,8 @@ export default class ContextContainer extends React.Component {
             setSorting: this.setSorting,
             setProjectWithCurrentMilestone: this.setProjectWithCurrentMilestone,
             setIsEditing: this.setIsEditing,
-            watcher: this.watcher
+            watcher: this.watcher,
+            getActiveUserName: this.getActiveUserName
         };
 
         this.lastUpdateTime = null;
@@ -60,16 +66,36 @@ export default class ContextContainer extends React.Component {
     setUser = (user) => {
         this.setState({user});
         if (this.state.app && user) {
+            this.setFilter({active_user_filter : user.profile.email})
             const dbCollection = user
                 .mongoClient(REALM_SERVICE_NAME)
                 .db(REALM_DATABASE_NAME)
                 .collection(REALM_COLLECTION_NAME);
             this.setState({dbCollection});
+            const fcstCollection = user
+                .mongoClient(REALM_SERVICE_NAME)
+                .db(REALM_DATABASE_NAME)
+                .collection(REALM_FCST_COLLECTION_NAME);
+            this.setState({fcstCollection});
         }
     };
 
     anonymousSignIn = async () => {
         const credentials = Realm.Credentials.anonymous();
+        try {
+            const user = await this.state.app.logIn(credentials);
+            this.setUser(user);
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    googleHandleRedirect = async () => {
+        Realm.handleAuthRedirect();
+    };
+
+    googleSignIn = async () => {
+        const credentials = Realm.Credentials.google(GOOGLE_REDIRECT_URI);
         try {
             const user = await this.state.app.logIn(credentials);
             this.setUser(user);
@@ -146,6 +172,7 @@ export default class ContextContainer extends React.Component {
 
     watcher = async () => {
         if (!this.state.dbCollection) return;
+        if (!this.state.user || !this.state.app.currentUser.isLoggedIn) return;
 
         for await (let event of this.state.dbCollection.watch()) {
             const {clusterTime, operationType, fullDocument} = event;
@@ -169,6 +196,10 @@ export default class ContextContainer extends React.Component {
                 this.setState({projects});
             }
         }
+    }
+
+    getActiveUserName = () => {
+        return this.state.user.profile.email;
     }
 
     render() {
