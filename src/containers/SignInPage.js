@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types'
-import { GoogleLogin } from 'react-google-login';
 
 import Avatar from '@material-ui/core/Avatar';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -8,9 +7,9 @@ import Link from '@material-ui/core/Link';
 import Box from '@material-ui/core/Box';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
-import Button from "@material-ui/core/Button";
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
+import GoogleButton from 'react-google-button'
 
 const useStyles = makeStyles((theme) => ({
     paper: {
@@ -28,7 +27,8 @@ const useStyles = makeStyles((theme) => ({
     },
     signInForm: {
         width: '100%',
-        marginTop: theme.spacing(1),
+        marginTop: theme.spacing(3),
+        marginBottom: theme.spacing(1),
         display: 'flex',
         justifyContent: 'center'
     },
@@ -55,12 +55,8 @@ SignInPage.defaultProps = {
 
 export default function SignInPage(props) {
     const {
-        googleClientId,
         appName,
         copyrightLink,
-        onSuccess,
-        onFailure,
-        anonymousSignIn,
         googleSignIn,
         signInError
     } = props;
@@ -77,46 +73,46 @@ export default function SignInPage(props) {
                 <Typography component="h1" variant="h5">
                     Sign in
                 </Typography>
-                <Button
-                    type="submit"
-                    variant="contained"
-                    color="primary"
-                    className={classes.submit}
-                    onClick={anonymousSignIn}
-                    disabled={true}
-                >
-                    Anonymous user
-                </Button>
-                <Button
-                    type="submit"
-                    variant="contained"
-                    color="primary"
-                    className={classes.submit}
-                    onClick={googleSignIn}
-                >
-                    Google Sign in
-                </Button>
-                <div className={classes.signInForm}>
-                    <GoogleLogin
-                        clientId={googleClientId}
-                        buttonText="Sign in with Google"
-                        onSuccess={onSuccess}
-                        onFailure={onFailure}
-                        scope={'email profile'}
-                        responseType={'code'}
-                        disabled={true}
-                    />
-                </div>
-                <div className={classes.signInForm}>
 
+                <div className={classes.signInForm}>
+                    <GoogleButton
+                        type="light"
+                        onClick={googleSignIn}
+                    />
+
+                    {/* TODO: disabled, not actual */}
+                    {/*<Button*/}
+                    {/*    type="submit"*/}
+                    {/*    variant="contained"*/}
+                    {/*    color="primary"*/}
+                    {/*    className={classes.submit}*/}
+                    {/*    onClick={anonymousSignIn}*/}
+                    {/*    disabled={true}*/}
+                    {/*>*/}
+                    {/*    Anonymous user*/}
+                    {/*</Button>*/}
+
+                    {/* TODO: disabled due to not working */}
+                    {/*<div className={classes.signInForm}>*/}
+                    {/*    <GoogleLogin*/}
+                    {/*        clientId={googleClientId}*/}
+                    {/*        buttonText="Sign in with Google"*/}
+                    {/*        onSuccess={onSuccess}*/}
+                    {/*        onFailure={onFailure}*/}
+                    {/*        scope={'email profile'}*/}
+                    {/*        responseType={'code'}*/}
+                    {/*        disabled={true}*/}
+                    {/*    />*/}
+                    {/*</div>*/}
                 </div>
+
                 {signInError && <div className={classes.errorBox}>
                     <Typography variant="body2" color="error" align="center">
                         {signInError}
                     </Typography>
                 </div>}
             </div>
-            <Box mt={8}>
+            <Box mt={1}>
                 <Copyright
                     appName={appName}
                     copyrightLink={copyrightLink}
