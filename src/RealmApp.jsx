@@ -7,9 +7,8 @@ import RealmApolloProvider from "./RealmApolloProvider";
 
 export default function RealmApp() {
     const {
-        app, appName, copyrightLink, googleClientId,
-        anonymousSignIn, googleSignIn, googleHandleRedirect, user, setUser,
-        onGoogleSuccessSignIn, onGoogleSignInFailure
+        app, appName, copyrightLink,
+        googleSignIn, googleHandleRedirect, user, setUser,
     } = useContext(RealmContext);
 
     const appRef = useRef(app);
@@ -21,15 +20,16 @@ export default function RealmApp() {
     return (
         <Router>
           <Switch>
-            <Route exact path="/google-callback" render={() => <div>Google Callback {googleHandleRedirect()}</div> } />
+            <Route
+                exact path="/google-callback"
+                render={() => <div>
+                    Google Callback {googleHandleRedirect()}
+                </div>}
+            />
             <Route path="/*" render={() => 
                 user ?  <RealmApolloProvider /> : <SignInPage
-                    onSuccess={onGoogleSuccessSignIn}
                     appName={appName}
                     copyrightLink={copyrightLink}
-                    googleClientId={googleClientId}
-                    onFailure={onGoogleSignInFailure}
-                    anonymousSignIn={anonymousSignIn}
                     googleSignIn={googleSignIn}
                 />
                 }/>

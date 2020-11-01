@@ -40,12 +40,8 @@ export default class ContextContainer extends React.Component {
         };
         this.funcs = {
             setUser: this.setUser,
-            setClient: this.setClient,
-            anonymousSignIn: this.anonymousSignIn,
             googleSignIn: this.googleSignIn,
             googleHandleRedirect: this.googleHandleRedirect,
-            onGoogleSuccessSignIn: this.onGoogleSuccessSignIn,
-            onGoogleSignInFailure: this.onGoogleSignInFailure,
             getUserAccessToken: this.getUserAccessToken,
             logOut: this.logOut,
             fetchFiltersDefaultValues: this.fetchFiltersDefaultValues,
@@ -66,7 +62,7 @@ export default class ContextContainer extends React.Component {
     setUser = (user) => {
         this.setState({user});
         if (this.state.app && user) {
-            this.setFilter({active_user_filter : user.profile.email})
+            this.setFilter({active_user_filter: user.profile.email});
             const dbCollection = user
                 .mongoClient(REALM_SERVICE_NAME)
                 .db(REALM_DATABASE_NAME)
@@ -80,15 +76,16 @@ export default class ContextContainer extends React.Component {
         }
     };
 
-    anonymousSignIn = async () => {
-        const credentials = Realm.Credentials.anonymous();
-        try {
-            const user = await this.state.app.logIn(credentials);
-            this.setUser(user);
-        } catch (err) {
-            console.error(err);
-        }
-    };
+    // TODO: deprecated functionality
+    // anonymousSignIn = async () => {
+    //     const credentials = Realm.Credentials.anonymous();
+    //     try {
+    //         const user = await this.state.app.logIn(credentials);
+    //         this.setUser(user);
+    //     } catch (err) {
+    //         console.error(err);
+    //     }
+    // };
 
     googleHandleRedirect = async () => {
         Realm.handleAuthRedirect();
@@ -104,19 +101,20 @@ export default class ContextContainer extends React.Component {
         }
     };
 
-    onGoogleSuccessSignIn = (response) => {
-        const credentials = Realm.Credentials.google(response.code);
-        this.state.app.logIn(credentials).then(user => {
-            console.log(`Logged in with id: ${user.id}`);
-            this.setUser(user);
-        }).catch(err => {
-            console.error('onGoogleSuccessSignIn:', err);
-        });
-    };
+    // TODO: deprecated functionality
+    // onGoogleSuccessSignIn = (response) => {
+    //     const credentials = Realm.Credentials.google(response.code);
+    //     this.state.app.logIn(credentials).then(user => {
+    //         console.log(`Logged in with id: ${user.id}`);
+    //         this.setUser(user);
+    //     }).catch(err => {
+    //         console.error('onGoogleSuccessSignIn:', err);
+    //     });
+    // };
 
-    onGoogleSignInFailure = (response) => {
-        console.error('onGoogleSignInFailure:', response);
-    }
+    // onGoogleSignInFailure = (response) => {
+    //     console.error('onGoogleSignInFailure:', response);
+    // }
 
     getUserAccessToken = async () => {
         await this.state.app.currentUser.refreshCustomData();
