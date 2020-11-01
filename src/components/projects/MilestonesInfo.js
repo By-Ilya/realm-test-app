@@ -2,6 +2,7 @@ import React, {useContext} from 'react';
 import PropTypes from 'prop-types';
 
 import SimpleTable from "../common/SimpleTable";
+import SimpleETable from "../common/SimpleETable";
 import EditableCellTable from "../common/EditableCellTable";
 import {
     generateMilestoneTableData,
@@ -50,7 +51,7 @@ export default function MilestonesInfo(props) {
 
     return (<>
         {milestonesTableRows.length !== 0 && <div className={classes.tableContainer}>
-            <SimpleTable
+            <SimpleETable
                 projectId={project._id}
                 tableName='Project milestone info'
                 currentColumns={milestonesTableColumns}
