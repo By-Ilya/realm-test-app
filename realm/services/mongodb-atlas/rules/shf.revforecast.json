@@ -1,0 +1,17 @@
+{
+    "collection": "revforecast",
+    "database": "shf",
+    "id": "5f990acb7fd9f17c89a2dac2",
+    "roles": [
+        {
+            "name": "default",
+            "apply_when": {},
+            "write": true,
+            "insert": true,
+            "delete": true,
+            "search": true,
+            "additional_fields": {}
+        }
+    ],
+    "schema": {}
+}

@@ -1,0 +1,174 @@
+{
+    "collection": "psproject",
+    "database": "shf",
+    "id": "5f8295506269fa0e8a8039af",
+    "roles": [
+        {
+            "name": "default",
+            "apply_when": {},
+            "write": true,
+            "insert": true,
+            "delete": true,
+            "search": true,
+            "additional_fields": {}
+        }
+    ],
+    "schema": {
+        "properties": {
+            "SystemModstamp": {
+                "bsonType": "date"
+            },
+            "_id": {
+                "bsonType": "string"
+            },
+            "account": {
+                "bsonType": "string"
+            },
+            "active": {
+                "bsonType": "bool"
+            },
+            "details": {
+                "bsonType": "object",
+                "properties": {
+                    "active_csm": {
+                        "bsonType": "string"
+                    },
+                    "next_projected_delivery_date": {
+                        "bsonType": "date"
+                    },
+                    "pm_project_status": {
+                        "bsonType": "string"
+                    },
+                    "pm_stage": {
+                        "bsonType": "string"
+                    },
+                    "product_end_date": {
+                        "bsonType": "date"
+                    },
+                    "project_status_notes": {
+                        "bsonType": "string"
+                    },
+                    "remaining_hours_will_expire": {
+                        "bsonType": "bool"
+                    }
+                }
+            },
+            "milestones": {
+                "bsonType": "array",
+                "items": {
+                    "bsonType": "object",
+                    "properties": {
+                        "SystemModstamp": {
+                            "bsonType": "date"
+                        },
+                        "_id": {
+                            "bsonType": "string"
+                        },
+                        "country": {
+                            "bsonType": "string"
+                        },
+                        "currency": {
+                            "bsonType": "string"
+                        },
+                        "details": {
+                            "bsonType": "object",
+                            "properties": {
+                                "bill_rate": {
+                                    "bsonType": "double"
+                                },
+                                "delivered_amount": {
+                                    "bsonType": "double"
+                                },
+                                "first_scheduled_date": {
+                                    "bsonType": "date"
+                                },
+                                "last_scheduled_date": {
+                                    "bsonType": "date"
+                                },
+                                "milestone_amount": {
+                                    "bsonType": "double"
+                                }
+                            }
+                        },
+                        "name": {
+                            "bsonType": "string"
+                        },
+                        "projectId": {
+                            "bsonType": "string"
+                        },
+                        "summary": {
+                            "bsonType": "object",
+                            "properties": {
+                                "delivered_hours": {
+                                    "bsonType": "double"
+                                },
+                                "gap_hours": {
+                                    "bsonType": "double"
+                                },
+                                "hours_for_ns": {
+                                    "bsonType": "double"
+                                },
+                                "planned_hours": {
+                                    "bsonType": "double"
+                                },
+                                "sold_hours": {
+                                    "bsonType": "double"
+                                },
+                                "unscheduled_hours": {
+                                    "bsonType": "double"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "name": {
+                "bsonType": "string"
+            },
+            "opportunity": {
+                "bsonType": "object",
+                "properties": {
+                    "engagement_manager": {
+                        "bsonType": "string"
+                    },
+                    "name": {
+                        "bsonType": "string"
+                    },
+                    "owner": {
+                        "bsonType": "string"
+                    }
+                }
+            },
+            "owner": {
+                "bsonType": "string"
+            },
+            "project_manager": {
+                "bsonType": "string"
+            },
+            "ps_ops_resource": {
+                "bsonType": "string"
+            },
+            "region": {
+                "bsonType": "string"
+            },
+            "stage": {
+                "bsonType": "string"
+            },
+            "summary": {
+                "bsonType": "object",
+                "properties": {
+                    "backlog_hours": {
+                        "bsonType": "double"
+                    },
+                    "gap_hours": {
+                        "bsonType": "double"
+                    },
+                    "planned_hours": {
+                        "bsonType": "double"
+                    }
+                }
+            }
+        },
+        "title": "psproject"
+    }
+}

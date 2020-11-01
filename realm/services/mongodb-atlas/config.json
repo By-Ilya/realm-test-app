@@ -1,0 +1,11 @@
+{
+    "id": "5f1a1da967cbc53397938264",
+    "name": "mongodb-atlas",
+    "type": "mongodb-atlas",
+    "config": {
+        "clusterName": "normxg-rev-fcst",
+        "readPreference": "primary",
+        "wireProtocolEnabled": false
+    },
+    "version": 1
+}

@@ -1,0 +1,17 @@
+{
+    "collection": "schedule",
+    "database": "shf",
+    "id": "5f88a2b9b7d71cd897001d13",
+    "roles": [
+        {
+            "name": "default",
+            "apply_when": {},
+            "write": true,
+            "insert": true,
+            "delete": true,
+            "search": true,
+            "additional_fields": {}
+        }
+    ],
+    "schema": {}
+}

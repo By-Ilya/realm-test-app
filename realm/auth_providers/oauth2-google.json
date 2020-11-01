@@ -1,0 +1,30 @@
+{
+    "id": "5f1a200667cbc5339793dcf6",
+    "name": "oauth2-google",
+    "type": "oauth2-google",
+    "config": {
+        "clientId": "135479055030-15qjocokoqnti45qlantli50ov9au201.apps.googleusercontent.com"
+    },
+    "secret_config": {
+        "clientSecret": "MyGSecret"
+    },
+    "disabled": false,
+    "metadata_fields": [
+        {
+            "required": false,
+            "name": "email"
+        },
+        {
+            "required": false,
+            "name": "name"
+        }
+    ],
+    "domain_restrictions": [
+        "mongodb.com"
+    ],
+    "redirect_uris": [
+        "http://localhost:3000/",
+        "https://shadowforce-sivxs.mongodbstitch.com/",
+        "http://localhost:3000/google-callback"
+    ]
+}

@@ -1,0 +1,17 @@
+{
+    "collection": "milestones",
+    "database": "revForecast",
+    "id": "5f1b462214e878bf1dc4bb42",
+    "roles": [
+        {
+            "name": "default",
+            "apply_when": {},
+            "write": true,
+            "insert": true,
+            "delete": true,
+            "search": true,
+            "additional_fields": {}
+        }
+    ],
+    "schema": {}
+}

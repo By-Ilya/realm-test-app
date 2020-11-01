@@ -1,0 +1,17 @@
+{
+    "collection": "userdata",
+    "database": "shf",
+    "id": "5f90ac8bb68d011950da1933",
+    "roles": [
+        {
+            "name": "default",
+            "apply_when": {},
+            "write": true,
+            "insert": true,
+            "delete": true,
+            "search": true,
+            "additional_fields": {}
+        }
+    ],
+    "schema": {}
+}

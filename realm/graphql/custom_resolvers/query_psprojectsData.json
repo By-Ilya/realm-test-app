@@ -1,0 +1,65 @@
+{
+    "field_name": "psprojectsData",
+    "function_name": "findProjects",
+    "id": "5f88d907b7d71cd8972db7d0",
+    "input_type": {
+        "bsonType": "object",
+        "properties": {
+            "filter": {
+                "bsonType": "object",
+                "properties": {
+                    "active": {
+                        "bsonType": "bool"
+                    },
+                    "active_user_filter": {
+                        "bsonType": "string"
+                    },
+                    "name": {
+                        "bsonType": "string"
+                    },
+                    "owner": {
+                        "bsonType": "string"
+                    },
+                    "project_manager": {
+                        "bsonType": "string"
+                    },
+                    "region": {
+                        "bsonType": "string"
+                    }
+                },
+                "required": [
+                    "active",
+                    "name",
+                    "region",
+                    "owner",
+                    "project_manager",
+                    "active_user_filter"
+                ]
+            },
+            "sort": {
+                "bsonType": "object",
+                "properties": {
+                    "field": {
+                        "bsonType": "string"
+                    },
+                    "order": {
+                        "bsonType": "int"
+                    }
+                },
+                "required": [
+                    "field",
+                    "order"
+                ]
+            }
+        },
+        "required": [
+            "filter",
+            "sort"
+        ],
+        "title": "FiltersInput"
+    },
+    "input_type_format": "custom",
+    "on_type": "Query",
+    "payload_type": "Psproject",
+    "payload_type_format": "generated-list"
+}

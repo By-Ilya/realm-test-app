@@ -1,0 +1,17 @@
+{
+    "collection": "test",
+    "database": "shf",
+    "id": "5f8ced1d7105801c87990356",
+    "roles": [
+        {
+            "name": "default",
+            "apply_when": {},
+            "write": true,
+            "insert": true,
+            "delete": true,
+            "search": true,
+            "additional_fields": {}
+        }
+    ],
+    "schema": {}
+}
