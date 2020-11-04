@@ -183,7 +183,7 @@ export default class ContextContainer extends React.Component {
 
     watcher = async () => {
         if (!this.state.dbCollection) return;
-        if (!this.state.user || !this.state.app.currentUser.isLoggedIn) return;
+        if (!this.state.user || !this.state.app.currentUser) return;
 
         for await (let event of this.state.dbCollection.watch()) {
             const {clusterTime, operationType, fullDocument} = event;
@@ -193,18 +193,24 @@ export default class ContextContainer extends React.Component {
                 fullDocument
             ) {
                 this.lastUpdateTime = clusterTime;
-                let {projects} = this.state;
+                let {projects, projectWithCurrentMilestone} = this.state;
+                let newProjectWithMilestone = null;
 
                 if (operationType === 'replace' || operationType === 'update') {
                     const {_id} = event.fullDocument;
                     projects = projects.map(
                         p => (p._id === _id) ? event.fullDocument : p
                     );
+                    if (projectWithCurrentMilestone.project._id === _id)
+                        newProjectWithMilestone = {...projectWithCurrentMilestone,project: event.fullDocument}
+
                 } else if (operationType === 'insert') {
                     projects.push(event.fullDocument);
                 }
 
                 this.setState({projects});
+                if (newProjectWithMilestone)
+                    this.setProjectWithCurrentMilestone(newProjectWithMilestone);
             }
         }
     }

@@ -36,6 +36,7 @@ export default function MilestonesInfoPaper(props) {
         //     currentMilestone = foundMilestones && foundMilestones.length ? foundMilestones[0] : null;
         // }
         project = projectWithCurrentMilestone.project
+        //project = projects.filter(p => p._id === project._id)[0];
         currentMilestone = projectWithCurrentMilestone.milestone
         forecast = projectWithCurrentMilestone.forecast
     }

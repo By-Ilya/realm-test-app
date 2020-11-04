@@ -4,10 +4,12 @@ import PropTypes from 'prop-types';
 import SimpleTable from "../common/SimpleTable";
 import SimpleETable from "../common/SimpleETable";
 import EditableCellTable from "../common/EditableCellTable";
+import ContactsTable from "../common/ContactsTable";
 import {
     generateMilestoneTableData,
     generateScheduleTableData,
-    generateForecastTableData
+    generateForecastTableData,
+    generateContactsTableData,
 } from "../common/helpers/generateTablesData";
 import {RealmContext} from "../../context/RealmContext";
 
@@ -35,6 +37,11 @@ export default function MilestonesInfo(props) {
         forecastTableRows
     } = generateForecastTableData(project);
 
+    const {
+        contactsTableColumns,
+        contactsTableRows
+    } = generateContactsTableData(project);
+
     const handleUpdateRow = async ({updateKey, value}) => {
         const query = {_id: project._id};
         const update = {'$set': {[updateKey]: value}};
@@ -56,6 +63,15 @@ export default function MilestonesInfo(props) {
                 tableName='Project milestone info'
                 currentColumns={milestonesTableColumns}
                 currentData={milestonesTableRows}
+                onUpdate={handleUpdateRow}
+            />
+        </div>}
+        {<div className={classes.tableContainer}>
+            <ContactsTable
+                projectId={project._id}
+                tableName='Contact Information'
+                currentColumns={contactsTableColumns}
+                currentData={contactsTableRows}
                 onUpdate={handleUpdateRow}
             />
         </div>}

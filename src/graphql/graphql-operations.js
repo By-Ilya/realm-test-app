@@ -43,6 +43,16 @@ export const FIND_PROJECTS = gql`
             project_manager
             region
             stage
+            contacts {
+                customer {
+                    name
+                    email
+                }
+                ce {
+                    name
+                    email
+                }
+            }
         }
     }
 `;
