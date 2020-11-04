@@ -1,5 +1,10 @@
 import {toEnUsDate,toDateOnly} from "../../../helpers/dateFormatter";
 import {convertForecastIntoRows} from "../../../helpers/forecast-util";
+import React, { Component } from 'react';
+
+function generateSFLink(id) {
+    return "https://mongodb.my.salesforce.com/" + id;
+}
 
 export function generateMilestoneTableData(project) {
     if (!project) return {
@@ -8,16 +13,21 @@ export function generateMilestoneTableData(project) {
     };
 
     const {
+        _id,
         owner, region,
         project_manager,
         account, name,
+        account_id,
         opportunity, details,
         currentMilestone
     } = project;
 
     const milestonesTableColumns = [
         {title: 'Project / Milestone Fields', field: 'name', editable: 'never'},
-        {title: 'Value', field: 'value', editable: 'onUpdate'}
+        {title: 'Value', field: 'value', editable: 'onUpdate',
+        render: rowData => rowData.link 
+            ? <a href={rowData.link} target = "_blank" rel = "noopener noreferrer">{rowData.value}</a> 
+            : rowData.value}
     ];
     const milestonesTableRows = [
         {name: 'Project Owner', value: owner, editable: false},
@@ -30,10 +40,10 @@ export function generateMilestoneTableData(project) {
             tableKey: 'value',
             updateKey: 'details.pm_stage'
         },
-        {name: 'Account', value: account, editable: false},
-        {name: 'Opportunity', value: opportunity.name, editable: false},
-        {name: 'PS Project Name', value: name, editable: false},
-        {name: 'Milestone Name', value: currentMilestone.name, editable: false},
+        {name: 'Account', value: account, link: generateSFLink(account_id), editable: false},
+        {name: 'Opportunity', value: opportunity.name, link: generateSFLink(opportunity._id), editable: false},
+        {name: 'PS Project Name', value: name, link: generateSFLink(_id), editable: false},
+        {name: 'Milestone Name', value: currentMilestone.name, link: generateSFLink(currentMilestone._id), editable: false},
         {name: 'Country', value: currentMilestone.country, editable: false},
         {name: 'Milestone amount', value: currentMilestone.details.milestone_amount, editable: false},
         {name: 'Gap Hours', value: currentMilestone.summary.gap_hours, editable: false},
