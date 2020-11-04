@@ -54,13 +54,15 @@ export function generateScheduleTableData(project) {
     const scheduleTableColumns = [
         {title: 'Date', field: 'date', editable: 'never'},
         {title: 'Scheduled', field: 'scheduled', editable: 'never'},
-        {title: 'Hours', field: 'hours', editable: 'never'}
+        {title: 'Hours', field: 'hours', editable: 'never'},
+        {title: 'Resource(s)', field: 'resources', editable: 'never'}
     ];
     const scheduleTableRows = currentMilestone.schedule.map(s => {
         return {
             date: toDateOnly(s.week),
             scheduled: s.revenue ? `$ ${s.revenue.toFixed(0)}` : '-',
             hours: s.hours ? s.hours : '-',
+            resources: s.resources.join(','),
             editable: false
         };
     });
