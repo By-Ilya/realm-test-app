@@ -6,7 +6,7 @@ function generateSFLink(id) {
     return "https://mongodb.my.salesforce.com/" + id;
 }
 
-export function generateMilestoneTableData(project) {
+export function generateMilestoneTableData(project, onClickPMStageButton) {
     if (!project) return {
         milestonesTableColumns: [],
         milestonesTableRows: []
@@ -19,15 +19,23 @@ export function generateMilestoneTableData(project) {
         account, name,
         account_id,
         opportunity, details,
+        survey_sent,
         currentMilestone
     } = project;
 
     const milestonesTableColumns = [
         {title: 'Project / Milestone Fields', field: 'name', editable: 'never'},
         {title: 'Value', field: 'value', editable: 'onUpdate',
-        render: rowData => rowData.link 
-            ? <a href={rowData.link} target = "_blank" rel = "noopener noreferrer">{rowData.value}</a> 
-            : rowData.value}
+        render: rowData => {
+                if (rowData.name === "PM Stage" && rowData.value === "Closed" && !rowData.survey_sent)
+                    return [rowData.value,"   ",<button onClick={() => onClickPMStageButton(project)}>Send surveys</button>];
+
+                if (rowData.link)
+                    return <a href={rowData.link} target = "_blank" rel = "noopener noreferrer">{rowData.value}</a>;
+                
+                return rowData.value;
+             }
+        }
     ];
     const milestonesTableRows = [
         {name: 'Project Owner', value: owner, editable: false},
@@ -37,6 +45,7 @@ export function generateMilestoneTableData(project) {
             name: 'PM Stage',
             value: details.pm_stage,
             editable: true,
+            survey_sent: survey_sent,
             tableKey: 'value',
             updateKey: 'details.pm_stage'
         },

@@ -22,10 +22,14 @@ export default function MilestonesInfo(props) {
     const {classes, project} = props;
     const {dbCollection, fcstCollection} = useContext(RealmContext);
 
+    const onClickPMStageButton = async (project) => {
+        await dbCollection.updateOne({_id: project._id},{$set:{survey_sent:true, survey_sent_ts: new Date()}})
+    }
+
     const {
         milestonesTableColumns,
         milestonesTableRows
-    } = generateMilestoneTableData(project);
+    } = generateMilestoneTableData(project, onClickPMStageButton);
 
     const {
         scheduleTableColumns,

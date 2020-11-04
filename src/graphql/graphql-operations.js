@@ -43,6 +43,7 @@ export const FIND_PROJECTS = gql`
             project_manager
             region
             stage
+            survey_sent
             contacts {
                 customer {
                     name
