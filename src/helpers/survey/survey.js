@@ -31,10 +31,16 @@ import { custMessageHTMLBody, ceMessageHTMLBody } from "./MessageTemplate";
 // }
 
 export function custMailParams(origEmail,custName,custEmail,projectId) {
-  return [origEmail, custEmail, "Thank you", custMessageHTMLBody(custName, custEmail, projectId)]
+  var toEmail = custEmail, 
+      subject = "Thank you",
+      html = custMessageHTMLBody(custName, custEmail, projectId);
+  return {origEmail, toEmail, subject, html}
 }
 
 export function ceMailParams(origEmail,ceName,ceEmail,projectId,projectDesc) {
-  return [origEmail, ceEmail, "Complete post-engagement survey", ceMessageHTMLBody(ceName, ceEmail, projectId, projectDesc)]
+  var toEmail = ceEmail, 
+      subject = "Complete post-engagement survey",
+      html = ceMessageHTMLBody(ceName, ceEmail, projectId, projectDesc);
+  return {origEmail, toEmail, subject, html}
 }
 

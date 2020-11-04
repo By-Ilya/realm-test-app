@@ -46,7 +46,7 @@ export default function MilestonesInfo(props) {
         await user.callFunction("sendMail",custMailParams(origEmail,custName,custEmail,projectId));
         await user.callFunction("sendMail",ceMailParams(origEmail,ceName,ceEmail,projectId,projectDesc));
 
-        //await dbCollection.updateOne({_id: project._id},{$set:{survey_sent:true, survey_sent_ts: new Date()}});
+        await dbCollection.updateOne({_id: project._id},{$set:{survey_sent:true, survey_sent_ts: new Date()}});
 
         alert(`Surveys sent!`);
     }
