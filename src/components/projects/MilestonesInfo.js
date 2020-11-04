@@ -11,6 +11,10 @@ import {
     generateForecastTableData,
     generateContactsTableData,
 } from "../common/helpers/generateTablesData";
+import {
+    custMailParams,
+    ceMailParams
+} from "../../helpers/survey/survey";
 import {RealmContext} from "../../context/RealmContext";
 
 MilestonesInfo.propTypes = {
@@ -20,10 +24,31 @@ MilestonesInfo.propTypes = {
 
 export default function MilestonesInfo(props) {
     const {classes, project} = props;
-    const {dbCollection, fcstCollection} = useContext(RealmContext);
+    const {dbCollection, fcstCollection, user} = useContext(RealmContext);
 
     const onClickPMStageButton = async (project) => {
-        await dbCollection.updateOne({_id: project._id},{$set:{survey_sent:true, survey_sent_ts: new Date()}})
+        var origEmail = user.profile.email,
+            contacts = project.contacts,
+            custName = (contacts && contacts.customer) ? contacts.customer.name : null,
+            custEmail = (contacts && contacts.customer) ? contacts.customer.email : null,
+            projectNameSpaceIndex = project.name.indexOf(" "),
+            projectId = project.name.substring(0, projectNameSpaceIndex),
+            projectDesc = project.name.substring(projectNameSpaceIndex + 1),
+            ceName = (contacts && contacts.ce) ? contacts.ce.name : null,
+            ceEmail = (contacts && contacts.ce) ? contacts.ce.email : null;
+
+        if (!custName || !custEmail || !ceName || !ceEmail) {
+            alert(`Contact information isn't complete!`);
+            return;
+        }
+        console.log(custMailParams(origEmail,custName,custEmail,projectId))
+        console.log(ceMailParams(origEmail,ceName,ceEmail,projectId,projectDesc))
+        await user.callFunction("sendMail",custMailParams(origEmail,custName,custEmail,projectId));
+        await user.callFunction("sendMail",ceMailParams(origEmail,ceName,ceEmail,projectId,projectDesc));
+
+        //await dbCollection.updateOne({_id: project._id},{$set:{survey_sent:true, survey_sent_ts: new Date()}});
+
+        alert(`Surveys sent!`);
     }
 
     const {
