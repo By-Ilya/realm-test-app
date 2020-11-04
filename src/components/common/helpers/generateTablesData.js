@@ -64,7 +64,11 @@ export function generateScheduleTableData(project) {
     const scheduleTableColumns = [
         {title: 'Date', field: 'date', editable: 'never'},
         {title: 'Scheduled', field: 'scheduled', editable: 'never'},
-        {title: 'Hours', field: 'hours', editable: 'never'},
+        {title: 'Hours', field: 'hours', editable: 'never',
+            render: rowData => (rowData.hours_nonbillable == 0) 
+                                ? rowData.hours 
+                                : `${rowData.hours} (${rowData.hours_nonbillable} NB)`
+        },
         {title: 'Resource(s)', field: 'resources', editable: 'never'}
     ];
     const scheduleTableRows = currentMilestone.schedule.map(s => {
@@ -73,6 +77,7 @@ export function generateScheduleTableData(project) {
             scheduled: s.revenue ? `$ ${s.revenue.toFixed(0)}` : '-',
             hours: s.hours ? s.hours : '-',
             resources: s.resources.join(','),
+            hours_nonbillable: s.hours_nonbillable ? s.hours_nonbillable : 0,
             editable: false
         };
     });
