@@ -94,7 +94,7 @@ export default function TopPanel(props) {
     const {fetchProjects} = props;
     const {
         filter, setFilter, sort, setSorting,
-        regionsList, ownersList, projectManagersList,
+        regionsList, ownersList, projectManagersList, stagesList,
         fetchFiltersDefaultValues, setLoadProcessing,
         getActiveUserName, user, logOut
     } = useContext(RealmContext);
@@ -134,6 +134,14 @@ export default function TopPanel(props) {
             values: projectManagersList,
             setValue: event => {
                 setLocalFilter({...localFilter, project_manager: event.target.value});
+            }
+        },
+        {
+            label: 'Stage',
+            currentValue: localFilter.pm_stage,
+            values: stagesList,
+            setValue: event => {
+                setLocalFilter({...localFilter, pm_stage: event.target.value});
             }
         },
         {
