@@ -15,6 +15,17 @@ const REALM_COLLECTION_NAME = `${process.env.REACT_APP_COLLECTION_NAME}` || '';
 const REALM_FCST_COLLECTION_NAME = `${process.env.REACT_APP_FCST_COLLECTION_NAME}` || '';
 const GOOGLE_REDIRECT_URI = `${process.env.REACT_APP_GOOGLE_REDIRECT_URI}` ||'http://localhost:3000/google-callback';
 
+function sortNameToField(name) {
+    switch(name) {
+        case 'name': return name;
+        case 'region': return name;
+        case 'owner': return name;
+        case 'expiration': return "details.product_end_date";
+        case 'stage': return "details.pm_stage_sortid";
+        default: return "details.pm_stage_sortid";
+    }
+}
+
 export default class ContextContainer extends React.Component {
     constructor(props) {
         super(props);
@@ -29,7 +40,7 @@ export default class ContextContainer extends React.Component {
             dbCollection: null,
             fcstCollection: null,
             filter: {region: '', owner: '', project_manager: '', name: '', active: true, active_user_filter: ''},
-            sort: {field: 'name', order: 'ASC'},
+            sort: {field: 'details.pm_stage_sortid', order: 'ASC'},
             regionsList: [],
             ownersList: [],
             projectManagersList: [],
@@ -157,6 +168,7 @@ export default class ContextContainer extends React.Component {
     }
 
     setSorting = (newSort) => {
+        newSort.field = sortNameToField(newSort.field);
         this.setState({sort: newSort});
     }
 

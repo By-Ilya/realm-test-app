@@ -176,7 +176,7 @@ export default function TopPanel(props) {
         {
             label: 'Field',
             currentValue: localSort.field,
-            values: ['name', 'region', 'owner'],
+            values: ['name', 'region', 'owner','expiration','stage'],
             setValue: event => {
                 setLocalSorting({...localSort, field: event.target.value});
             }
