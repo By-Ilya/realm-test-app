@@ -31,7 +31,7 @@
   "scripts": {
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
-    "start": "NODE_PATH=./src && export $(cat .env.local | xargs) && react-scripts start",
+    "start": "NODE_PATH=./src && react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
