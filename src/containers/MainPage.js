@@ -1,5 +1,5 @@
 import React, {useContext} from 'react';
-import {useQuery, useLazyQuery} from "@apollo/client";
+import {useLazyQuery} from "@apollo/client";
 
 import {RealmContext} from "../context/RealmContext";
 import TopPanel from "../components/TopPanel";
@@ -8,10 +8,10 @@ import {FIND_PROJECTS} from "../graphql/graphql-operations";
 
 export default function MainPage() {
     const {
-        setProjects,
-        setLoadProcessing,
-        cleanLocalProjects,
-        filter, sort, watcher
+        setProjects, setHasMoreProjects,
+        setLoadProcessing, cleanLocalProjects,
+        filter, sort, pagination, watcher,
+        setMoreProjectsLoadProcessing
     } = useContext(RealmContext);
 
     const getSortOrder = () => {
@@ -22,22 +22,30 @@ export default function MainPage() {
     const queryOptions = {
         variables: {
             filtersInput: {
-                filter: {...filter},
+                filter: {...filter, limit: pagination.limit },
                 sort: getSortOrder()
             }
         }
     };
+
+    const isMoreProjects = projectsData => projectsData && projectsData.length >= pagination.limit;
 
     const [fetchProjects] = useLazyQuery(
         FIND_PROJECTS,
         {
             ...queryOptions,
             onCompleted: data => {
-                setProjects(data.psprojectsData);
+                const {psprojectsData} = data;
+                setHasMoreProjects(isMoreProjects(psprojectsData));
+                setProjects(psprojectsData);
                 setLoadProcessing(false);
+                setMoreProjectsLoadProcessing(false);
             },
             onError: error => {
                 console.error(error);
+                setHasMoreProjects(false);
+                setLoadProcessing(false);
+                setMoreProjectsLoadProcessing(false);
             },
             fetchPolicy: 'network-only'
         }
@@ -56,6 +64,6 @@ export default function MainPage() {
 
     return (<>
         <TopPanel fetchProjects={fetchProjectsByTrigger} />
-        <ProjectsContainer />
+        <ProjectsContainer fetchProjects={fetchProjectsByTrigger} />
     </>)
 }

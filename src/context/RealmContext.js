@@ -13,7 +13,25 @@ const REALM_SERVICE_NAME = `${process.env.REACT_APP_SERVICE_NAME}` || 'mongodb-a
 const REALM_DATABASE_NAME = `${process.env.REACT_APP_DATABASE_NAME}` || '';
 const REALM_COLLECTION_NAME = `${process.env.REACT_APP_COLLECTION_NAME}` || '';
 const REALM_FCST_COLLECTION_NAME = `${process.env.REACT_APP_FCST_COLLECTION_NAME}` || '';
-const GOOGLE_REDIRECT_URI = `${process.env.REACT_APP_GOOGLE_REDIRECT_URI}` ||'http://localhost:3000/google-callback';
+const GOOGLE_REDIRECT_URI = `${process.env.REACT_APP_GOOGLE_REDIRECT_URI}` || 'http://localhost:3000/google-callback';
+const DEFAULT_PAGE_LIMIT = parseInt(process.env.REACT_APP_PROJECTS_PAGE) || 10;
+
+const DEFAULT_FILTER = {
+    region: '',
+    owner: '',
+    project_manager: '',
+    name: '',
+    active: true,
+    active_user_filter: '',
+}
+const DEFAULT_SORT = {
+    field: 'name',
+    order: 'ASC'
+};
+const DEFAULT_PAGINATION = {
+    increaseOn: DEFAULT_PAGE_LIMIT,
+    limit: DEFAULT_PAGE_LIMIT
+}
 
 export default class ContextContainer extends React.Component {
     constructor(props) {
@@ -28,13 +46,18 @@ export default class ContextContainer extends React.Component {
             user: null,
             dbCollection: null,
             fcstCollection: null,
-            filter: {region: '', owner: '', project_manager: '', name: '', active: true, active_user_filter: ''},
-            sort: {field: 'name', order: 'ASC'},
+            filter: DEFAULT_FILTER,
+            sort: DEFAULT_SORT,
+            pagination: DEFAULT_PAGINATION,
+            defaultPageLimit: DEFAULT_PAGE_LIMIT,
             regionsList: [],
             ownersList: [],
             projectManagersList: [],
             loadProcessing: false,
+            moreProjectsLoadProcessing: false,
             projects: null,
+            projectsTotalCount: 0,
+            hasMoreProjects: true,
             projectWithCurrentMilestone: null,
             isEditing: false
         };
@@ -46,10 +69,14 @@ export default class ContextContainer extends React.Component {
             logOut: this.logOut,
             fetchFiltersDefaultValues: this.fetchFiltersDefaultValues,
             setLoadProcessing: this.setLoadProcessing,
+            setMoreProjectsLoadProcessing: this.setMoreProjectsLoadProcessing,
             setProjects: this.setProjects,
+            setHasMoreProjects: this.setHasMoreProjects,
             cleanLocalProjects: this.cleanLocalProjects,
             setFilter: this.setFilter,
             setSorting: this.setSorting,
+            setPagination: this.setPagination,
+            setDefaultPagination: this.setDefaultPagination,
             setProjectWithCurrentMilestone: this.setProjectWithCurrentMilestone,
             setIsEditing: this.setIsEditing,
             watcher: this.watcher,
@@ -129,6 +156,7 @@ export default class ContextContainer extends React.Component {
                     regionsList: fetchedData.regions.sort() || [],
                     ownersList: fetchedData.owners.sort() || [],
                     projectManagersList: fetchedData.projectManagers.sort() || [],
+                    projectsTotalCount: fetchedData.countDocuments || 0
                 }
             );
         }
@@ -138,8 +166,16 @@ export default class ContextContainer extends React.Component {
         this.setState({loadProcessing});
     }
 
+    setMoreProjectsLoadProcessing = moreProjectsLoadProcessing => {
+        this.setState({moreProjectsLoadProcessing});
+    }
+
     setProjects = projects => {
         this.setState({projects});
+    }
+
+    setHasMoreProjects = hasMoreProjects => {
+        this.setState({hasMoreProjects});
     }
 
     cleanLocalProjects = async () => {
@@ -158,6 +194,15 @@ export default class ContextContainer extends React.Component {
 
     setSorting = (newSort) => {
         this.setState({sort: newSort});
+    }
+
+    setPagination = (newPagination) => {
+        const pagination = {...this.state.pagination, ...newPagination};
+        this.setState({pagination});
+    }
+
+    setDefaultPagination = () => {
+        this.setState({pagination: DEFAULT_PAGINATION});
     }
 
     setProjectWithCurrentMilestone = (projectWithCurrentMilestone) => {
