@@ -31,7 +31,7 @@ export default function MilestonesInfo(props) {
             contacts = project.contacts,
             custName = (contacts && contacts.customer) ? contacts.customer.name : null,
             custEmail = (contacts && contacts.customer) ? contacts.customer.email : null,
-            projectId = project.name;
+            projectId = project.name,
             ceName = (contacts && contacts.ce) ? contacts.ce.name : null,
             ceEmail = (contacts && contacts.ce) ? contacts.ce.email : null;
 
