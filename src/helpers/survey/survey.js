@@ -37,10 +37,10 @@ export function custMailParams(origEmail,custName,custEmail,projectId) {
   return {origEmail, toEmail, subject, html}
 }
 
-export function ceMailParams(origEmail,ceName,ceEmail,projectId,projectDesc) {
+export function ceMailParams(origEmail,ceName,ceEmail,projectId) {
   var toEmail = ceEmail, 
       subject = "Complete post-engagement survey",
-      html = ceMessageHTMLBody(ceName, ceEmail, projectId, projectDesc);
+      html = ceMessageHTMLBody(ceName, ceEmail, projectId);
   return {origEmail, toEmail, subject, html}
 }
 

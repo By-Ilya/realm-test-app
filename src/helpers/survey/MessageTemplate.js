@@ -45,12 +45,12 @@ export function custMessageHTMLBody(custName,custEmail,projectId) {
 	  </div>`;
 }
 
-export function ceMessageHTMLBody(ceName,ceEmail,projectId,projectDesc) {
+export function ceMessageHTMLBody(ceName,ceEmail,projectId) {
   return `
   	  <div>
 		  Hi ${ceName},
 		  <br/><br/>
-		  Thank you for successfully completing the following PS Project: ${projectId} - ${projectDesc}.
+		  Thank you for successfully completing the following PS Project: ${projectId}.
 		  <br/>
 		  Take a quick <a href=${generateCeSurveyLink(ceName,ceEmail, projectId)}>survey</a> and share your experience below.
 		  <br/> <br/>
