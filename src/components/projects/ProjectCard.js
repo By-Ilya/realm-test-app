@@ -44,16 +44,20 @@ export default function ProjectCard(props) {
     const classes = useStyles();
 
     const {psproject} = props;
-    const {user, setProjectWithCurrentMilestone} = useContext(RealmContext);
+    const {user, setProjectWithCurrentMilestone, dbCollection} = useContext(RealmContext);
 
     const handleOnClickMilestone = async (milestone) => {
         var schedule = await user.functions.getMilestoneScheduleOnwards(milestone._id);
         var forecast = await user.functions.getMilestoneForecast(milestone._id);
+        ///HACK GRAPHQL BUG
+        var proj = await dbCollection.findOne({"milestones._id" : milestone._id}, {"milestones.$":1});
+        var ms_real = proj.milestones[0];
+        ///
         setProjectWithCurrentMilestone({
             // projectId: psproject._id,
             // milestoneId: milestone._id
             project: psproject,
-            milestone: {...milestone, schedule},
+            milestone: {...ms_real, schedule},
             forecast: forecast
         });
     }
