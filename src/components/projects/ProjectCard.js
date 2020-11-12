@@ -50,8 +50,11 @@ export default function ProjectCard(props) {
         var schedule = await user.functions.getMilestoneScheduleOnwards(milestone._id);
         var forecast = await user.functions.getMilestoneForecast(milestone._id);
         ///HACK GRAPHQL BUG
-        var proj = await dbCollection.findOne({"milestones._id" : milestone._id}, {"milestones.$":1});
-        var ms_real = proj.milestones[0];
+        var proj = await dbCollection.findOne({"milestones._id" : milestone._id});
+        var ms_real = proj.milestones.filter(ms => {
+          return ms._id === milestone._id
+        })[0]
+        //console.log(ms_real)
         ///
         setProjectWithCurrentMilestone({
             // projectId: psproject._id,
