@@ -11,6 +11,9 @@
 # production
 /build
 
+# data
+/test_data
+
 # idea
 .vscode
 .idea
