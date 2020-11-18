@@ -1,7 +1,6 @@
 {
     "collection": "milestones",
     "database": "revForecast",
-    "id": "5f1b462214e878bf1dc4bb42",
     "roles": [
         {
             "name": "default",

@@ -1,7 +1,6 @@
 {
     "collection": "test",
     "database": "shf",
-    "id": "5f8ced1d7105801c87990356",
     "roles": [
         {
             "name": "default",

@@ -17,13 +17,19 @@ exports = async function findProjects({filter, sort}) {
   const psprojectCollection = cluster.db("shf").collection("psproject");
   const userdataCollection = cluster.db("shf").collection("userdata");
   
-  const {active, name, region, owner, project_manager, active_user_filter} = filter;
+  const {active, name, region, owner, project_manager, active_user_filter, pm_stage} = filter;
   
   let matchData = {};
   if (active) matchData = {...matchData, "details.pm_stage" : {$nin : ["Closed","Cancelled"] }, active };
   if (region) matchData = {...matchData, region}
   if (owner) matchData = {...matchData, owner};
   if (project_manager) matchData = {...matchData, project_manager};
+  if (pm_stage) {
+    if (pm_stage === '-None-')
+      matchData = {...matchData, "details.pm_stage" : null};
+    else
+      matchData = {...matchData, "details.pm_stage" : pm_stage};
+  }
   if (active_user_filter) {
     let userDoc = await userdataCollection.findOne({_id : active_user_filter })
     if (userDoc)

@@ -1,7 +1,6 @@
 {
     "field_name": "psprojectsData",
     "function_name": "findProjects",
-    "id": "5f88d907b7d71cd8972db7d0",
     "input_type": {
         "bsonType": "object",
         "properties": {
@@ -20,6 +19,9 @@
                     "owner": {
                         "bsonType": "string"
                     },
+                    "pm_stage": {
+                        "bsonType": "string"
+                    },
                     "project_manager": {
                         "bsonType": "string"
                     },
@@ -33,7 +35,8 @@
                     "region",
                     "owner",
                     "project_manager",
-                    "active_user_filter"
+                    "active_user_filter",
+                    "pm_stage"
                 ]
             },
             "sort": {

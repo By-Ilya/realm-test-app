@@ -26,17 +26,26 @@ exports = async function(arg){
   
   var past = await col.aggregate([
     {$match:{"milestoneId":arg,"week":{$lt:sundate}}},
+    {$match:{$or:[{"actual.hours":{$gt:0}},{"actual.revenue":{$gt:0}}]}},
+    {$match:{role:{$ne:"Project Manager"}}},
     {$sort:{"week":1}},
-    {$group:{_id:"$week","week":{$first:"$week"},hours:{$sum:"$actual.hours"}, revenue:{$sum:"$actual.revenue"}}},
-    {$match:{$or:[{hours:{$gt:0}},{revenue:{$gt:0}}]}},
-    {$limit:3}
+    {$group:{_id:"$week","week":{$first:"$week"},hours:{$sum:"$actual.hours"}, 
+      hours_nonbillable:{$sum:{ $cond: [ "$billable", 0, "$actual.hours" ] }},
+      revenue:{$sum:"$actual.revenue"}, resources: {$addToSet: "$resource"}}},
+    {$sort:{"week":-1}},
+    {$limit:3},
+    {$sort:{"week":1}}
   ]).toArray();
   
   var future = await col.aggregate([
     {$match:{"milestoneId":arg,"week":{$gte:sundate}}},
+    {$match:{$or:[{"estimated.hours":{$gt:0}},{"estimated.revenue":{$gt:0}}]}},
+    {$match:{role:{$ne:"Project Manager"}}},
     {$sort:{"week":1}},
-    {$group:{_id:"$week","week":{$first:"$week"},hours:{$sum:"$estimated.hours"}, revenue:{$sum:"$estimated.revenue"}}},
-    {$match:{$or:[{hours:{$gt:0}},{revenue:{$gt:0}}]}},
+    {$group:{_id:"$week","week":{$first:"$week"},hours:{$sum:"$estimated.hours"}, 
+      hours_nonbillable:{$sum:{ $cond: [ "$billable", 0, "$estimated.hours" ] }},
+      revenue:{$sum:"$estimated.revenue"}, resources: {$addToSet: "$resource"}}},
+    {$sort:{"week":1}},
     {$limit:7}
   ]).toArray();
   

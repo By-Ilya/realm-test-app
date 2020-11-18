@@ -1,7 +1,6 @@
 {
     "collection": "psproject",
     "database": "shf",
-    "id": "5f8295506269fa0e8a8039af",
     "roles": [
         {
             "name": "default",
@@ -24,8 +23,38 @@
             "account": {
                 "bsonType": "string"
             },
+            "account_id": {
+                "bsonType": "string"
+            },
             "active": {
                 "bsonType": "bool"
+            },
+            "contacts": {
+                "bsonType": "object",
+                "properties": {
+                    "ce": {
+                        "bsonType": "object",
+                        "properties": {
+                            "email": {
+                                "bsonType": "string"
+                            },
+                            "name": {
+                                "bsonType": "string"
+                            }
+                        }
+                    },
+                    "customer": {
+                        "bsonType": "object",
+                        "properties": {
+                            "email": {
+                                "bsonType": "string"
+                            },
+                            "name": {
+                                "bsonType": "string"
+                            }
+                        }
+                    }
+                }
             },
             "details": {
                 "bsonType": "object",
@@ -41,6 +70,9 @@
                     },
                     "pm_stage": {
                         "bsonType": "string"
+                    },
+                    "pm_stage_sortid": {
+                        "bsonType": "double"
                     },
                     "product_end_date": {
                         "bsonType": "date"
@@ -128,6 +160,9 @@
             "opportunity": {
                 "bsonType": "object",
                 "properties": {
+                    "_id": {
+                        "bsonType": "string"
+                    },
                     "engagement_manager": {
                         "bsonType": "string"
                     },
@@ -167,6 +202,12 @@
                         "bsonType": "double"
                     }
                 }
+            },
+            "survey_sent": {
+                "bsonType": "bool"
+            },
+            "survey_sent_ts": {
+                "bsonType": "date"
             }
         },
         "title": "psproject"

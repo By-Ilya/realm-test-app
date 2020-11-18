@@ -1,6 +1,6 @@
 "use strict"
 
-exports = function(origEmail, toEmail, subject, html){
+exports = function({origEmail, toEmail, subject, html}){
   const nodemailer = require("nodemailer");
   /*
     Accessing application's values:

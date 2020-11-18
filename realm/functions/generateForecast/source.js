@@ -193,14 +193,14 @@ exports = async function(arg){
               {
                 'case': {
                   '$lt': [
-                    '$schedule.week', Date()
+                    '$schedule.week', today
                   ]
                 }, 
                 'then': '$schedule.actual.revenue'
               }, {
                 'case': {
                   '$gte': [
-                    '$schedule.week', Date()
+                    '$schedule.week', today
                   ]
                 }, 
                 'then': 0
@@ -294,6 +294,7 @@ exports = async function(arg){
   //expired
   res = await col_project.aggregate([
     {$match:{"region":{'$in': arg.regions},"details.product_end_date":{$gte:soq, $lt:mplus_3}}},
+    {$match:{"stage":{$ne:"Won't Deliver (At Risk Only)"}}},
     {$project:{
       "milestone":"$milestones",
       "exp_group": {
@@ -350,6 +351,7 @@ exports = async function(arg){
       'details.product_end_date':{$gte:soq} //non-expired projects only
     }
   },
+  {$match:{"details.pm_stage":{$nin:["Closed","Cancelled"]}}},
   {
     '$lookup': {
       'from': 'revforecast', 

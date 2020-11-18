@@ -1,13 +1,11 @@
 {
-    "app_id": "shadowforce-sivxs",
     "config_version": 20200603,
     "name": "ShadowForce",
     "location": "US-VA",
     "deployment_model": "GLOBAL",
     "security": {},
     "hosting": {
-        "enabled": true,
-        "app_default_domain": "shadowforce-sivxs.mongodbstitch.com"
+        "enabled": true
     },
     "custom_user_data_config": {
         "enabled": false,
