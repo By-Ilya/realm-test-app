@@ -11,7 +11,8 @@ export default function MainPage() {
         setProjects, setHasMoreProjects,
         setLoadProcessing, cleanLocalProjects,
         filter, sort, pagination, watcher,
-        setMoreProjectsLoadProcessing
+        setMoreProjectsLoadProcessing,
+        setProjectsTotalCount
     } = useContext(RealmContext);
 
     const getSortOrder = () => {
@@ -19,25 +20,33 @@ export default function MainPage() {
         return {field, order: order === 'DESC' ? -1 : 1};
     }
 
+    const {limit} = pagination;
     const queryOptions = {
         variables: {
             filtersInput: {
-                filter: {...filter, limit: pagination.limit },
+                filter: {...filter, limit },
                 sort: getSortOrder()
             }
         }
     };
 
-    const isMoreProjects = projectsData => projectsData && projectsData.length >= pagination.limit;
+    const isMoreProjects = projects => projects && projects.length >= limit + 1;
 
     const [fetchProjects] = useLazyQuery(
         FIND_PROJECTS,
         {
             ...queryOptions,
             onCompleted: data => {
+                setProjectsTotalCount(filter);
                 const {psprojectsData} = data;
-                setHasMoreProjects(isMoreProjects(psprojectsData));
-                setProjects(psprojectsData);
+                const psprojects = [...psprojectsData];
+                if (isMoreProjects(psprojects)) {
+                    psprojects.pop();
+                    setHasMoreProjects(true);
+                } else {
+                    setHasMoreProjects(false);
+                }
+                setProjects(psprojects);
                 setLoadProcessing(false);
                 setMoreProjectsLoadProcessing(false);
             },

@@ -72,6 +72,7 @@ export default class ContextContainer extends React.Component {
             setMoreProjectsLoadProcessing: this.setMoreProjectsLoadProcessing,
             setProjects: this.setProjects,
             setHasMoreProjects: this.setHasMoreProjects,
+            setProjectsTotalCount: this.setProjectsTotalCount,
             cleanLocalProjects: this.cleanLocalProjects,
             setFilter: this.setFilter,
             setSorting: this.setSorting,
@@ -150,13 +151,13 @@ export default class ContextContainer extends React.Component {
 
     fetchFiltersDefaultValues = async () => {
         if (this.state.user) {
-            const fetchedData = await this.state.user.functions.getFiltersDefaultValues();
+            const {getFiltersDefaultValues} = this.state.user.functions;
+            const fetchedData = await getFiltersDefaultValues();
             this.setState(
                 {
                     regionsList: fetchedData.regions.sort() || [],
                     ownersList: fetchedData.owners.sort() || [],
-                    projectManagersList: fetchedData.projectManagers.sort() || [],
-                    projectsTotalCount: fetchedData.countDocuments || 0
+                    projectManagersList: fetchedData.projectManagers.sort() || []
                 }
             );
         }
@@ -178,8 +179,21 @@ export default class ContextContainer extends React.Component {
         this.setState({hasMoreProjects});
     }
 
+    setProjectsTotalCount = async () => {
+        const {getTotalProjectsCount} = this.state.user.functions;
+        const fetchedData = await getTotalProjectsCount(this.state.filter);
+        if (fetchedData && fetchedData.length) {
+            const {name: projectsTotalCount} = fetchedData[0];
+            this.setState({projectsTotalCount});
+        }
+    }
+
     cleanLocalProjects = async () => {
-        this.setState({projects: [], projectWithCurrentMilestone: null});
+        this.setState({
+            projects: [],
+            projectWithCurrentMilestone: null,
+            projectsTotalCount: 0
+        });
     }
 
     logOut = async () => {
@@ -225,7 +239,7 @@ export default class ContextContainer extends React.Component {
                 fullDocument
             ) {
                 this.lastUpdateTime = clusterTime;
-                let {projects} = this.state;
+                let {projects, hasMoreProjects, pagination} = this.state;
 
                 if (operationType === 'replace' || operationType === 'update') {
                     const {_id} = event.fullDocument;
@@ -233,7 +247,12 @@ export default class ContextContainer extends React.Component {
                         p => (p._id === _id) ? event.fullDocument : p
                     );
                 } else if (operationType === 'insert') {
-                    projects.push(event.fullDocument);
+                    if (hasMoreProjects) return;
+                    const {limit} = pagination;
+                    const isFullPage = !Boolean(projects.length % limit);
+                    isFullPage
+                        ? this.setState({hasMoreProjects: true})
+                        : projects.push(event.fullDocument);
                 }
 
                 this.setState({projects});
