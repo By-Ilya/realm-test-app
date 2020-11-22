@@ -1,4 +1,4 @@
-import {toEnUsDate,toDateOnly} from "../../../helpers/dateFormatter";
+import {toDateOnly} from "../../../helpers/dateFormatter";
 import {convertForecastIntoRows} from "../../../helpers/forecast-util";
 
 export function generateMilestoneTableData(project) {
@@ -73,7 +73,7 @@ export function generateForecastTableData(project) {
         forecastTableRows: []
     };
 
-    const {currentMilestone, forecast} = project;
+    const {forecast} = project;
 
     const forecastTableColumns = [
         {title: 'N3M', field: 'name'},

@@ -1,5 +1,5 @@
 import React, {useContext} from 'react';
-import {useQuery, useLazyQuery} from "@apollo/client";
+import {useLazyQuery} from "@apollo/client";
 
 import {RealmContext} from "../context/RealmContext";
 import TopPanel from "../components/TopPanel";
@@ -8,10 +8,11 @@ import {FIND_PROJECTS} from "../graphql/graphql-operations";
 
 export default function MainPage() {
     const {
-        setProjects,
-        setLoadProcessing,
-        cleanLocalProjects,
-        filter, sort, watcher
+        setProjects, setHasMoreProjects,
+        setLoadProcessing, cleanLocalProjects,
+        filter, sort, pagination, watcher,
+        setMoreProjectsLoadProcessing,
+        setProjectsTotalCount
     } = useContext(RealmContext);
 
     const getSortOrder = () => {
@@ -19,25 +20,41 @@ export default function MainPage() {
         return {field, order: order === 'DESC' ? -1 : 1};
     }
 
+    const {limit} = pagination;
     const queryOptions = {
         variables: {
             filtersInput: {
-                filter: {...filter},
+                filter: {...filter, limit },
                 sort: getSortOrder()
             }
         }
     };
+
+    const isMoreProjects = projects => projects && projects.length >= limit + 1;
 
     const [fetchProjects] = useLazyQuery(
         FIND_PROJECTS,
         {
             ...queryOptions,
             onCompleted: data => {
-                setProjects(data.psprojectsData);
+                setProjectsTotalCount(filter);
+                const {psprojectsData} = data;
+                const psprojects = [...psprojectsData];
+                if (isMoreProjects(psprojects)) {
+                    psprojects.pop();
+                    setHasMoreProjects(true);
+                } else {
+                    setHasMoreProjects(false);
+                }
+                setProjects(psprojects);
                 setLoadProcessing(false);
+                setMoreProjectsLoadProcessing(false);
             },
             onError: error => {
                 console.error(error);
+                setHasMoreProjects(false);
+                setLoadProcessing(false);
+                setMoreProjectsLoadProcessing(false);
             },
             fetchPolicy: 'network-only'
         }
@@ -56,6 +73,6 @@ export default function MainPage() {
 
     return (<>
         <TopPanel fetchProjects={fetchProjectsByTrigger} />
-        <ProjectsContainer />
+        <ProjectsContainer fetchProjects={fetchProjectsByTrigger} />
     </>)
 }

@@ -28,13 +28,6 @@ export default function MilestonesInfoPaper(props) {
     let currentMilestone = null;
     let forecast = null;
     if (projectWithCurrentMilestone) {
-        // const {projectId, milestoneId} = projectWithCurrentMilestone;
-        // const foundProjects = projects.filter(p => p._id === projectId);
-        // if (foundProjects && foundProjects.length) {
-        //     project = foundProjects[0];
-        //     const foundMilestones = project.milestones.filter(m => m._id === milestoneId);
-        //     currentMilestone = foundMilestones && foundMilestones.length ? foundMilestones[0] : null;
-        // }
         project = projectWithCurrentMilestone.project
         currentMilestone = projectWithCurrentMilestone.milestone
         forecast = projectWithCurrentMilestone.forecast

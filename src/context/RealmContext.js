@@ -13,7 +13,25 @@ const REALM_SERVICE_NAME = `${process.env.REACT_APP_SERVICE_NAME}` || 'mongodb-a
 const REALM_DATABASE_NAME = `${process.env.REACT_APP_DATABASE_NAME}` || '';
 const REALM_COLLECTION_NAME = `${process.env.REACT_APP_COLLECTION_NAME}` || '';
 const REALM_FCST_COLLECTION_NAME = `${process.env.REACT_APP_FCST_COLLECTION_NAME}` || '';
-const GOOGLE_REDIRECT_URI = `${process.env.REACT_APP_GOOGLE_REDIRECT_URI}` ||'http://localhost:3000/google-callback';
+const GOOGLE_REDIRECT_URI = `${process.env.REACT_APP_GOOGLE_REDIRECT_URI}` || 'http://localhost:3000/google-callback';
+const DEFAULT_PAGE_LIMIT = parseInt(process.env.REACT_APP_PROJECTS_PAGE) || 10;
+
+const DEFAULT_FILTER = {
+    region: '',
+    owner: '',
+    project_manager: '',
+    name: '',
+    active: true,
+    active_user_filter: '',
+}
+const DEFAULT_SORT = {
+    field: 'name',
+    order: 'ASC'
+};
+const DEFAULT_PAGINATION = {
+    increaseOn: DEFAULT_PAGE_LIMIT,
+    limit: DEFAULT_PAGE_LIMIT
+}
 
 export default class ContextContainer extends React.Component {
     constructor(props) {
@@ -28,13 +46,18 @@ export default class ContextContainer extends React.Component {
             user: null,
             dbCollection: null,
             fcstCollection: null,
-            filter: {region: '', owner: '', project_manager: '', name: '', active: true, active_user_filter: ''},
-            sort: {field: 'name', order: 'ASC'},
+            filter: DEFAULT_FILTER,
+            sort: DEFAULT_SORT,
+            pagination: DEFAULT_PAGINATION,
+            defaultPageLimit: DEFAULT_PAGE_LIMIT,
             regionsList: [],
             ownersList: [],
             projectManagersList: [],
             loadProcessing: false,
+            moreProjectsLoadProcessing: false,
             projects: null,
+            projectsTotalCount: 0,
+            hasMoreProjects: true,
             projectWithCurrentMilestone: null,
             isEditing: false
         };
@@ -46,10 +69,15 @@ export default class ContextContainer extends React.Component {
             logOut: this.logOut,
             fetchFiltersDefaultValues: this.fetchFiltersDefaultValues,
             setLoadProcessing: this.setLoadProcessing,
+            setMoreProjectsLoadProcessing: this.setMoreProjectsLoadProcessing,
             setProjects: this.setProjects,
+            setHasMoreProjects: this.setHasMoreProjects,
+            setProjectsTotalCount: this.setProjectsTotalCount,
             cleanLocalProjects: this.cleanLocalProjects,
             setFilter: this.setFilter,
             setSorting: this.setSorting,
+            setPagination: this.setPagination,
+            setDefaultPagination: this.setDefaultPagination,
             setProjectWithCurrentMilestone: this.setProjectWithCurrentMilestone,
             setIsEditing: this.setIsEditing,
             watcher: this.watcher,
@@ -123,12 +151,13 @@ export default class ContextContainer extends React.Component {
 
     fetchFiltersDefaultValues = async () => {
         if (this.state.user) {
-            const fetchedData = await this.state.user.functions.getFiltersDefaultValues();
+            const {getFiltersDefaultValues} = this.state.user.functions;
+            const fetchedData = await getFiltersDefaultValues();
             this.setState(
                 {
                     regionsList: fetchedData.regions.sort() || [],
                     ownersList: fetchedData.owners.sort() || [],
-                    projectManagersList: fetchedData.projectManagers.sort() || [],
+                    projectManagersList: fetchedData.projectManagers.sort() || []
                 }
             );
         }
@@ -138,12 +167,33 @@ export default class ContextContainer extends React.Component {
         this.setState({loadProcessing});
     }
 
+    setMoreProjectsLoadProcessing = moreProjectsLoadProcessing => {
+        this.setState({moreProjectsLoadProcessing});
+    }
+
     setProjects = projects => {
         this.setState({projects});
     }
 
+    setHasMoreProjects = hasMoreProjects => {
+        this.setState({hasMoreProjects});
+    }
+
+    setProjectsTotalCount = async () => {
+        const {getTotalProjectsCount} = this.state.user.functions;
+        const fetchedData = await getTotalProjectsCount(this.state.filter);
+        if (fetchedData && fetchedData.length) {
+            const {name: projectsTotalCount} = fetchedData[0];
+            this.setState({projectsTotalCount});
+        }
+    }
+
     cleanLocalProjects = async () => {
-        this.setState({projects: [], projectWithCurrentMilestone: null});
+        this.setState({
+            projects: [],
+            projectWithCurrentMilestone: null,
+            projectsTotalCount: 0
+        });
     }
 
     logOut = async () => {
@@ -158,6 +208,15 @@ export default class ContextContainer extends React.Component {
 
     setSorting = (newSort) => {
         this.setState({sort: newSort});
+    }
+
+    setPagination = (newPagination) => {
+        const pagination = {...this.state.pagination, ...newPagination};
+        this.setState({pagination});
+    }
+
+    setDefaultPagination = () => {
+        this.setState({pagination: DEFAULT_PAGINATION});
     }
 
     setProjectWithCurrentMilestone = (projectWithCurrentMilestone) => {
@@ -180,7 +239,7 @@ export default class ContextContainer extends React.Component {
                 fullDocument
             ) {
                 this.lastUpdateTime = clusterTime;
-                let {projects} = this.state;
+                let {projects, hasMoreProjects, pagination} = this.state;
 
                 if (operationType === 'replace' || operationType === 'update') {
                     const {_id} = event.fullDocument;
@@ -188,7 +247,12 @@ export default class ContextContainer extends React.Component {
                         p => (p._id === _id) ? event.fullDocument : p
                     );
                 } else if (operationType === 'insert') {
-                    projects.push(event.fullDocument);
+                    if (hasMoreProjects) return;
+                    const {limit} = pagination;
+                    const isFullPage = !Boolean(projects.length % limit);
+                    isFullPage
+                        ? this.setState({hasMoreProjects: true})
+                        : projects.push(event.fullDocument);
                 }
 
                 this.setState({projects});

@@ -11,7 +11,7 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 
 import {RealmContext} from "../../context/RealmContext";
-import {toEnUsDate,toDateOnly} from "../../helpers/dateFormatter";
+import {toDateOnly} from "../../helpers/dateFormatter";
 
 const useStyles = makeStyles({
     root: {
