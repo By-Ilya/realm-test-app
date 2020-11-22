@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/realm-test-app/precache-manifest.f216f4f2564235909ee326c208e93062.js"
+  "/realm-test-app/precache-manifest.37e56d710c355b59eb2f5d5c4a7db7e8.js"
 );
 
 self.addEventListener('message', (event) => {
