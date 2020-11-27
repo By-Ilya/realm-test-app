@@ -8,7 +8,8 @@ import RealmApolloProvider from "./RealmApolloProvider";
 export default function RealmApp() {
     const {
         app, appName, copyrightLink,
-        googleSignIn, googleHandleRedirect, user, setUser,
+        googleSignIn, googleHandleRedirect,
+        user, setUser,
     } = useContext(RealmContext);
 
     const appRef = useRef(app);

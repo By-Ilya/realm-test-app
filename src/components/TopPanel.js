@@ -96,7 +96,8 @@ export default function TopPanel(props) {
         filter, setFilter, sort, setSorting,
         regionsList, ownersList, projectManagersList, stagesList,
         fetchFiltersDefaultValues, setLoadProcessing,
-        getActiveUserName, user, logOut
+        getActiveUserName, user, logOut,
+        setDefaultPagination
     } = useContext(RealmContext);
 
     useEffect(() => {
@@ -177,6 +178,7 @@ export default function TopPanel(props) {
         } else {
             setFilter(localFilter);
         }
+        setDefaultPagination();
     }
 
     const [localSort, setLocalSorting] = useState(sort);
