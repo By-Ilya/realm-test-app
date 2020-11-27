@@ -1,4 +1,4 @@
-exports = async function findProjects({filter, sort}) {
+exports = async function findProjects({filter, sort, count_only}) {
   // function getSoQ() {
   //   var today = new Date(),
   //   month = today.getMonth(),
@@ -17,7 +17,7 @@ exports = async function findProjects({filter, sort}) {
   const psprojectCollection = cluster.db("shf").collection("psproject");
   const userdataCollection = cluster.db("shf").collection("userdata");
   
-  const {active, name, region, owner, project_manager, active_user_filter, pm_stage} = filter;
+  const {active, name, region, owner, project_manager, active_user_filter, pm_stage, limit} = filter;
   
   let matchData = {};
   if (active) matchData = {...matchData, "details.pm_stage" : {$nin : ["Closed","Cancelled"] }, active };
@@ -36,10 +36,9 @@ exports = async function findProjects({filter, sort}) {
       matchData = {...matchData, "$or" : [{owner : {$in : userDoc.sf_names}},{project_manager: {$in : userDoc.sf_names}},{ps_ops_resource: {$in : userDoc.sf_names}}]};
   }
   
-  const {field, order} = sort;
-  
-  if (name) {
-    const psprojects = await psprojectCollection.aggregate([
+  var agg_pipeline = [];
+  if (name)
+    agg_pipeline.push(
       {$search: 
         {
           "text": {
@@ -47,18 +46,30 @@ exports = async function findProjects({filter, sort}) {
             "path": "name"
           }
         }
-      },
-      {$match: matchData},
-      {$sort: {[field]: order}}
-    ]);
+      }
+    );
     
-    return psprojects.toArray();
-  }
+  agg_pipeline.push(
+    {$match: matchData}
+  );
   
-  const psprojects = await psprojectCollection.aggregate([
-    {$match: matchData},
-    {$sort: {[field]: order}}
-  ]);
+  if (!count_only) {
+    const {field, order} = sort;
+    const biasedLimit = limit + 1;
+    
+    agg_pipeline.push(
+      {$sort: {[field]: order}}
+    );
+    agg_pipeline.push(
+      {$limit: biasedLimit || 51}
+    );
+    
+  } else
+    agg_pipeline.push(
+      {$count: "name"}
+    );
+  
+  const psprojects = await psprojectCollection.aggregate(agg_pipeline);
   
   return psprojects.toArray();
 };
