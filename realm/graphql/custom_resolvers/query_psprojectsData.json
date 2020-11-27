@@ -11,7 +11,19 @@
                         "bsonType": "bool"
                     },
                     "active_user_filter": {
-                        "bsonType": "string"
+                        "bsonType": "object",
+                        "properties": {
+                            "email": {
+                                "bsonType": "string"
+                            },
+                            "name": {
+                                "bsonType": "string"
+                            }
+                        },
+                        "required": [
+                            "name",
+                            "email"
+                        ]
                     },
                     "limit": {
                         "bsonType": "int"
@@ -38,7 +50,6 @@
                     "region",
                     "owner",
                     "project_manager",
-                    "active_user_filter",
                     "pm_stage"
                 ]
             },

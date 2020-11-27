@@ -22,7 +22,7 @@ const DEFAULT_FILTER = {
     project_manager: '',
     name: '',
     active: true,
-    active_user_filter: '',
+    active_user_filter: null,
     pm_stage: ''
 }
 const DEFAULT_SORT = {
@@ -94,7 +94,7 @@ export default class ContextContainer extends React.Component {
             setProjectWithCurrentMilestone: this.setProjectWithCurrentMilestone,
             setIsEditing: this.setIsEditing,
             watcher: this.watcher,
-            getActiveUserName: this.getActiveUserName
+            getActiveUserFilter: this.getActiveUserFilter
         };
 
         this.lastUpdateTime = null;
@@ -103,7 +103,7 @@ export default class ContextContainer extends React.Component {
     setUser = (user) => {
         this.setState({user});
         if (this.state.app && user) {
-            this.setFilter({active_user_filter: user.profile.email});
+            this.setFilter({active_user_filter: {name: user.profile.name, email: user.profile.email}});
             const dbCollection = user
                 .mongoClient(REALM_SERVICE_NAME)
                 .db(REALM_DATABASE_NAME)
@@ -281,8 +281,8 @@ export default class ContextContainer extends React.Component {
         }
     }
 
-    getActiveUserName = () => {
-        return this.state.user.profile.email;
+    getActiveUserFilter = () => {
+        return {email: this.state.user.profile.email, name: this.state.user.profile.name};
     }
 
     render() {

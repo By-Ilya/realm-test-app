@@ -30,10 +30,17 @@ exports = async function findProjects({filter, sort, count_only}) {
     else
       matchData = {...matchData, "details.pm_stage" : pm_stage};
   }
-  if (active_user_filter) {
-    let userDoc = await userdataCollection.findOne({_id : active_user_filter })
-    if (userDoc)
-      matchData = {...matchData, "$or" : [{owner : {$in : userDoc.sf_names}},{project_manager: {$in : userDoc.sf_names}},{ps_ops_resource: {$in : userDoc.sf_names}}]};
+  if (active_user_filter && active_user_filter.name) {
+    let userDoc = await userdataCollection.findOne({_id : active_user_filter.email })
+    let names;
+    if (userDoc) {
+      names = userDoc.sf_names;
+      if (names.indexOf(active_user_filter.name) < 0)
+        names.push(active_user_filter.name)
+    } else
+      names = [active_user_filter.name];
+        
+    matchData = {...matchData, "$or" : [{owner : {$in : names}},{project_manager: {$in : names}},{ps_ops_resource: {$in : names}}]};
   }
   
   var agg_pipeline = [];

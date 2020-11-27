@@ -96,7 +96,7 @@ export default function TopPanel(props) {
         filter, setFilter, sort, setSorting,
         regionsList, ownersList, projectManagersList, stagesList,
         fetchFiltersDefaultValues, setLoadProcessing,
-        getActiveUserName, user, logOut,
+        getActiveUserFilter, user, logOut,
         setDefaultPagination
     } = useContext(RealmContext);
 
@@ -164,8 +164,8 @@ export default function TopPanel(props) {
                 setLocalFilter({
                     ...localFilter,
                     active_user_filter: (event.target.value === "Yes")
-                        ? getActiveUserName()
-                        : ''
+                        ? getActiveUserFilter()
+                        : null
                 });
             }
         }
