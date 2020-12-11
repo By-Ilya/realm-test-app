@@ -10,34 +10,31 @@ export default function MainPage() {
     const {
         setProjects, setHasMoreProjects,
         setLoadProcessing, cleanLocalProjects,
-        filter, sort, pagination, watcher,
+        filter, getSortOrder, pagination, watcher,
         setMoreProjectsLoadProcessing,
-        setProjectsTotalCount
+        fetchProjectsTotalCount
     } = useContext(RealmContext);
 
-    const getSortOrder = () => {
-        const {field, order} = sort;
-        return {field, order: order === 'DESC' ? -1 : 1};
-    }
-
     const {limit} = pagination;
-    const queryOptions = {
-        variables: {
-            filtersInput: {
-                filter: {...filter, limit },
-                sort: getSortOrder()
+
+    const makeQueryOptions = (countOnly = false) => {
+        return {
+            variables: {
+                filtersInput: {
+                    filter: {...filter, limit, countOnly},
+                    sort: getSortOrder()
+                }
             }
-        }
-    };
+        };
+    }
 
     const isMoreProjects = projects => projects && projects.length >= limit + 1;
 
     const [fetchProjects] = useLazyQuery(
         FIND_PROJECTS,
         {
-            ...queryOptions,
+            ...makeQueryOptions(false),
             onCompleted: data => {
-                setProjectsTotalCount(filter);
                 const {psprojectsData} = data;
                 const psprojects = [...psprojectsData];
                 if (isMoreProjects(psprojects)) {
@@ -62,7 +59,8 @@ export default function MainPage() {
 
     const fetchProjectsByTrigger = async ({needToClean}) => {
         needToClean && await cleanLocalProjects();
-        await fetchProjects();
+        fetchProjects();
+        fetchProjectsTotalCount();
     }
 
     let timerId = setTimeout(async function watchForUpdates() {

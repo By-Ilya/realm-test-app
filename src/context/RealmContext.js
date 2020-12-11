@@ -72,7 +72,8 @@ export default class ContextContainer extends React.Component {
             setMoreProjectsLoadProcessing: this.setMoreProjectsLoadProcessing,
             setProjects: this.setProjects,
             setHasMoreProjects: this.setHasMoreProjects,
-            setProjectsTotalCount: this.setProjectsTotalCount,
+            fetchProjectsTotalCount: this.fetchProjectsTotalCount,
+            getSortOrder: this.getSortOrder,
             cleanLocalProjects: this.cleanLocalProjects,
             setFilter: this.setFilter,
             setSorting: this.setSorting,
@@ -179,13 +180,24 @@ export default class ContextContainer extends React.Component {
         this.setState({hasMoreProjects});
     }
 
-    setProjectsTotalCount = async () => {
-        const {getTotalProjectsCount} = this.state.user.functions;
-        const fetchedData = await getTotalProjectsCount(this.state.filter);
+    fetchProjectsTotalCount = async () => {
+        const {filter, user} = this.state;
+        const {findProjects} = user.functions;
+        const fetchedData = await findProjects({
+            filter: {...filter, countOnly: true},
+            sort: this.getSortOrder()
+        });
         if (fetchedData && fetchedData.length) {
             const {name: projectsTotalCount} = fetchedData[0];
             this.setState({projectsTotalCount});
         }
+    }
+
+    getSortOrder = () => {
+        const {sort} = this.state;
+        const {field, order} = sort;
+
+        return {field, order: order === 'DESC' ? -1 : 1};
     }
 
     cleanLocalProjects = async () => {
