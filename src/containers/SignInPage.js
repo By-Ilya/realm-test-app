@@ -41,11 +41,9 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 SignInPage.propTypes = {
-    googleClientId: PropTypes.string.isRequired,
     appName: PropTypes.string.isRequired,
     copyrightLink: PropTypes.string.isRequired,
-    onSuccess: PropTypes.func.isRequired,
-    onFailure: PropTypes.func.isRequired,
+    googleSignIn: PropTypes.func.isRequired,
     signInError: PropTypes.string
 }
 
