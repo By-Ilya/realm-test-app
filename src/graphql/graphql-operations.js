@@ -54,6 +54,10 @@ export const FIND_PROJECTS = gql`
                     email
                 }
             }
+            future_assignments_dates {
+                s
+                e
+            }
         }
     }
 `;

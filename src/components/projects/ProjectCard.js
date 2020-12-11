@@ -12,6 +12,7 @@ import ListItemText from "@material-ui/core/ListItemText";
 
 import {RealmContext} from "../../context/RealmContext";
 import {toDateOnly} from "../../helpers/dateFormatter";
+import {setUtcZeroTime} from "../../helpers/date-util";
 
 const useStyles = makeStyles({
     root: {
@@ -65,6 +66,41 @@ export default function ProjectCard(props) {
         });
     }
 
+    const generateNextAssignmentDateString = (future_assignments_dates) => {
+        const empty_string = '-';
+
+        if (!future_assignments_dates || (future_assignments_dates.length < 1))
+            return empty_string;
+
+        let todayUtc = new Date();
+        setUtcZeroTime(todayUtc);
+
+        //since the array is sorted by (e), we can quickly check if there's nothing in future
+        let max_e = new Date(future_assignments_dates[future_assignments_dates.length - 1].e);
+
+        if (max_e.getTime() <= todayUtc.getTime())
+            return empty_string;
+
+        //we need to check all ranges that have (e) > today and find the min (s)
+        let tomorrowUtc = new Date(todayUtc)
+        tomorrowUtc.setDate(tomorrowUtc.getDate() + 1);
+
+        let min_s = max_e; 
+        future_assignments_dates.forEach( ass => {
+            let end = new Date(ass.e)
+            let start = new Date(ass.s)
+            if (end.getTime() > todayUtc.getTime()) {
+                if (min_s.getTime() > start.getTime() )
+                    min_s = start;
+            }
+        })
+
+        if (min_s.getTime() > tomorrowUtc.getTime())
+            return toDateOnly(min_s);
+        else
+            return toDateOnly(tomorrowUtc);
+    }
+
     return (
         <Card className={classes.root}>
             <CardContent>
@@ -102,7 +138,7 @@ export default function ProjectCard(props) {
                     <b>Stage:</b> {psproject.details.pm_stage}
                 </Typography>
                 <Typography variant="body2" component="p">
-                    <b>Status:</b> {psproject.details.pm_project_status}
+                    <b>Next Assignment:</b> {generateNextAssignmentDateString(psproject.future_assignments_dates)}
                 </Typography>
                 <Typography variant="body2" component="p">
                     <b>Expires:</b> {toDateOnly(psproject.details.product_end_date)}
