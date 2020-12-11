@@ -85,6 +85,20 @@
                     }
                 }
             },
+            "future_assignments_dates": {
+                "bsonType": "array",
+                "items": {
+                    "bsonType": "object",
+                    "properties": {
+                        "e": {
+                            "bsonType": "date"
+                        },
+                        "s": {
+                            "bsonType": "date"
+                        }
+                    }
+                }
+            },
             "milestones": {
                 "bsonType": "array",
                 "items": {

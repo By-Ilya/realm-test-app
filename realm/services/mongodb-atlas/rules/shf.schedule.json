@@ -12,5 +12,67 @@
             "additional_fields": {}
         }
     ],
-    "schema": {}
+    "schema": {
+        "properties": {
+            "SystemModstamp": {
+                "bsonType": "date"
+            },
+            "_id": {
+                "bsonType": "string"
+            },
+            "actual": {
+                "bsonType": "object",
+                "properties": {
+                    "days": {
+                        "bsonType": "double"
+                    },
+                    "hours": {
+                        "bsonType": "double"
+                    },
+                    "revenue": {
+                        "bsonType": "double"
+                    }
+                }
+            },
+            "billable": {
+                "bsonType": "bool"
+            },
+            "estimated": {
+                "bsonType": "object",
+                "properties": {
+                    "days": {
+                        "bsonType": "double"
+                    },
+                    "hours": {
+                        "bsonType": "double"
+                    },
+                    "revenue": {
+                        "bsonType": "double"
+                    }
+                }
+            },
+            "isDeleted": {
+                "bsonType": "bool"
+            },
+            "milestoneId": {
+                "bsonType": "string"
+            },
+            "name": {
+                "bsonType": "string"
+            },
+            "projectId": {
+                "bsonType": "string"
+            },
+            "resource": {
+                "bsonType": "string"
+            },
+            "role": {
+                "bsonType": "string"
+            },
+            "week": {
+                "bsonType": "date"
+            }
+        },
+        "title": "schedule"
+    }
 }
