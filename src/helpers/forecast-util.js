@@ -15,7 +15,7 @@ function getCallFromThree(vals) {
     //10->1: 0,1,2
     //11->1: 0,1
     //0->1:0
-    var delta = (qEndMonth > month) ? (qEndMonth - month) : (month + 12 - qEndMonth);
+    var delta = (qEndMonth > month) ? (qEndMonth - month) : (qEndMonth + 12 - month);
     var res = 0;
     for (let i=0; i<delta; i++)
     	res += vals[i];

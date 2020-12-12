@@ -46,7 +46,7 @@ export default function ProjectsList(props) {
                 <ul className={classes.ul}>
                     <ListSubheader>
                         <Typography variant="h5" color="primary">
-                            Total: {projectsTotalCount || 0} Viewed: {projects ? projects.length : 0}
+                            Total: {projectsTotalCount || 0} {(projects && (projects.length < projectsTotalCount)) ? ("(Showing " + projects.length + ")") : "" }
                         </Typography>
                     </ListSubheader>
 

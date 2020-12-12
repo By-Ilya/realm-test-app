@@ -14,7 +14,7 @@ const REALM_DATABASE_NAME = `${process.env.REACT_APP_DATABASE_NAME}` || '';
 const REALM_COLLECTION_NAME = `${process.env.REACT_APP_COLLECTION_NAME}` || '';
 const REALM_FCST_COLLECTION_NAME = `${process.env.REACT_APP_FCST_COLLECTION_NAME}` || '';
 const GOOGLE_REDIRECT_URI = `${process.env.REACT_APP_GOOGLE_REDIRECT_URI}` || 'http://localhost:3000/google-callback';
-const DEFAULT_PAGE_LIMIT = parseInt(process.env.REACT_APP_PROJECTS_PAGE) || 10;
+const DEFAULT_PAGE_LIMIT = parseInt(process.env.REACT_APP_PROJECTS_PAGE) || 50;
 
 const DEFAULT_FILTER = {
     region: '',
@@ -22,15 +22,27 @@ const DEFAULT_FILTER = {
     project_manager: '',
     name: '',
     active: true,
-    active_user_filter: '',
+    active_user_filter: null,
+    pm_stage: ''
 }
 const DEFAULT_SORT = {
-    field: 'name',
+    field: 'details.pm_stage_sortid',
     order: 'ASC'
 };
 const DEFAULT_PAGINATION = {
     increaseOn: DEFAULT_PAGE_LIMIT,
     limit: DEFAULT_PAGE_LIMIT
+}
+
+function sortNameToField(name) {
+    switch(name) {
+        case 'name': return name;
+        case 'region': return name;
+        case 'owner': return name;
+        case 'expiration': return "details.product_end_date";
+        case 'stage': return "details.pm_stage_sortid";
+        default: return "details.pm_stage_sortid";
+    }
 }
 
 export default class ContextContainer extends React.Component {
@@ -53,6 +65,7 @@ export default class ContextContainer extends React.Component {
             regionsList: [],
             ownersList: [],
             projectManagersList: [],
+            stagesList: ["-None-","Not Started","Planning","In Progress","On Hold","Cancelled","Closed"],
             loadProcessing: false,
             moreProjectsLoadProcessing: false,
             projects: null,
@@ -81,7 +94,7 @@ export default class ContextContainer extends React.Component {
             setProjectWithCurrentMilestone: this.setProjectWithCurrentMilestone,
             setIsEditing: this.setIsEditing,
             watcher: this.watcher,
-            getActiveUserName: this.getActiveUserName
+            getActiveUserFilter: this.getActiveUserFilter
         };
 
         this.lastUpdateTime = null;
@@ -90,7 +103,7 @@ export default class ContextContainer extends React.Component {
     setUser = (user) => {
         this.setState({user});
         if (this.state.app && user) {
-            this.setFilter({active_user_filter: user.profile.email});
+            this.setFilter({active_user_filter: {name: user.profile.name, email: user.profile.email}});
             const dbCollection = user
                 .mongoClient(REALM_SERVICE_NAME)
                 .db(REALM_DATABASE_NAME)
@@ -180,8 +193,8 @@ export default class ContextContainer extends React.Component {
     }
 
     setProjectsTotalCount = async () => {
-        const {getTotalProjectsCount} = this.state.user.functions;
-        const fetchedData = await getTotalProjectsCount(this.state.filter);
+        const {findProjects} = this.state.user.functions;
+        const fetchedData = await findProjects({filter: this.state.filter,count_only: true});
         if (fetchedData && fetchedData.length) {
             const {name: projectsTotalCount} = fetchedData[0];
             this.setState({projectsTotalCount});
@@ -207,6 +220,7 @@ export default class ContextContainer extends React.Component {
     }
 
     setSorting = (newSort) => {
+        newSort.field = sortNameToField(newSort.field);
         this.setState({sort: newSort});
     }
 
@@ -229,7 +243,7 @@ export default class ContextContainer extends React.Component {
 
     watcher = async () => {
         if (!this.state.dbCollection) return;
-        if (!this.state.user || !this.state.app.currentUser.isLoggedIn) return;
+        if (!this.state.user || !this.state.app.currentUser) return;
 
         for await (let event of this.state.dbCollection.watch()) {
             const {clusterTime, operationType, fullDocument} = event;
@@ -239,13 +253,18 @@ export default class ContextContainer extends React.Component {
                 fullDocument
             ) {
                 this.lastUpdateTime = clusterTime;
-                let {projects, hasMoreProjects, pagination} = this.state;
+
+                let {projects, projectWithCurrentMilestone, hasMoreProjects, pagination} = this.state;
+                let newProjectWithMilestone = null;
 
                 if (operationType === 'replace' || operationType === 'update') {
                     const {_id} = event.fullDocument;
                     projects = projects.map(
                         p => (p._id === _id) ? event.fullDocument : p
                     );
+                    if (projectWithCurrentMilestone && projectWithCurrentMilestone.project._id === _id)
+                        newProjectWithMilestone = {...projectWithCurrentMilestone,project: event.fullDocument}
+
                 } else if (operationType === 'insert') {
                     if (hasMoreProjects) return;
                     const {limit} = pagination;
@@ -256,12 +275,14 @@ export default class ContextContainer extends React.Component {
                 }
 
                 this.setState({projects});
+                if (newProjectWithMilestone)
+                    this.setProjectWithCurrentMilestone(newProjectWithMilestone);
             }
         }
     }
 
-    getActiveUserName = () => {
-        return this.state.user.profile.email;
+    getActiveUserFilter = () => {
+        return {email: this.state.user.profile.email, name: this.state.user.profile.name};
     }
 
     render() {

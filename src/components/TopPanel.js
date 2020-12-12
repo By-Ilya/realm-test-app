@@ -94,9 +94,9 @@ export default function TopPanel(props) {
     const {fetchProjects} = props;
     const {
         filter, setFilter, sort, setSorting,
-        regionsList, ownersList, projectManagersList,
+        regionsList, ownersList, projectManagersList, stagesList,
         fetchFiltersDefaultValues, setLoadProcessing,
-        getActiveUserName, user, logOut,
+        getActiveUserFilter, user, logOut,
         setDefaultPagination
     } = useContext(RealmContext);
 
@@ -138,6 +138,14 @@ export default function TopPanel(props) {
             }
         },
         {
+            label: 'Stage',
+            currentValue: localFilter.pm_stage,
+            values: stagesList,
+            setValue: event => {
+                setLocalFilter({...localFilter, pm_stage: event.target.value});
+            }
+        },
+        {
             label: 'Only Active',
             currentValue: localFilter.active ? "Yes" : "No",
             values: ["Yes","No"],
@@ -156,8 +164,8 @@ export default function TopPanel(props) {
                 setLocalFilter({
                     ...localFilter,
                     active_user_filter: (event.target.value === "Yes")
-                        ? getActiveUserName()
-                        : ''
+                        ? getActiveUserFilter()
+                        : null
                 });
             }
         }
@@ -178,7 +186,7 @@ export default function TopPanel(props) {
         {
             label: 'Field',
             currentValue: localSort.field,
-            values: ['name', 'region', 'owner'],
+            values: ['name', 'region', 'owner','expiration','stage'],
             setValue: event => {
                 setLocalSorting({...localSort, field: event.target.value});
             }

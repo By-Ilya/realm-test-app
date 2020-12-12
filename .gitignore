@@ -11,6 +11,9 @@
 # production
 /build
 
+# data
+/test_data
+
 # idea
 .vscode
 .idea
@@ -19,6 +22,7 @@
 .DS_Store
 .env
 .env.local
+.env.production
 .env.development.local
 .env.test.local
 .env.production.local

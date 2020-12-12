@@ -1,0 +1,82 @@
+{
+    "field_name": "psprojectsData",
+    "function_name": "findProjects",
+    "input_type": {
+        "bsonType": "object",
+        "properties": {
+            "filter": {
+                "bsonType": "object",
+                "properties": {
+                    "active": {
+                        "bsonType": "bool"
+                    },
+                    "active_user_filter": {
+                        "bsonType": "object",
+                        "properties": {
+                            "email": {
+                                "bsonType": "string"
+                            },
+                            "name": {
+                                "bsonType": "string"
+                            }
+                        },
+                        "required": [
+                            "name",
+                            "email"
+                        ]
+                    },
+                    "limit": {
+                        "bsonType": "int"
+                    },
+                    "name": {
+                        "bsonType": "string"
+                    },
+                    "owner": {
+                        "bsonType": "string"
+                    },
+                    "pm_stage": {
+                        "bsonType": "string"
+                    },
+                    "project_manager": {
+                        "bsonType": "string"
+                    },
+                    "region": {
+                        "bsonType": "string"
+                    }
+                },
+                "required": [
+                    "active",
+                    "name",
+                    "region",
+                    "owner",
+                    "project_manager",
+                    "pm_stage"
+                ]
+            },
+            "sort": {
+                "bsonType": "object",
+                "properties": {
+                    "field": {
+                        "bsonType": "string"
+                    },
+                    "order": {
+                        "bsonType": "int"
+                    }
+                },
+                "required": [
+                    "field",
+                    "order"
+                ]
+            }
+        },
+        "required": [
+            "filter",
+            "sort"
+        ],
+        "title": "FiltersInput"
+    },
+    "input_type_format": "custom",
+    "on_type": "Query",
+    "payload_type": "Psproject",
+    "payload_type_format": "generated-list"
+}

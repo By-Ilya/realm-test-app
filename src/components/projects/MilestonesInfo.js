@@ -2,12 +2,19 @@ import React, {useContext} from 'react';
 import PropTypes from 'prop-types';
 
 import SimpleTable from "../common/SimpleTable";
+import SimpleETable from "../common/SimpleETable";
 import EditableCellTable from "../common/EditableCellTable";
+import ContactsTable from "../common/ContactsTable";
 import {
     generateMilestoneTableData,
     generateScheduleTableData,
-    generateForecastTableData
+    generateForecastTableData,
+    generateContactsTableData,
 } from "../common/helpers/generateTablesData";
+import {
+    custMailParams,
+    ceMailParams
+} from "../../helpers/survey/survey";
 import {RealmContext} from "../../context/RealmContext";
 
 MilestonesInfo.propTypes = {
@@ -17,12 +24,35 @@ MilestonesInfo.propTypes = {
 
 export default function MilestonesInfo(props) {
     const {classes, project} = props;
-    const {dbCollection, fcstCollection} = useContext(RealmContext);
+    const {dbCollection, fcstCollection, user} = useContext(RealmContext);
+
+    const onClickPMStageButton = async (project) => {
+        var origEmail = user.profile.email,
+            contacts = project.contacts,
+            custName = (contacts && contacts.customer) ? contacts.customer.name : null,
+            custEmail = (contacts && contacts.customer) ? contacts.customer.email : null,
+            projectId = project.name,
+            ceName = (contacts && contacts.ce) ? contacts.ce.name : null,
+            ceEmail = (contacts && contacts.ce) ? contacts.ce.email : null;
+
+        if (!custName || !custEmail || !ceName || !ceEmail) {
+            alert(`Contact information isn't complete!`);
+            return;
+        }
+        //console.log(custMailParams(origEmail,custName,custEmail,projectId))
+        //console.log(ceMailParams(origEmail,ceName,ceEmail,projectId))
+        await user.callFunction("sendMail",custMailParams(origEmail,custName,custEmail,projectId));
+        await user.callFunction("sendMail",ceMailParams(origEmail,ceName,ceEmail,projectId));
+
+        await dbCollection.updateOne({_id: project._id},{$set:{survey_sent:true, survey_sent_ts: new Date()}});
+
+        alert(`Surveys sent!`);
+    }
 
     const {
         milestonesTableColumns,
         milestonesTableRows
-    } = generateMilestoneTableData(project);
+    } = generateMilestoneTableData(project, onClickPMStageButton);
 
     const {
         scheduleTableColumns,
@@ -33,6 +63,11 @@ export default function MilestonesInfo(props) {
         forecastTableColumns,
         forecastTableRows
     } = generateForecastTableData(project);
+
+    const {
+        contactsTableColumns,
+        contactsTableRows
+    } = generateContactsTableData(project);
 
     const handleUpdateRow = async ({updateKey, value}) => {
         const query = {_id: project._id};
@@ -50,11 +85,20 @@ export default function MilestonesInfo(props) {
 
     return (<>
         {milestonesTableRows.length !== 0 && <div className={classes.tableContainer}>
-            <SimpleTable
+            <SimpleETable
                 projectId={project._id}
                 tableName='Project milestone info'
                 currentColumns={milestonesTableColumns}
                 currentData={milestonesTableRows}
+                onUpdate={handleUpdateRow}
+            />
+        </div>}
+        {<div className={classes.tableContainer}>
+            <ContactsTable
+                projectId={project._id}
+                tableName='Contact Information'
+                currentColumns={contactsTableColumns}
+                currentData={contactsTableRows}
                 onUpdate={handleUpdateRow}
             />
         </div>}

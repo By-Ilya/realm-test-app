@@ -5,6 +5,7 @@ export const FIND_PROJECTS = gql`
         psprojectsData(input: $filtersInput) {
             _id
             account
+            account_id
             active
             details {
                 pm_stage
@@ -15,6 +16,7 @@ export const FIND_PROJECTS = gql`
                 name
                 owner
                 engagement_manager
+                _id
             }
             milestones {
                 _id
@@ -41,6 +43,21 @@ export const FIND_PROJECTS = gql`
             project_manager
             region
             stage
+            survey_sent
+            contacts {
+                customer {
+                    name
+                    email
+                }
+                ce {
+                    name
+                    email
+                }
+            }
+            future_assignments_dates {
+                s
+                e
+            }
         }
     }
 `;

@@ -23,9 +23,10 @@ export default function RealmApp() {
           <Switch>
             <Route
                 exact path="/google-callback"
-                render={() => <div>
-                    Google Callback {googleHandleRedirect()}
-                </div>}
+                render={() => {
+                    googleHandleRedirect();
+                    return <div> Google Callback </div> 
+                }}
             />
             <Route path="/*" render={() => 
                 user ?  <RealmApolloProvider /> : <SignInPage

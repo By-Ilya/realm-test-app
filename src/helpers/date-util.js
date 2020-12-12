@@ -1,6 +1,7 @@
 module.exports = {
   getThisMonth,
-  getNextMonth
+  getNextMonth,
+  setUtcZeroTime
 };
 
 function getThisMonth(now) {
@@ -25,4 +26,11 @@ function getNextMonth(now, utc=true) {
     current.setHours(0,0,0,0);
   
   return current;
+}
+
+function setUtcZeroTime(date) {
+  date.setUTCHours(0)
+  date.setUTCMinutes(0)
+  date.setUTCSeconds(0)
+  date.setUTCMilliseconds(0)
 }
