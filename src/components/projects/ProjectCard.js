@@ -10,6 +10,7 @@ import ListSubheader from "@material-ui/core/ListSubheader";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import LinearProgress from '@material-ui/core/LinearProgress';
+import Box from "@material-ui/core/Box";
 
 import {RealmContext} from "../../context/RealmContext";
 import {toDateOnly} from "../../helpers/dateFormatter";
@@ -167,7 +168,14 @@ function MilestonesList(props) {
             {milestones && milestones.map(milestone => {
                 return (
                     <ListItem button onClick={() => onClickMilestone(milestone)} key={milestone._id}>
-                        <ListItemText primary={milestone.name} />
+                          <Box
+                            textAlign="left"
+                            style={{ paddingRight: 5 }}
+                          >
+                            {milestone.name} 
+                          </Box>
+                        <ListItemText secondaryTypographyProps={{ align: "right" }}
+                        secondary={`${Math.round(100*milestone.summary.delivered_hours/milestone.summary.planned_hours)}%`} />
                     </ListItem>
                 )
             })}
