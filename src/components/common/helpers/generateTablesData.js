@@ -56,6 +56,7 @@ export function generateMilestoneTableData(project, onClickPMStageButton) {
         {name: 'Country', value: currentMilestone.country, editable: false},
         {name: 'Milestone amount', value: currentMilestone.details.milestone_amount, editable: false},
         {name: 'Bill rate', value: currentMilestone.details.bill_rate, editable: false},
+        {name: 'Planned Hours', value: currentMilestone.summary.planned_hours, editable: false},
         {name: 'Gap Hours', value: currentMilestone.summary.gap_hours, editable: false},
         {name: 'Unscheduled Hours', value: currentMilestone.summary.unscheduled_hours, editable: false},
     ]
