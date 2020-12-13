@@ -18,6 +18,11 @@ export const FIND_PROJECTS = gql`
                 engagement_manager
                 _id
             }
+            summary {
+                backlog_hours
+                gap_hours
+                planned_hours
+            }
             milestones {
                 _id
                 country

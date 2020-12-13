@@ -9,6 +9,7 @@ import List from "@material-ui/core/List";
 import ListSubheader from "@material-ui/core/ListSubheader";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
+import LinearProgress from '@material-ui/core/LinearProgress';
 
 import {RealmContext} from "../../context/RealmContext";
 import {toDateOnly} from "../../helpers/dateFormatter";
@@ -103,6 +104,9 @@ export default function ProjectCard(props) {
 
     return (
         <Card className={classes.root}>
+            <LinearProgress variant="buffer" 
+                value={100*(1-psproject.summary.gap_hours/psproject.summary.planned_hours)} 
+                valueBuffer={100*(1-psproject.summary.backlog_hours/psproject.summary.planned_hours)} />
             <CardContent>
                 <div className={classes.info}>
                     <div className={classes.leftInfo}>
