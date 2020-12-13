@@ -7,6 +7,7 @@ export const FIND_PROJECTS = gql`
             account
             account_id
             active
+            monthly_forecast_done
             details {
                 pm_stage
                 pm_project_status

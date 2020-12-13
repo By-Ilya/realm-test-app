@@ -83,6 +83,12 @@ export default function MilestonesInfo(props) {
         await fcstCollection.updateOne(query, update, options);
     }
 
+    const handleUpdateForecastCheckbox = async (event) => {
+        const query = {_id: project._id};
+        const update = {'$set': {monthly_forecast_done: event.target.checked}};
+        await dbCollection.updateOne(query, update);
+    }
+
     return (<>
         {milestonesTableRows.length !== 0 && <div className={classes.tableContainer}>
             <SimpleETable
@@ -118,6 +124,8 @@ export default function MilestonesInfo(props) {
                 currentColumns={forecastTableColumns}
                 currentData={forecastTableRows}
                 onUpdate={handleUpdateForecast}
+                onCheckboxUpdate={handleUpdateForecastCheckbox}
+                checkboxValue={project.monthly_forecast_done ? true : false}
             />
         </div>}
     </>)

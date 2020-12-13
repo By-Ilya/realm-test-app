@@ -157,9 +157,22 @@ export default function TopPanel(props) {
             }
         },
         {
+            label: 'Planning done',
+            currentValue: localFilter.monthly_forecast_done ? "Yes" : (localFilter.monthly_forecast_done === false) ? "No" : "",
+            values: ["Yes","No"],
+            setValue: event => {
+                setLocalFilter({
+                    ...localFilter,
+                    monthly_forecast_done: (event.target.value === "Yes")
+                        ? true
+                        : (event.target.value === "No") ? false : null
+                });
+            }
+        },
+        {
             label: 'Only my projects',
             currentValue: localFilter.active_user_filter ? "Yes" : "No",
-            values: ["Yes","No"],
+            values: [null,"Yes","No"],
             setValue: event => {
                 setLocalFilter({
                     ...localFilter,
