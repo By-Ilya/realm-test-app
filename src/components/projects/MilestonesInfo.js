@@ -24,7 +24,7 @@ MilestonesInfo.propTypes = {
 
 export default function MilestonesInfo(props) {
     const {classes, project} = props;
-    const {dbCollection, fcstCollection, user} = useContext(RealmContext);
+    const {dbCollection, fcstCollection, setProjectWithCurrentMilestone, user} = useContext(RealmContext);
 
     const onClickPMStageButton = async (project) => {
         var origEmail = user.profile.email,
@@ -81,12 +81,20 @@ export default function MilestonesInfo(props) {
         const update = {'$set': {[updateKey]: value}};
         const options = {'upsert': true};
         await fcstCollection.updateOne(query, update, options);
+
+        //refresh the forecast data
+        var forecast = await user.functions.getMilestoneForecast(project.currentMilestone._id);
+        setProjectWithCurrentMilestone({
+            project: project,
+            milestone: project.currentMilestone,
+            forecast: forecast
+        });
     }
 
     const handleUpdateForecastCheckbox = async (event) => {
         const query = {_id: project._id};
         const update = {'$set': {monthly_forecast_done: event.target.checked}};
-        await dbCollection.updateOne(query, update);
+        dbCollection.updateOne(query, update);
     }
 
     return (<>
