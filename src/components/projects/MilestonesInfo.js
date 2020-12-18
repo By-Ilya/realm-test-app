@@ -70,7 +70,7 @@ export default function MilestonesInfo(props) {
     } = generateContactsTableData(project);
 
     const handleUpdateRow = async ({updateKey, value}) => {
-        const query = {_id: project._id};
+        const query = {_id: project._id, 'milestones._id':project.currentMilestone._id};
         const update = {'$set': {[updateKey]: value}};
         const options = {'upsert': false};
         await dbCollection.updateOne(query, update, options);

@@ -263,8 +263,21 @@ export default class ContextContainer extends React.Component {
                     projects = projects.map(
                         p => (p._id === _id) ? event.fullDocument : p
                     );
-                    if (projectWithCurrentMilestone && projectWithCurrentMilestone.project._id === _id)
-                        newProjectWithMilestone = {...projectWithCurrentMilestone,project: event.fullDocument}
+
+                    if (projectWithCurrentMilestone && projectWithCurrentMilestone.project._id === _id) {
+                        let ms = projectWithCurrentMilestone.milestone;
+                        let pr = event.fullDocument;
+                        let schedule = projectWithCurrentMilestone.milestone.schedule;
+                        for(let i in pr.milestones) {
+                            if (projectWithCurrentMilestone.milestone._id === pr.milestones[i]._id) {
+                                ms = pr.milestones[i];
+                                break;
+                            }
+                        }
+
+                        ms.schedule = schedule;
+                        newProjectWithMilestone = {...projectWithCurrentMilestone,project: pr, milestone: ms}
+                    }
 
                 } else if (operationType === 'insert') {
                     if (hasMoreProjects) return;

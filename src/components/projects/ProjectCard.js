@@ -115,7 +115,7 @@ export default function ProjectCard(props) {
                 </div>
 
                 <Typography variant="h5" component="h2">
-                    {psproject.name}
+                    {psproject.custom_name ? psproject.custom_name : psproject.name}
                 </Typography>
 
                 <div className={classes.info}>
@@ -164,7 +164,7 @@ function MilestonesList(props) {
                             textAlign="left"
                             style={{ paddingRight: 5 }}
                           >
-                            {milestone.name} 
+                            {milestone.custom_name ? milestone.custom_name : milestone.name} 
                           </Box>
                         <ListItemText secondaryTypographyProps={{ align: "right" }}
                         secondary={`${Math.round(100*milestone.summary.delivered_hours/milestone.summary.planned_hours)}%`} />

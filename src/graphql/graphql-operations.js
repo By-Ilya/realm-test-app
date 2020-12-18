@@ -29,6 +29,7 @@ export const FIND_PROJECTS = gql`
                 country
                 currency
                 name
+                custom_name
                 summary {
                     planned_hours
                     sold_hours
@@ -45,6 +46,7 @@ export const FIND_PROJECTS = gql`
                 }
             }
             name
+            custom_name
             owner
             project_manager
             region
