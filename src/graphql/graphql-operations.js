@@ -45,6 +45,12 @@ export const FIND_PROJECTS = gql`
                     delivered_amount
                 }
             }
+            documents {
+                _id
+                name
+                url
+                url_name
+            }
             name
             custom_name
             owner

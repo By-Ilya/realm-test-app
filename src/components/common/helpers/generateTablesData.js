@@ -77,6 +77,43 @@ export function generateMilestoneTableData(project, onClickPMStageButton) {
     return {milestonesTableColumns, milestonesTableRows}
 }
 
+export function generateDocumentsTableData(project) {
+    if (!project) return {
+        documentsTableColumns: [],
+        documentsTableRows: []
+    };
+
+    const {
+        documents
+    } = project;
+
+    const documentsTableColumns = [
+        {title: 'Name', field: 'name', editable: 'always'},
+        {title: 'Link', field: 'url', editable: 'always',
+        render: rowData => {
+                if (rowData.url)
+                    return <a href={rowData.url} target = "_blank" rel = "noopener noreferrer">{rowData.url_name ? rowData.url_name : rowData.url}</a>;
+                
+                return rowData.url;
+             }
+        }
+    ];
+
+    const documentsTableRows = [];
+
+    if (documents && documents.length > 0) {
+        for(let i in documents) {
+            documentsTableRows.push({...documents[i], editable: true})
+        }
+    } else
+        documentsTableRows.push({
+                    name:"Report",
+                    editable:true
+                });
+
+    return {documentsTableColumns, documentsTableRows}
+}
+
 export function generateContactsTableData(project) {
     if (!project) return {
         contactsTableColumns: [],

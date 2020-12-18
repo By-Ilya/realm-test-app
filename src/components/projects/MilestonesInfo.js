@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 
 import SimpleTable from "../common/SimpleTable";
 import SimpleETable from "../common/SimpleETable";
+import DocumentsTable from "../common/DocumentsTable";
 import EditableCellTable from "../common/EditableCellTable";
 import ContactsTable from "../common/ContactsTable";
 import {
@@ -10,12 +11,15 @@ import {
     generateScheduleTableData,
     generateForecastTableData,
     generateContactsTableData,
+    generateDocumentsTableData
 } from "../common/helpers/generateTablesData";
 import {
     custMailParams,
     ceMailParams
 } from "../../helpers/survey/survey";
 import {RealmContext} from "../../context/RealmContext";
+
+const BSON = require('bson');
 
 MilestonesInfo.propTypes = {
     classes: PropTypes.object.isRequired,
@@ -69,9 +73,41 @@ export default function MilestonesInfo(props) {
         contactsTableRows
     } = generateContactsTableData(project);
 
+    const {
+        documentsTableColumns,
+        documentsTableRows
+    } = generateDocumentsTableData(project);
+
     const handleUpdateRow = async ({updateKey, value}) => {
         const query = {_id: project._id, 'milestones._id':project.currentMilestone._id};
         const update = {'$set': {[updateKey]: value}};
+        const options = {'upsert': false};
+        await dbCollection.updateOne(query, update, options);
+    }
+
+    const handleUpdateDocumentsRow = async ({doc}) => {
+        if (!doc._id) { //we updated a virtual row
+            await handleAddDocumentsRow({doc})
+            return;
+        }
+
+        const query = {_id: project._id, 'documents._id':doc._id};
+        const update = {'$set': {'documents.$.name':doc.name, 'documents.$.url':doc.url}};
+        const options = {'upsert': false};
+        await dbCollection.updateOne(query, update, options);
+    }
+
+   const handleAddDocumentsRow = async ({doc}) => {
+        const query = {_id: project._id};
+        const _id = new BSON.ObjectID().toString();
+        const update = {'$push': {'documents':{name:doc.name, url: doc.url, _id}}};
+        const options = {'upsert': false};
+        await dbCollection.updateOne(query, update, options);
+    }
+
+   const handleDeleteDocumentsRow = async ({doc}) => {
+        const query = {_id: project._id};
+        const update = {'$pull': {'documents':{_id:doc._id}}};
         const options = {'upsert': false};
         await dbCollection.updateOne(query, update, options);
     }
@@ -105,6 +141,17 @@ export default function MilestonesInfo(props) {
                 currentColumns={milestonesTableColumns}
                 currentData={milestonesTableRows}
                 onUpdate={handleUpdateRow}
+            />
+        </div>}
+        {documentsTableRows.length !== 0 && <div className={classes.tableContainer}>
+            <DocumentsTable
+                projectId={project._id}
+                tableName='Documents'
+                currentColumns={documentsTableColumns}
+                currentData={documentsTableRows}
+                onUpdate={handleUpdateDocumentsRow}
+                onAdd={handleAddDocumentsRow}
+                onDelete={handleDeleteDocumentsRow}
             />
         </div>}
         {<div className={classes.tableContainer}>
