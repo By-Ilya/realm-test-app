@@ -19,8 +19,6 @@ import {
 } from "../../helpers/survey/survey";
 import {RealmContext} from "../../context/RealmContext";
 
-const BSON = require('bson');
-
 MilestonesInfo.propTypes = {
     classes: PropTypes.object.isRequired,
     project: PropTypes.object.isRequired,
@@ -99,8 +97,7 @@ export default function MilestonesInfo(props) {
 
    const handleAddDocumentsRow = async ({doc}) => {
         const query = {_id: project._id};
-        const _id = new BSON.ObjectID().toString();
-        const update = {'$push': {'documents':{name:doc.name, url: doc.url, _id}}};
+        const update = {'$push': {'documents':{name:doc.name, url: doc.url, _id: doc._id}}};
         const options = {'upsert': false};
         await dbCollection.updateOne(query, update, options);
     }

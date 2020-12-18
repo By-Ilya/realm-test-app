@@ -5,6 +5,8 @@ import MaterialTable from "material-table";
 import generateTableIcons from "./helpers/TableIcons";
 import {RealmContext} from "../../context/RealmContext";
 
+const BSON = require('bson');
+
 DocumentsTable.propTypes = {
     projectId: PropTypes.string.isRequired,
     tableName: PropTypes.string.isRequired,
@@ -69,6 +71,7 @@ export default function DocumentsTable(props) {
                 onRowUpdateCancelled: () => setIsEditing(false),
                 onRowAdd: async (newData) => {
                     try {
+                        newData._id = new BSON.ObjectID().toString();
                         await onAdd({doc: newData});
                         newData.editable = true;
                         setData([...data, newData]);
