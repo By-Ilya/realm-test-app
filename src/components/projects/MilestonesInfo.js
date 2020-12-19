@@ -90,7 +90,7 @@ export default function MilestonesInfo(props) {
         }
 
         const query = {_id: project._id, 'documents._id':doc._id};
-        const update = {'$set': {'documents.$.name':doc.name, 'documents.$.url':doc.url}};
+        const update = {'$set': {'documents.$.name':doc.name, 'documents.$.url':doc.url},'$unset': {'documents.$.url_name':1}};
         const options = {'upsert': false};
         await dbCollection.updateOne(query, update, options);
     }
