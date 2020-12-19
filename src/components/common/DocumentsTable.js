@@ -57,7 +57,10 @@ export default function DocumentsTable(props) {
                 isEditable: rowData => rowData.editable,
                 onRowUpdate: async (newData, oldData) => {
                     try {
-                        await onUpdate({doc: newData});
+                        let isVirtual = !newData._id;
+                        if (isVirtual)
+                            newData._id = new BSON.ObjectID().toString();
+                        await onUpdate({doc: newData, isVirtual});
                         const dataUpdate = [...data];
                         const index = oldData.tableData.id;
                         dataUpdate[index] = newData;

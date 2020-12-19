@@ -83,8 +83,8 @@ export default function MilestonesInfo(props) {
         await dbCollection.updateOne(query, update, options);
     }
 
-    const handleUpdateDocumentsRow = async ({doc}) => {
-        if (!doc._id) { //we updated a virtual row
+    const handleUpdateDocumentsRow = async ({doc, isVirtual}) => {
+        if (isVirtual) { //we updated a virtual row
             await handleAddDocumentsRow({doc})
             return;
         }
