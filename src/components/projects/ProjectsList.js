@@ -40,13 +40,24 @@ export default function ProjectsList(props) {
         }
     }, [pagination]);
 
+    const isShowingProjectsInfoVisible = () => {
+        return !loadProcessing && projects && projects.length < projectsTotalCount;
+    }
+
+    const getTotalProjectsHeader = () => {
+        const totalProjectsHeader = `Total: ${projectsTotalCount || 0}`;
+        return isShowingProjectsInfoVisible()
+            ? `${totalProjectsHeader} (Showing ${projects.length})`
+            : totalProjectsHeader;
+    }
+
     return (
         <List component="nav" className={classes.listRoot} aria-label="contacts" subheader={<li />}>
             <li className={classes.listSection}>
                 <ul className={classes.ul}>
                     <ListSubheader>
                         <Typography variant="h5" color="primary">
-                            Total: {projectsTotalCount || 0} {(projects && (projects.length < projectsTotalCount)) ? ("(Showing " + projects.length + ")") : "" }
+                            {getTotalProjectsHeader()}
                         </Typography>
                     </ListSubheader>
 

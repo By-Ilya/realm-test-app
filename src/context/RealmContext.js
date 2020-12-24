@@ -32,7 +32,19 @@ const DEFAULT_SORT = {
 const DEFAULT_PAGINATION = {
     increaseOn: DEFAULT_PAGE_LIMIT,
     limit: DEFAULT_PAGE_LIMIT
-}
+};
+
+const DEFAULT_STAGE_LIST = [
+    "-None-",
+    "Not Started",
+    "Planning",
+    "In Progress",
+    "On Hold",
+    "Cancelled",
+    "Closed"
+];
+
+const WATCHER_TIMEOUT = 5000;
 
 function sortNameToField(name) {
     switch(name) {
@@ -65,14 +77,14 @@ export default class ContextContainer extends React.Component {
             regionsList: [],
             ownersList: [],
             projectManagersList: [],
-            stagesList: ["-None-","Not Started","Planning","In Progress","On Hold","Cancelled","Closed"],
+            stagesList: DEFAULT_STAGE_LIST,
             loadProcessing: false,
             moreProjectsLoadProcessing: false,
             projects: null,
             projectsTotalCount: 0,
             hasMoreProjects: true,
             projectWithCurrentMilestone: null,
-            isEditing: false
+            isEditing: false,
         };
         this.funcs = {
             setUser: this.setUser,
@@ -85,7 +97,8 @@ export default class ContextContainer extends React.Component {
             setMoreProjectsLoadProcessing: this.setMoreProjectsLoadProcessing,
             setProjects: this.setProjects,
             setHasMoreProjects: this.setHasMoreProjects,
-            setProjectsTotalCount: this.setProjectsTotalCount,
+            fetchProjectsTotalCount: this.fetchProjectsTotalCount,
+            getSortOrder: this.getSortOrder,
             cleanLocalProjects: this.cleanLocalProjects,
             setFilter: this.setFilter,
             setSorting: this.setSorting,
@@ -93,17 +106,30 @@ export default class ContextContainer extends React.Component {
             setDefaultPagination: this.setDefaultPagination,
             setProjectWithCurrentMilestone: this.setProjectWithCurrentMilestone,
             setIsEditing: this.setIsEditing,
-            watcher: this.watcher,
             getActiveUserFilter: this.getActiveUserFilter
         };
 
         this.lastUpdateTime = null;
+        this.watcherTimerId = null;
     };
+
+    async componentDidMount() {
+        await this.watchForUpdates();
+    };
+
+    componentWillUnmount() {
+        clearTimeout(this.watcherTimerId);
+    }
 
     setUser = (user) => {
         this.setState({user});
         if (this.state.app && user) {
-            this.setFilter({active_user_filter: {name: user.profile.name, email: user.profile.email}});
+            this.setFilter({
+                active_user_filter: {
+                    name: user.profile.name,
+                    email: user.profile.email
+                }
+            });
             const dbCollection = user
                 .mongoClient(REALM_SERVICE_NAME)
                 .db(REALM_DATABASE_NAME)
@@ -116,17 +142,6 @@ export default class ContextContainer extends React.Component {
             this.setState({fcstCollection});
         }
     };
-
-    // TODO: deprecated functionality
-    // anonymousSignIn = async () => {
-    //     const credentials = Realm.Credentials.anonymous();
-    //     try {
-    //         const user = await this.state.app.logIn(credentials);
-    //         this.setUser(user);
-    //     } catch (err) {
-    //         console.error(err);
-    //     }
-    // };
 
     googleHandleRedirect = async () => {
         Realm.handleAuthRedirect();
@@ -141,21 +156,6 @@ export default class ContextContainer extends React.Component {
             console.error(err);
         }
     };
-
-    // TODO: deprecated functionality
-    // onGoogleSuccessSignIn = (response) => {
-    //     const credentials = Realm.Credentials.google(response.code);
-    //     this.state.app.logIn(credentials).then(user => {
-    //         console.log(`Logged in with id: ${user.id}`);
-    //         this.setUser(user);
-    //     }).catch(err => {
-    //         console.error('onGoogleSuccessSignIn:', err);
-    //     });
-    // };
-
-    // onGoogleSignInFailure = (response) => {
-    //     console.error('onGoogleSignInFailure:', response);
-    // }
 
     getUserAccessToken = async () => {
         await this.state.app.currentUser.refreshCustomData();
@@ -192,9 +192,19 @@ export default class ContextContainer extends React.Component {
         this.setState({hasMoreProjects});
     }
 
-    setProjectsTotalCount = async () => {
-        const {findProjects} = this.state.user.functions;
-        const fetchedData = await findProjects({filter: this.state.filter,count_only: true});
+    getSortOrder = () => {
+        const {field, order} = this.state.sort;
+        return {field, order: order === 'DESC' ? -1 : 1};
+    }
+
+    fetchProjectsTotalCount = async () => {
+        const {user, filter} = this.state;
+        const {findProjects} = user.functions;
+        const fetchedData = await findProjects({
+            filter,
+            sort: this.getSortOrder(),
+            count_only: true
+        });
         if (fetchedData && fetchedData.length) {
             const {name: projectsTotalCount} = fetchedData[0];
             this.setState({projectsTotalCount});
@@ -241,9 +251,62 @@ export default class ContextContainer extends React.Component {
         this.setState({isEditing});
     }
 
+    watchForUpdates = async () => {
+        if (this.watcherTimerId) clearTimeout(this.watcherTimerId);
+        await this.watcher();
+        this.watcherTimerId = setTimeout(
+            this.watchForUpdates,
+            WATCHER_TIMEOUT
+        );
+    } 
+
     watcher = async () => {
-        if (!this.state.dbCollection) return;
-        if (!this.state.user || !this.state.app.currentUser) return;
+        const {dbCollection, user, app} = this.state;
+        if (!dbCollection || !user || !app.currentUser) return;
+
+        let {
+            projects, projectWithCurrentMilestone,
+            hasMoreProjects, pagination
+        } = this.state;
+
+        // Action on update or replace event
+        const onUpdateOperation = (updatedDocument) => {
+            const {_id} = updatedDocument;
+            let wasProjectUpdated = false;
+            projects = projects.map(project => {
+                if (project._id === _id) {
+                    wasProjectUpdated = true;
+                    return updatedDocument;
+                }
+                return project;
+            });
+
+            if (wasProjectUpdated) {
+                this.setProjects(projects);
+                if (
+                    projectWithCurrentMilestone &&
+                    projectWithCurrentMilestone._id === _id
+                ) {
+                    this.setProjectWithCurrentMilestone({
+                        ...projectWithCurrentMilestone,
+                        project: updatedDocument
+                    });
+                }
+            }
+        };
+
+        // Action on insert event
+        const onInsertOperation = async (insertedDocument) => {
+            await this.fetchProjectsTotalCount();
+            if (hasMoreProjects) return;
+            const {limit} = pagination;
+            const isFullPage = !Boolean(projects.length % limit);
+            if (isFullPage) {
+                this.setHasMoreProjects(true);
+                return;
+            }
+            projects.push(insertedDocument);
+        }
 
         for await (let event of this.state.dbCollection.watch()) {
             const {clusterTime, operationType, fullDocument} = event;
@@ -253,36 +316,27 @@ export default class ContextContainer extends React.Component {
                 fullDocument
             ) {
                 this.lastUpdateTime = clusterTime;
-
-                let {projects, projectWithCurrentMilestone, hasMoreProjects, pagination} = this.state;
-                let newProjectWithMilestone = null;
-
-                if (operationType === 'replace' || operationType === 'update') {
-                    const {_id} = event.fullDocument;
-                    projects = projects.map(
-                        p => (p._id === _id) ? event.fullDocument : p
-                    );
-                    if (projectWithCurrentMilestone && projectWithCurrentMilestone.project._id === _id)
-                        newProjectWithMilestone = {...projectWithCurrentMilestone,project: event.fullDocument}
-
-                } else if (operationType === 'insert') {
-                    if (hasMoreProjects) return;
-                    const {limit} = pagination;
-                    const isFullPage = !Boolean(projects.length % limit);
-                    isFullPage
-                        ? this.setState({hasMoreProjects: true})
-                        : projects.push(event.fullDocument);
-                }
-
-                this.setState({projects});
-                if (newProjectWithMilestone)
-                    this.setProjectWithCurrentMilestone(newProjectWithMilestone);
+                switch(operationType) {
+                    case 'replace':
+                    case 'update':
+                        onUpdateOperation(fullDocument);
+                        break;
+                    case 'insert':
+                        onInsertOperation(fullDocument);
+                        break;
+                    default:
+                        break;
+                };
             }
         }
     }
 
     getActiveUserFilter = () => {
-        return {email: this.state.user.profile.email, name: this.state.user.profile.name};
+        const {profile} = this.state.user;
+        return {
+            email: profile.email, 
+            name: profile.name
+        };
     }
 
     render() {
