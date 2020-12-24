@@ -24,14 +24,14 @@ export default function MainPage() {
                 count_only: false
             }
         }
-    };
+    }
 
     const isMoreProjects = projects => projects && projects.length >= limit + 1;
 
     const [fetchProjects] = useLazyQuery(
         FIND_PROJECTS,
         {
-            ...queryOptions,
+            queryOptions,
             onCompleted: data => {
                 const {psprojectsData} = data;
                 const psprojects = [...psprojectsData];

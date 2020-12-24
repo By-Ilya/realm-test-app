@@ -211,6 +211,13 @@ export default class ContextContainer extends React.Component {
         }
     }
 
+    getSortOrder = () => {
+        const {sort} = this.state;
+        const {field, order} = sort;
+
+        return {field, order: order === 'DESC' ? -1 : 1};
+    }
+
     cleanLocalProjects = async () => {
         this.setState({
             projects: [],
