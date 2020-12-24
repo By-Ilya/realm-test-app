@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 
 import SimpleTable from "../common/SimpleTable";
 import SimpleETable from "../common/SimpleETable";
+import DocumentsTable from "../common/DocumentsTable";
 import EditableCellTable from "../common/EditableCellTable";
 import ContactsTable from "../common/ContactsTable";
 import {
@@ -10,6 +11,7 @@ import {
     generateScheduleTableData,
     generateForecastTableData,
     generateContactsTableData,
+    generateDocumentsTableData
 } from "../common/helpers/generateTablesData";
 import {
     custMailParams,
@@ -24,7 +26,7 @@ MilestonesInfo.propTypes = {
 
 export default function MilestonesInfo(props) {
     const {classes, project} = props;
-    const {dbCollection, fcstCollection, user} = useContext(RealmContext);
+    const {dbCollection, fcstCollection, setProjectWithCurrentMilestone, user} = useContext(RealmContext);
 
     const onClickPMStageButton = async (project) => {
         var origEmail = user.profile.email,
@@ -69,9 +71,40 @@ export default function MilestonesInfo(props) {
         contactsTableRows
     } = generateContactsTableData(project);
 
+    const {
+        documentsTableColumns,
+        documentsTableRows
+    } = generateDocumentsTableData(project);
+
     const handleUpdateRow = async ({updateKey, value}) => {
-        const query = {_id: project._id};
+        const query = {_id: project._id, 'milestones._id':project.currentMilestone._id};
         const update = {'$set': {[updateKey]: value}};
+        const options = {'upsert': false};
+        await dbCollection.updateOne(query, update, options);
+    }
+
+    const handleUpdateDocumentsRow = async ({doc, isVirtual}) => {
+        if (isVirtual) { //we updated a virtual row
+            await handleAddDocumentsRow({doc})
+            return;
+        }
+
+        const query = {_id: project._id, 'documents._id':doc._id};
+        const update = {'$set': {'documents.$.name':doc.name, 'documents.$.url':doc.url},'$unset': {'documents.$.url_name':1}};
+        const options = {'upsert': false};
+        await dbCollection.updateOne(query, update, options);
+    }
+
+   const handleAddDocumentsRow = async ({doc}) => {
+        const query = {_id: project._id};
+        const update = {'$push': {'documents':{name:doc.name, url: doc.url, _id: doc._id}}};
+        const options = {'upsert': false};
+        await dbCollection.updateOne(query, update, options);
+    }
+
+   const handleDeleteDocumentsRow = async ({doc}) => {
+        const query = {_id: project._id};
+        const update = {'$pull': {'documents':{_id:doc._id}}};
         const options = {'upsert': false};
         await dbCollection.updateOne(query, update, options);
     }
@@ -81,6 +114,20 @@ export default function MilestonesInfo(props) {
         const update = {'$set': {[updateKey]: value}};
         const options = {'upsert': true};
         await fcstCollection.updateOne(query, update, options);
+
+        //refresh the forecast data
+        var forecast = await user.functions.getMilestoneForecast(project.currentMilestone._id);
+        setProjectWithCurrentMilestone({
+            project: project,
+            milestone: project.currentMilestone,
+            forecast: forecast
+        });
+    }
+
+    const handleUpdateForecastCheckbox = async (event) => {
+        const query = {_id: project._id};
+        const update = {'$set': {monthly_forecast_done: event.target.checked}};
+        dbCollection.updateOne(query, update);
     }
 
     return (<>
@@ -91,6 +138,17 @@ export default function MilestonesInfo(props) {
                 currentColumns={milestonesTableColumns}
                 currentData={milestonesTableRows}
                 onUpdate={handleUpdateRow}
+            />
+        </div>}
+        {documentsTableRows.length !== 0 && <div className={classes.tableContainer}>
+            <DocumentsTable
+                projectId={project._id}
+                tableName='Documents'
+                currentColumns={documentsTableColumns}
+                currentData={documentsTableRows}
+                onUpdate={handleUpdateDocumentsRow}
+                onAdd={handleAddDocumentsRow}
+                onDelete={handleDeleteDocumentsRow}
             />
         </div>}
         {<div className={classes.tableContainer}>
@@ -118,6 +176,8 @@ export default function MilestonesInfo(props) {
                 currentColumns={forecastTableColumns}
                 currentData={forecastTableRows}
                 onUpdate={handleUpdateForecast}
+                onCheckboxUpdate={handleUpdateForecastCheckbox}
+                checkboxValue={project.monthly_forecast_done ? true : false}
             />
         </div>}
     </>)

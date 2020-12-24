@@ -9,6 +9,8 @@ import List from "@material-ui/core/List";
 import ListSubheader from "@material-ui/core/ListSubheader";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
+import LinearProgress from '@material-ui/core/LinearProgress';
+import Box from "@material-ui/core/Box";
 
 import {RealmContext} from "../../context/RealmContext";
 import {toDateOnly} from "../../helpers/dateFormatter";
@@ -50,18 +52,10 @@ export default function ProjectCard(props) {
     const handleOnClickMilestone = async (milestone) => {
         var schedule = await user.functions.getMilestoneScheduleOnwards(milestone._id);
         var forecast = await user.functions.getMilestoneForecast(milestone._id);
-        ///HACK GRAPHQL BUG
-        var proj = await dbCollection.findOne({"milestones._id" : milestone._id});
-        var ms_real = proj.milestones.filter(ms => {
-          return ms._id === milestone._id
-        })[0]
-        //console.log(ms_real)
-        ///
+
         setProjectWithCurrentMilestone({
-            // projectId: psproject._id,
-            // milestoneId: milestone._id
             project: psproject,
-            milestone: {...ms_real, schedule},
+            milestone: {...milestone, schedule},
             forecast: forecast
         });
     }
@@ -103,6 +97,9 @@ export default function ProjectCard(props) {
 
     return (
         <Card className={classes.root}>
+            <LinearProgress variant="buffer" 
+                value={100*(1-psproject.summary.gap_hours/psproject.summary.planned_hours)} 
+                valueBuffer={100*(1-psproject.summary.backlog_hours/psproject.summary.planned_hours)} />
             <CardContent>
                 <div className={classes.info}>
                     <div className={classes.leftInfo}>
@@ -118,7 +115,7 @@ export default function ProjectCard(props) {
                 </div>
 
                 <Typography variant="h5" component="h2">
-                    {psproject.name}
+                    {psproject.custom_name ? psproject.custom_name : psproject.name}
                 </Typography>
 
                 <div className={classes.info}>
@@ -163,7 +160,14 @@ function MilestonesList(props) {
             {milestones && milestones.map(milestone => {
                 return (
                     <ListItem button onClick={() => onClickMilestone(milestone)} key={milestone._id}>
-                        <ListItemText primary={milestone.name} />
+                          <Box
+                            textAlign="left"
+                            style={{ paddingRight: 5 }}
+                          >
+                            {milestone.custom_name ? milestone.custom_name : milestone.name} 
+                          </Box>
+                        <ListItemText secondaryTypographyProps={{ align: "right" }}
+                        secondary={`${Math.round(100*milestone.summary.delivered_hours/milestone.summary.planned_hours)}%`} />
                     </ListItem>
                 )
             })}

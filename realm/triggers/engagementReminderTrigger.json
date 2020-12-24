@@ -1,0 +1,9 @@
+{
+    "name": "engagementReminderTrigger",
+    "type": "SCHEDULED",
+    "config": {
+        "schedule": "0 13 * * *"
+    },
+    "function_name": "engagementReminder",
+    "disabled": false
+}

@@ -28,6 +28,9 @@
                     "limit": {
                         "bsonType": "int"
                     },
+                    "monthly_forecast_done": {
+                        "bsonType": "bool"
+                    },
                     "name": {
                         "bsonType": "string"
                     },

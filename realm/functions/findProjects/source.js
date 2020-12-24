@@ -17,7 +17,7 @@ exports = async function findProjects({filter, sort, count_only}) {
   const psprojectCollection = cluster.db("shf").collection("psproject");
   const userdataCollection = cluster.db("shf").collection("userdata");
   
-  const {active, name, region, owner, project_manager, active_user_filter, pm_stage, limit} = filter;
+  const {active, name, region, owner, project_manager, active_user_filter, pm_stage, limit, monthly_forecast_done} = filter;
   
   let matchData = {};
   if (active) matchData = {...matchData, "details.pm_stage" : {$nin : ["Closed","Cancelled"] }, active };
@@ -41,6 +41,11 @@ exports = async function findProjects({filter, sort, count_only}) {
       names = [active_user_filter.name];
         
     matchData = {...matchData, "$or" : [{owner : {$in : names}},{project_manager: {$in : names}},{ps_ops_resource: {$in : names}}]};
+  }
+  if (monthly_forecast_done === true) {
+    matchData = {...matchData, "monthly_forecast_done" : true};
+  } else if (monthly_forecast_done === false) {
+    matchData = {...matchData, "monthly_forecast_done" : {$ne: true}};
   }
   
   var agg_pipeline = [];

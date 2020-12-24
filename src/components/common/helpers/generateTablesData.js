@@ -16,7 +16,8 @@ export function generateMilestoneTableData(project, onClickPMStageButton) {
         _id,
         owner, region,
         project_manager,
-        account, name,
+        account, 
+        name, custom_name,
         account_id,
         opportunity, details,
         survey_sent,
@@ -51,16 +52,66 @@ export function generateMilestoneTableData(project, onClickPMStageButton) {
         },
         {name: 'Account', value: account, link: generateSFLink(account_id), editable: false},
         {name: 'Opportunity', value: opportunity.name, link: generateSFLink(opportunity._id), editable: false},
-        {name: 'PS Project Name', value: name, link: generateSFLink(_id), editable: false},
-        {name: 'Milestone Name', value: currentMilestone.name, link: generateSFLink(currentMilestone._id), editable: false},
+        {name: 'PS Project Name', 
+            value: custom_name ? custom_name : name, 
+            link: generateSFLink(_id), 
+            editable: true,
+            tableKey: 'value',
+            updateKey: 'custom_name'
+        },
+        {name: 'Milestone Name', 
+            value: currentMilestone.custom_name ? currentMilestone.custom_name : currentMilestone.name, 
+            link: generateSFLink(currentMilestone._id), 
+            editable: true,
+            tableKey: 'value',
+            updateKey: 'milestones.$.custom_name'
+        },
         {name: 'Country', value: currentMilestone.country, editable: false},
         {name: 'Milestone amount', value: currentMilestone.details.milestone_amount, editable: false},
         {name: 'Bill rate', value: currentMilestone.details.bill_rate, editable: false},
+        {name: 'Planned Hours', value: currentMilestone.summary.planned_hours, editable: false},
         {name: 'Gap Hours', value: currentMilestone.summary.gap_hours, editable: false},
         {name: 'Unscheduled Hours', value: currentMilestone.summary.unscheduled_hours, editable: false},
     ]
 
     return {milestonesTableColumns, milestonesTableRows}
+}
+
+export function generateDocumentsTableData(project) {
+    if (!project) return {
+        documentsTableColumns: [],
+        documentsTableRows: []
+    };
+
+    const {
+        documents
+    } = project;
+
+    const documentsTableColumns = [
+        {title: 'Name', field: 'name', editable: 'always'},
+        {title: 'Link', field: 'url', editable: 'always',
+        render: rowData => {
+                if (rowData.url)
+                    return <a href={rowData.url} target = "_blank" rel = "noopener noreferrer">{rowData.url_name ? rowData.url_name : rowData.url}</a>;
+                
+                return rowData.url;
+             }
+        }
+    ];
+
+    const documentsTableRows = [];
+
+    if (documents && documents.length > 0) {
+        for(let i in documents) {
+            documentsTableRows.push({...documents[i], editable: true})
+        }
+    } else
+        documentsTableRows.push({
+                    name:"Report",
+                    editable:true
+                });
+
+    return {documentsTableColumns, documentsTableRows}
 }
 
 export function generateContactsTableData(project) {

@@ -7,6 +7,7 @@ export const FIND_PROJECTS = gql`
             account
             account_id
             active
+            monthly_forecast_done
             details {
                 pm_stage
                 pm_project_status
@@ -18,11 +19,17 @@ export const FIND_PROJECTS = gql`
                 engagement_manager
                 _id
             }
+            summary {
+                backlog_hours
+                gap_hours
+                planned_hours
+            }
             milestones {
                 _id
                 country
                 currency
                 name
+                custom_name
                 summary {
                     planned_hours
                     sold_hours
@@ -38,7 +45,14 @@ export const FIND_PROJECTS = gql`
                     delivered_amount
                 }
             }
+            documents {
+                _id
+                name
+                url
+                url_name
+            }
             name
+            custom_name
             owner
             project_manager
             region

@@ -1,0 +1,22 @@
+{
+    "name": "updateProjectTrigger",
+    "type": "DATABASE",
+    "config": {
+        "operation_types": [
+            "UPDATE"
+        ],
+        "database": "shf",
+        "collection": "psproject",
+        "service_name": "mongodb-atlas",
+        "match": {
+            "updateDescription.updatedFields": {
+                "details.pm_stage": "Closed"
+            }
+        },
+        "project": {},
+        "full_document": true,
+        "unordered": false
+    },
+    "function_name": "projectOnClose",
+    "disabled": false
+}

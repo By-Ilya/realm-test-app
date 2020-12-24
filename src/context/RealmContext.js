@@ -23,7 +23,8 @@ const DEFAULT_FILTER = {
     name: '',
     active: true,
     active_user_filter: null,
-    pm_stage: ''
+    pm_stage: '',
+    monthly_forecast_done: null
 }
 const DEFAULT_SORT = {
     field: 'details.pm_stage_sortid',

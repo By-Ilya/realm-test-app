@@ -6,6 +6,9 @@ import generateTableIcons from "./helpers/TableIcons";
 import {getThisMonth,getNextMonth} from "../../helpers/date-util";
 import {RealmContext} from "../../context/RealmContext";
 import {getCallFromThree} from "../../helpers/forecast-util";
+import Checkbox from '@material-ui/core/Checkbox';
+import Typography from "@material-ui/core/Typography";
+import Box from "@material-ui/core/Box";
 
 EditableCellTable.propTypes = {
     projectId: PropTypes.string.isRequired,
@@ -20,7 +23,9 @@ export default function EditableCellTable(props) {
     const {
         projectId, tableName,
         currentColumns, currentData,
-        onUpdate
+        onUpdate,
+        checkboxValue,
+        onCheckboxUpdate
     } = props;
 
     const {isEditing, setIsEditing} = useContext(RealmContext);
@@ -40,7 +45,18 @@ export default function EditableCellTable(props) {
 
     return (
         <MaterialTable
-            title={tableName}
+            title= <Box display='flex' alignItems="center"> 
+                        <Typography
+                          variant="h6"
+                          style={{
+                            whiteSpace: "nowrap",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                          }}>
+                            {tableName}
+                        </Typography>
+                        <Checkbox checked={checkboxValue} onChange={onCheckboxUpdate}/> 
+                    </Box>
             icons={generateTableIcons({onClickEditButton})}
             columns={columns}
             data={data}
