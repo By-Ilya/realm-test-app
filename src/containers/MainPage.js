@@ -31,7 +31,7 @@ export default function MainPage() {
     const [fetchProjects] = useLazyQuery(
         FIND_PROJECTS,
         {
-            queryOptions,
+            ...queryOptions,
             onCompleted: data => {
                 const {psprojectsData} = data;
                 const psprojects = [...psprojectsData];
