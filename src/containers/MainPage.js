@@ -10,25 +10,21 @@ export default function MainPage() {
     const {
         setProjects, setHasMoreProjects,
         setLoadProcessing, cleanLocalProjects,
-        filter, sort, pagination, watcher,
+        filter, getSortOrder, pagination,
         setMoreProjectsLoadProcessing,
-        setProjectsTotalCount
+        fetchProjectsTotalCount
     } = useContext(RealmContext);
-
-    const getSortOrder = () => {
-        const {field, order} = sort;
-        return {field, order: order === 'DESC' ? -1 : 1};
-    }
 
     const {limit} = pagination;
     const queryOptions = {
         variables: {
             filtersInput: {
                 filter: {...filter, limit },
-                sort: getSortOrder()
+                sort: getSortOrder(),
+                count_only: false
             }
         }
-    };
+    }
 
     const isMoreProjects = projects => projects && projects.length >= limit + 1;
 
@@ -37,7 +33,6 @@ export default function MainPage() {
         {
             ...queryOptions,
             onCompleted: data => {
-                setProjectsTotalCount(filter);
                 const {psprojectsData} = data;
                 const psprojects = [...psprojectsData];
                 if (isMoreProjects(psprojects)) {
@@ -49,6 +44,7 @@ export default function MainPage() {
                 setProjects(psprojects);
                 setLoadProcessing(false);
                 setMoreProjectsLoadProcessing(false);
+                fetchProjectsTotalCount();
             },
             onError: error => {
                 console.error(error);
@@ -62,14 +58,8 @@ export default function MainPage() {
 
     const fetchProjectsByTrigger = async ({needToClean}) => {
         needToClean && await cleanLocalProjects();
-        await fetchProjects();
-    }
-
-    let timerId = setTimeout(async function watchForUpdates() {
-        timerId && clearTimeout(timerId);
-        await watcher();
-        timerId = setTimeout(watchForUpdates, 5000);
-    }, 5000);
+        fetchProjects();
+    };
 
     return (<>
         <TopPanel fetchProjects={fetchProjectsByTrigger} />

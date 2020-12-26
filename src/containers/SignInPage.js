@@ -41,11 +41,9 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 SignInPage.propTypes = {
-    googleClientId: PropTypes.string.isRequired,
     appName: PropTypes.string.isRequired,
     copyrightLink: PropTypes.string.isRequired,
-    onSuccess: PropTypes.func.isRequired,
-    onFailure: PropTypes.func.isRequired,
+    googleSignIn: PropTypes.func.isRequired,
     signInError: PropTypes.string
 }
 
@@ -79,31 +77,6 @@ export default function SignInPage(props) {
                         type="light"
                         onClick={googleSignIn}
                     />
-
-                    {/* TODO: disabled, not actual */}
-                    {/*<Button*/}
-                    {/*    type="submit"*/}
-                    {/*    variant="contained"*/}
-                    {/*    color="primary"*/}
-                    {/*    className={classes.submit}*/}
-                    {/*    onClick={anonymousSignIn}*/}
-                    {/*    disabled={true}*/}
-                    {/*>*/}
-                    {/*    Anonymous user*/}
-                    {/*</Button>*/}
-
-                    {/* TODO: disabled due to not working */}
-                    {/*<div className={classes.signInForm}>*/}
-                    {/*    <GoogleLogin*/}
-                    {/*        clientId={googleClientId}*/}
-                    {/*        buttonText="Sign in with Google"*/}
-                    {/*        onSuccess={onSuccess}*/}
-                    {/*        onFailure={onFailure}*/}
-                    {/*        scope={'email profile'}*/}
-                    {/*        responseType={'code'}*/}
-                    {/*        disabled={true}*/}
-                    {/*    />*/}
-                    {/*</div>*/}
                 </div>
 
                 {signInError && <div className={classes.errorBox}>
