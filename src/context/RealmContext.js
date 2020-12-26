@@ -203,7 +203,6 @@ export default class ContextContainer extends React.Component {
         const {findProjects} = user.functions;
         const fetchedData = await findProjects({
             filter,
-            sort: this.getSortOrder(),
             count_only: true
         });
         if (fetchedData && fetchedData.length) {
@@ -272,13 +271,12 @@ export default class ContextContainer extends React.Component {
         const {dbCollection, user, app} = this.state;
         if (!dbCollection || !user || !app.currentUser) return;
 
-        let {
-            projects, projectWithCurrentMilestone,
-            hasMoreProjects, pagination
-        } = this.state;
-
         // Action on update or replace event
         const onUpdateOperation = (updatedDocument) => {
+            let {
+                projects, projectWithCurrentMilestone,
+            } = this.state;
+
             const {_id} = updatedDocument;
             let wasProjectUpdated = false;
             projects = projects.map(project => {
@@ -293,7 +291,7 @@ export default class ContextContainer extends React.Component {
                 this.setProjects(projects);
                 if (
                     projectWithCurrentMilestone &&
-                    projectWithCurrentMilestone._id === _id
+                    projectWithCurrentMilestone.project._id === _id
                 ) {
                     this.setProjectWithCurrentMilestone({
                         ...projectWithCurrentMilestone,
@@ -306,6 +304,12 @@ export default class ContextContainer extends React.Component {
         // Action on insert event
         const onInsertOperation = async (insertedDocument) => {
             await this.fetchProjectsTotalCount();
+
+            let {
+                projects,
+                hasMoreProjects, pagination
+            } = this.state;
+
             if (hasMoreProjects) return;
             const {limit} = pagination;
             const isFullPage = !Boolean(projects.length % limit);
