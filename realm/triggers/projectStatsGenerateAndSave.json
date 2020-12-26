@@ -1,0 +1,9 @@
+{
+    "name": "projectStatsGenerateAndSave",
+    "type": "SCHEDULED",
+    "config": {
+        "schedule": "0 3/24 * * *"
+    },
+    "function_name": "projectStatsGenerateAndSave",
+    "disabled": false
+}

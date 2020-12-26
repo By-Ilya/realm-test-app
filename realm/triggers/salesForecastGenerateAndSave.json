@@ -1,0 +1,9 @@
+{
+    "name": "salesForecastGenerateAndSave",
+    "type": "SCHEDULED",
+    "config": {
+        "schedule": "0 3/24 * * *"
+    },
+    "function_name": "salesForecastGenerateAndSave",
+    "disabled": false
+}
