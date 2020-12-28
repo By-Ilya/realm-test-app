@@ -293,9 +293,23 @@ export default class ContextContainer extends React.Component {
                     projectWithCurrentMilestone &&
                     projectWithCurrentMilestone.project._id === _id
                 ) {
+                    let ms = projectWithCurrentMilestone.milestone;
+                    let pr = updatedDocument;
+                    let schedule = projectWithCurrentMilestone.milestone.schedule;
+                    if (ms)
+                        for(let i in pr.milestones) {
+                            if (projectWithCurrentMilestone.milestone._id === pr.milestones[i]._id) {
+                                ms = pr.milestones[i];
+                                break;
+                            }
+                        }
+
+                    ms.schedule = schedule;
+
                     this.setProjectWithCurrentMilestone({
                         ...projectWithCurrentMilestone,
-                        project: updatedDocument
+                        project: pr,
+                        milestone: ms
                     });
                 }
             }
