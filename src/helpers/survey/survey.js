@@ -32,7 +32,7 @@ import { custMessageHTMLBody, ceMessageHTMLBody } from "./MessageTemplate";
 
 export function custMailParams(origEmail,custName,custEmail,projectId) {
   var toEmail = custEmail, 
-      subject = "Thank you",
+      subject = "Help us improve",
       html = custMessageHTMLBody(custName, custEmail, projectId);
   return {origEmail, toEmail, subject, html}
 }
