@@ -115,37 +115,44 @@ export function generateDocumentsTableData(project) {
 }
 
 export function generateSurveyTableData(project) {
-    console.log(JSON.stringify(project.survey_responses));
-    //if (!project) return {
-    return {
+    if (!project || !project.survey_responses) return {
         surveyTableColumns: [],
         surveyTableRows: []
     };
 
-    // const {currentMilestone} = project;
+    const surveyTableColumns = [
+        {title: 'Name', field: 'name', editable: 'never'},
+        {title: 'Questions', field: 'questions', editable: 'never',
+            render: rowData => {
+                return <table>
+                          { rowData.questions.map(q => (
+                            <tr>
+                                <td>{q.text}</td>
+                                <td>{q.score}</td>
+                            </tr>
+                          )) }
+                        </table>;
+             }
+        }
+    ];
+    const surveyTableRows = project.survey_responses.map(r => {
+        // let qs = "";
 
-    // const scheduleTableColumns = [
-    //     {title: 'Date', field: 'date', editable: 'never'},
-    //     {title: 'Scheduled', field: 'scheduled', editable: 'never'},
-    //     {title: 'Hours', field: 'hours', editable: 'never',
-    //         render: rowData => (rowData.hours_nonbillable == 0) 
-    //                             ? rowData.hours 
-    //                             : `${rowData.hours} (${rowData.hours_nonbillable} NB)`
-    //     },
-    //     {title: 'Resource(s)', field: 'resources', editable: 'never'}
-    // ];
-    // const scheduleTableRows = currentMilestone.schedule.map(s => {
-    //     return {
-    //         date: toDateOnly(s.week),
-    //         scheduled: s.revenue ? `$ ${s.revenue.toFixed(0)}` : '-',
-    //         hours: s.hours ? s.hours : '-',
-    //         resources: s.resources.join(','),
-    //         hours_nonbillable: s.hours_nonbillable ? s.hours_nonbillable : 0,
-    //         editable: false
-    //     };
-    // });
+        // r.questions.map(q => {
+        //     if (qs !== "")
+        //         qs += "\n";
 
-    // return {surveyTableColumns, surveyTableRows}
+        //     qs += q.text + "\n" + q.score;
+        // });
+
+        return {
+            name: r.survey,
+            questions: r.questions,
+            editable: false
+        };
+    });
+
+    return {surveyTableColumns, surveyTableRows}
 }
 
 export function generateContactsTableData(project) {
