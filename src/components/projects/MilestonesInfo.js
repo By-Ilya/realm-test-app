@@ -11,7 +11,8 @@ import {
     generateScheduleTableData,
     generateForecastTableData,
     generateContactsTableData,
-    generateDocumentsTableData
+    generateDocumentsTableData,
+    generateSurveyTableData
 } from "../common/helpers/generateTablesData";
 import {
     custMailParams,
@@ -60,6 +61,11 @@ export default function MilestonesInfo(props) {
         scheduleTableColumns,
         scheduleTableRows
     } = generateScheduleTableData(project);
+
+    const {
+        surveyTableColumns,
+        surveyTableRows
+    } = generateSurveyTableData(project);
 
     const {
         forecastTableColumns,
@@ -158,6 +164,14 @@ export default function MilestonesInfo(props) {
                 currentColumns={contactsTableColumns}
                 currentData={contactsTableRows}
                 onUpdate={handleUpdateRow}
+            />
+        </div>}
+        {surveyTableRows.length !== 0 && <div className={classes.tableContainer}>
+            <SimpleTable
+                projectId={project._id}
+                tableName='Survey Responses'
+                currentColumns={surveyTableColumns}
+                currentData={surveyTableRows}
             />
         </div>}
         {scheduleTableRows.length !== 0 && <div className={classes.tableContainer}>

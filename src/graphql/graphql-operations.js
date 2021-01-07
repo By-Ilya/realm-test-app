@@ -72,6 +72,18 @@ export const FIND_PROJECTS = gql`
                 s
                 e
             }
+            survey_responses {
+              date
+              email
+              name
+              projectId
+              survey
+              questions {
+                score
+                score_value
+                text
+              }
+            }
         }
     }
 `;
