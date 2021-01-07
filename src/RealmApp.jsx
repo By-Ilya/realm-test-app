@@ -15,7 +15,16 @@ export default function RealmApp() {
     const appRef = useRef(app);
 
     useEffect(() => {
-        setUser(app.currentUser);
+        try {
+            if (app.currentUser)
+                app.currentUser.refreshProfile();
+            setUser(app.currentUser);
+        } catch(err) {
+            if (err.statusCode === 401)
+                console.log("The user session has been invalidated");
+            else
+                console.log("Unexpected error", err)
+        }
     }, [appRef.current.currentUser]);
 
     return (
