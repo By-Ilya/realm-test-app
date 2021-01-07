@@ -1,9 +1,24 @@
 import {toDateOnly} from "../../../helpers/dateFormatter";
 import {convertForecastIntoRows} from "../../../helpers/forecast-util";
 import React, { Component } from 'react';
+import {
+  projectHasCESurvey,
+  projectHasCustSurvey
+} from "../../../helpers/project-util";
 
 function generateSFLink(id) {
     return "https://mongodb.my.salesforce.com/" + id;
+}
+
+function projectNeedsSurveys(project) {
+    var contacts = project.contacts,
+        custEmail = (contacts && contacts.customer) ? contacts.customer.email : null,
+        ceEmail = (contacts && contacts.ce) ? contacts.ce.email : null;
+
+    if (!project.survey_sent)
+        return true;
+
+    return (!projectHasCustSurvey(project,custEmail) || !projectHasCESurvey(project,ceEmail));
 }
 
 export function generateMilestoneTableData(project, onClickPMStageButton) {
@@ -20,7 +35,6 @@ export function generateMilestoneTableData(project, onClickPMStageButton) {
         name, custom_name,
         account_id,
         opportunity, details,
-        survey_sent,
         currentMilestone
     } = project;
 
@@ -46,7 +60,7 @@ export function generateMilestoneTableData(project, onClickPMStageButton) {
             name: 'PM Stage',
             value: details.pm_stage,
             editable: true,
-            survey_sent: survey_sent,
+            survey_sent: !projectNeedsSurveys(project),
             tableKey: 'value',
             updateKey: 'details.pm_stage'
         },

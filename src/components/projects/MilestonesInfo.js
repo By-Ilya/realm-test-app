@@ -18,6 +18,10 @@ import {
     custMailParams,
     ceMailParams
 } from "../../helpers/survey/survey";
+import {
+  projectHasCESurvey,
+  projectHasCustSurvey
+} from "../../helpers/project-util";
 import {RealmContext} from "../../context/RealmContext";
 
 MilestonesInfo.propTypes = {
@@ -44,8 +48,10 @@ export default function MilestonesInfo(props) {
         }
         //console.log(custMailParams(origEmail,custName,custEmail,projectId))
         //console.log(ceMailParams(origEmail,ceName,ceEmail,projectId))
-        await user.callFunction("sendMail",custMailParams(origEmail,custName,custEmail,projectId));
-        await user.callFunction("sendMail",ceMailParams(origEmail,ceName,ceEmail,projectId));
+        if (!projectHasCustSurvey(project,custEmail))
+            await user.callFunction("sendMail",custMailParams(origEmail,custName,custEmail,projectId));
+        if (!projectHasCESurvey(project,ceEmail))
+            await user.callFunction("sendMail",ceMailParams(origEmail,ceName,ceEmail,projectId));
 
         await dbCollection.updateOne({_id: project._id},{$set:{survey_sent:true, survey_sent_ts: new Date()}});
 
