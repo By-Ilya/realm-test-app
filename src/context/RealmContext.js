@@ -260,7 +260,12 @@ export default class ContextContainer extends React.Component {
 
     watchForUpdates = async () => {
         if (this.watcherTimerId) clearTimeout(this.watcherTimerId);
-        await this.watcher();
+        try {
+            await this.watcher();
+        } catch(err) {
+            console.log("Watcher exception", err)
+        }
+        
         this.watcherTimerId = setTimeout(
             this.watchForUpdates,
             WATCHER_TIMEOUT
