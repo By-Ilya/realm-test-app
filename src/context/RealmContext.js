@@ -107,7 +107,8 @@ export default class ContextContainer extends React.Component {
             setDefaultPagination: this.setDefaultPagination,
             setProjectWithCurrentMilestone: this.setProjectWithCurrentMilestone,
             setIsEditing: this.setIsEditing,
-            getActiveUserFilter: this.getActiveUserFilter
+            getActiveUserFilter: this.getActiveUserFilter,
+            requestSync: this.requestSync
         };
 
         this.lastUpdateTime = null;
@@ -256,6 +257,10 @@ export default class ContextContainer extends React.Component {
 
     setIsEditing = (isEditing) => {
         this.setState({isEditing});
+    }
+
+    requestSync = async () => {
+        //TODO: Put code here
     }
 
     watchForUpdates = async () => {
