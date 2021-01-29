@@ -262,7 +262,7 @@ export default class ContextContainer extends React.Component {
     requestSync = async () => {
         const {user, app} = this.state;
         if (!user || !app.currentUser) return;
-        await user.callFunction("requestSync");
+        await user.callFunction("requestSync",{origin:"user"});
     }
 
     watchForUpdates = async () => {
