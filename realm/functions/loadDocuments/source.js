@@ -1,4 +1,4 @@
-exports = function(col_name, arr){
+exports = async function(col_name, arr){
   /*
     Accessing application's values:
     var x = context.values.get("value_name");
@@ -60,9 +60,13 @@ exports = function(col_name, arr){
   
   var col = context.services.get("mongodb-atlas").db("shf").collection(col_name);
   var batch = col.initializeOrderedBulkOp();
+  console.log("AAA: " + new Date());
   for (var i in arr) {
     //batch.find({_id:arr[i]._id}).upsert().replaceOne(arr[i]); //need to do a smart update and populate the changeset
     batch.find({_id:arr[i]._id}).upsert().updateOne(createUpdateStatement(arr[i]));
   }
-  return batch.execute();
+  console.log("BBB: " + new Date());
+  var res = await batch.execute();
+  console.log("CCC: " + new Date());
+  return res;
 };

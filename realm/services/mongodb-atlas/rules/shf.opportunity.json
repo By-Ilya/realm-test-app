@@ -12,5 +12,113 @@
             "additional_fields": {}
         }
     ],
-    "schema": {}
+    "schema": {
+        "properties": {
+            "SystemModstamp": {
+                "bsonType": "date"
+            },
+            "_id": {
+                "bsonType": "string"
+            },
+            "account": {
+                "bsonType": "object",
+                "properties": {
+                    "_id": {
+                        "bsonType": "string"
+                    },
+                    "name": {
+                        "bsonType": "string"
+                    },
+                    "owner": {
+                        "bsonType": "string"
+                    },
+                    "owner_region": {
+                        "bsonType": "string"
+                    }
+                }
+            },
+            "amount": {
+                "bsonType": "double"
+            },
+            "close_date": {
+                "bsonType": "date"
+            },
+            "em": {
+                "bsonType": "object",
+                "properties": {
+                    "call": {
+                        "bsonType": "string"
+                    },
+                    "call_amount": {
+                        "bsonType": "double"
+                    },
+                    "engagement_manager": {
+                        "bsonType": "string"
+                    },
+                    "esd_created": {
+                        "bsonType": "bool"
+                    },
+                    "ps_status": {
+                        "bsonType": "string"
+                    }
+                }
+            },
+            "forecast_category": {
+                "bsonType": "string"
+            },
+            "has_services": {
+                "bsonType": "bool"
+            },
+            "name": {
+                "bsonType": "string"
+            },
+            "owner": {
+                "bsonType": "string"
+            },
+            "owner_region": {
+                "bsonType": "string"
+            },
+            "ps_notes": {
+                "bsonType": "string"
+            },
+            "ps_region": {
+                "bsonType": "string"
+            },
+            "ps_triage": {
+                "bsonType": "object",
+                "properties": {
+                    "em_needed": {
+                        "bsonType": "string"
+                    },
+                    "ps_needed": {
+                        "bsonType": "string"
+                    }
+                }
+            },
+            "sales_forecast": {
+                "bsonType": "object",
+                "properties": {
+                    "AE": {
+                        "bsonType": "bool"
+                    },
+                    "RD": {
+                        "bsonType": "bool"
+                    },
+                    "amount_services_RD": {
+                        "bsonType": "double"
+                    }
+                }
+            },
+            "services_post_carve": {
+                "bsonType": "double"
+            },
+            "stage": {
+                "bsonType": "string"
+            },
+            "type": {
+                "bsonType": "string"
+            }
+        },
+        "title": "opportunity"
+    }
 }

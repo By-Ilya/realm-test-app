@@ -246,6 +246,46 @@
                     }
                 }
             },
+            "survey_responses": {
+                "bsonType": "array",
+                "items": {
+                    "bsonType": "object",
+                    "properties": {
+                        "date": {
+                            "bsonType": "date"
+                        },
+                        "email": {
+                            "bsonType": "string"
+                        },
+                        "name": {
+                            "bsonType": "string"
+                        },
+                        "projectId": {
+                            "bsonType": "string"
+                        },
+                        "questions": {
+                            "bsonType": "array",
+                            "items": {
+                                "bsonType": "object",
+                                "properties": {
+                                    "score": {
+                                        "bsonType": "string"
+                                    },
+                                    "score_value": {
+                                        "bsonType": "int"
+                                    },
+                                    "text": {
+                                        "bsonType": "string"
+                                    }
+                                }
+                            }
+                        },
+                        "survey": {
+                            "bsonType": "string"
+                        }
+                    }
+                }
+            },
             "survey_sent": {
                 "bsonType": "bool"
             },

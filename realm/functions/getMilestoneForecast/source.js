@@ -152,22 +152,28 @@ exports = async function(arg){
       risk_2 = 0,
       upside_0 = 0,
       upside_1 = 0,
-      upside_2 = 0;
+      upside_2 = 0,
+      upside_ml_0 = 0,
+      upside_ml_1 = 0,
+      upside_ml_2 = 0;
       
   var fcst_m0 = await col_fcst.findOne({'milestoneId' : arg, 'month' : month});
   if (fcst_m0) { 
     risk_0 = fcst_m0.risk ? fcst_m0.risk : 0;
     upside_0 = fcst_m0.upside ? fcst_m0.upside : 0;
+    upside_ml_0 = fcst_m0.upside_ml ? fcst_m0.upside_ml : 0;
   }
   var fcst_m1 = await col_fcst.findOne({'milestoneId' : arg, 'month' : mplus_1});
   if (fcst_m1) { 
     risk_1 = fcst_m1.risk ? fcst_m1.risk : 0;
     upside_1 = fcst_m1.upside ? fcst_m1.upside : 0;
+    upside_ml_1 = fcst_m1.upside_ml ? fcst_m1.upside_ml : 0;
   }
   var fcst_m2 = await col_fcst.findOne({'milestoneId' : arg, 'month' : mplus_2});
   if (fcst_m2) { 
     risk_2 = fcst_m2.risk ? fcst_m2.risk : 0;
     upside_2 = fcst_m2.upside ? fcst_m2.upside : 0;
+    upside_ml_2 = fcst_m2.upside_ml ? fcst_m2.upside_ml : 0;
   }
   
         var forecast = {
@@ -184,9 +190,9 @@ exports = async function(arg){
                 "2": expiring_2
             },
             most_likely : {
-                "0": scheduled_0,
-                "1": scheduled_1,
-                "2":scheduled_2
+                "0": scheduled_0+upside_ml_0,
+                "1": scheduled_1+upside_ml_1,
+                "2":scheduled_2+upside_ml_2
             },
             risk : {
                 "0": risk_0,
@@ -197,6 +203,11 @@ exports = async function(arg){
                 "0": upside_0,
                 "1": upside_1,
                 "2": upside_2
+            },
+            upside_ml : {
+                "0": upside_ml_0,
+                "1": upside_ml_1,
+                "2": upside_ml_2
             }
         };
   return forecast;

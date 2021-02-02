@@ -49,7 +49,15 @@ exports = async function(arg) {
       region:{$first:"$owner_region"}, ps_region:{$first:"$ps_region"},
       closed_won: {$sum: {$cond: [{$eq:["$stage", "Closed Won"]}, "$services_post_carve" ,0]}},
       services_attach: {$sum: "$services_post_carve"},
-      rd_fcst_services: {$sum: "$sales_forecast.amount_services_RD"},
+      rd_fcst_services: {$sum: {$cond: [{$eq:["$stage", "Closed Won"]}, "$services_post_carve" ,
+        {$cond: [
+          {$or:[
+            //{$in:["$forecast_category",["Best Case","Most Likely","Closed"]]}, 
+            {$eq:["$sales_forecast.AE",true]},
+            {$eq:["$sales_forecast.RD",true]}
+            ]},
+          "$sales_forecast.amount_services_RD" ,0]}
+      ]}},
       deal_pipeline: {$sum: {$cond: [
         {$or:[
           {$in:["$forecast_category",["Best Case","Most Likely","Closed"]]}, 
