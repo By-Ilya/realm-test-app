@@ -98,15 +98,20 @@ export default function EditableCellTable(props) {
                     if (!month || !updateKey)
                         return Promise.reject();
 
+                    var val_parsed = parseFloat(newValue);
+                    if (isNaN(val_parsed))
+                        val_parsed = 0;
+
                     const dataUpdate = [...data];
                     const row = rowData.tableData.id;
                     const column = columnDef.field;
-                    dataUpdate[row][column] = parseFloat(newValue);
-                    dataUpdate[row]["cq_call"] = getCallFromThree([dataUpdate[row][0], dataUpdate[row][1], dataUpdate[row][2]]);
+                    dataUpdate[row][column] = val_parsed;
+                    if (dataUpdate[row]["cq_field"])
+                        dataUpdate[row]["cq_call"] = getCallFromThree([dataUpdate[row][0], dataUpdate[row][1], dataUpdate[row][2]]);
                     setData([...dataUpdate]);
                     //console.log(data);
 
-                    var promise = onUpdate({month, updateKey, value: parseFloat(newValue)});
+                    var promise = onUpdate({month, updateKey, value: val_parsed});
 
                     //setIsEditing(false); //will generate a warning but that's ok I guess
 
