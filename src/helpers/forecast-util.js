@@ -89,6 +89,9 @@ function convertForecastIntoRows(forecast) {
     row.push(
         {name: "Upside $", "0": forecast.upside["0"], "1" : forecast.upside["1"], "2" : forecast.upside["2"], cq_field:"ROQ Upside", cq_call: roq_upside},
         );
+    row.push(
+        {name: "Upside ML $", "0": forecast.upside_ml["0"], "1" : forecast.upside_ml["1"], "2" : forecast.upside_ml["2"]},
+        );
 
     return row;
 }

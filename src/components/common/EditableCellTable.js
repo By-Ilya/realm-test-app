@@ -91,6 +91,7 @@ export default function EditableCellTable(props) {
                     switch (rowData.tableData.id) {
                         case 5: updateKey = "risk"; break;
                         case 6: updateKey = "upside"; break;
+                        case 7: updateKey = "upside_ml"; break;
                         default: updateKey = null; break;
                     }
                     //console.log({month, updateKey, value: parseFloat(newValue)})
