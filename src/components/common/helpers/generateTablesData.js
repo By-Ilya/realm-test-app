@@ -46,7 +46,8 @@ export function generateMilestoneTableData(project, onClickPMStageButton) {
             field: 'value',
             editable: 'onUpdate',
             render: (rowData) => {
-                if (rowData.name === 'PM Stage' && rowData.value === 'Closed' && !rowData.survey_sent) {
+                if (rowData.name === 'PM Stage' && !(rowData.value === "Not Started" || rowData.value === "Planning")
+                 && !rowData.survey_sent) {
                     return [
                         rowData.value,
                         TAB_INDENT,
@@ -64,7 +65,7 @@ export function generateMilestoneTableData(project, onClickPMStageButton) {
                     </a>
                 ) : rowData.value;
             },
-        },
+        }
     ];
 
     const milestonesTableRows = [
