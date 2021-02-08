@@ -43,7 +43,7 @@ export function generateMilestoneTableData(project, onClickPMStageButton) {
         {title: 'Value', field: 'value', editable: 'onUpdate',
         render: rowData => {
                 if (rowData.name === "PM Stage" && 
-                    (rowData.value !== "Not Started" || rowData.value !== "Planning") &&
+                    !(rowData.value === "Not Started" || rowData.value === "Planning") &&
                     !rowData.survey_sent)
                     return [rowData.value,"   ",<button onClick={() => onClickPMStageButton(project)}>Send surveys</button>];
 
