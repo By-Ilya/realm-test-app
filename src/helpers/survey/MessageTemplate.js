@@ -38,7 +38,7 @@ export function custMessageHTMLBody(custName,custEmail,projectId) {
 		  <br/><br/>
 		  Thank you for using MongoDB Consulting.
 		  <br/>
-		  It was our pleasure to work with you. We want to know what you think. Please take 2 minutes to complete <a href=${generateCustSurveyLink(custName, custEmail, projectId)}>our survey</a> and tell us about your experience.
+		  It's been our pleasure to work with you. We want to know what you think. Please take 2 minutes to complete <a href=${generateCustSurveyLink(custName, custEmail, projectId)}>our survey</a> and tell us about your experience.
 		  <br/> <br/>
 		  MongoDB Professional Services
 		  <br/>
@@ -50,9 +50,9 @@ export function ceMessageHTMLBody(ceName,ceEmail,projectId) {
   	  <div>
 		  Hi ${ceName},
 		  <br/><br/>
-		  Thank you for successfully completing the following PS Project: ${projectId}.
+		  Thank you for your efforts on the following PS Project: ${projectId}.
 		  <br/>
-		  We want to know what you think. Please take 2 minutes to complete <a href=${generateCeSurveyLink(ceName,ceEmail, projectId)}>our survey</a> and share your experience.
+		  We want to know what you think. Please take 2 minutes to complete <a href=${generateCeSurveyLink(ceName,ceEmail, projectId)}>this survey</a> and share your experience.
 		  <br/> <br/>
 		  MongoDB Professional Services
 		  <br/>
