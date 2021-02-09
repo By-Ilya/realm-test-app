@@ -3,8 +3,7 @@ function getCallFromThree(vals) {
     const today = new Date();
     const month = today.getMonth();
 
-    // TODO: check the equality
-    qEndMonth = (month < 1) ? 1 : ((month < 4) ? 4 : ((month < 7) ? 7 : ((month < 10) ? 10 : 1)));
+    const qEndMonth = (month < 1) ? 1 : ((month < 4) ? 4 : ((month < 7) ? 7 : ((month < 10) ? 10 : 1)));
 
     //1->4: 0,1,2
     //2->4: 0,1

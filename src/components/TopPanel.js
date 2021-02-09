@@ -14,6 +14,7 @@ import SearchField from "components/common/SearchField";
 import FilterButton from "components/common/FilterButton";
 import Profile from "components/common/Profile";
 import Avatar from "components/common/Avatar";
+import SyncButton from "components/common/SyncButton";
 
 const DEFAULT_CHOOSE_VALUES = ['Yes', 'No'];
 const ENTER_KEY = 'Enter';
