@@ -12,9 +12,10 @@ import ListItemText from "@material-ui/core/ListItemText";
 import LinearProgress from '@material-ui/core/LinearProgress';
 import Box from "@material-ui/core/Box";
 
-import {RealmContext} from "../../context/RealmContext";
-import {toDateOnly} from "../../helpers/dateFormatter";
-import {setUtcZeroTime} from "../../helpers/date-util";
+import {AuthContext} from "context/AuthContext";
+import {ProjectContext} from "context/ProjectContext";
+import {toDateOnly} from "helpers/dateFormatter";
+import {setUtcZeroTime} from "helpers/date-util";
 
 const useStyles = makeStyles({
     root: {
@@ -45,13 +46,17 @@ ProjectCard.propTypes = {
 
 export default function ProjectCard(props) {
     const classes = useStyles();
-
+    const {user} = useContext(AuthContext);
+    const {
+        setProjectWithCurrentMilestone
+    } = useContext(ProjectContext);
+    
     const {psproject} = props;
-    const {user, setProjectWithCurrentMilestone, dbCollection} = useContext(RealmContext);
+    const {summary} = psproject;
 
     const handleOnClickMilestone = async (milestone) => {
-        var schedule = await user.functions.getMilestoneScheduleOnwards(milestone._id);
-        var forecast = await user.functions.getMilestoneForecast(milestone._id);
+        const schedule = await user.functions.getMilestoneScheduleOnwards(milestone._id);
+        const forecast = await user.functions.getMilestoneForecast(milestone._id);
 
         setProjectWithCurrentMilestone({
             project: psproject,
@@ -60,46 +65,52 @@ export default function ProjectCard(props) {
         });
     }
 
-    const generateNextAssignmentDateString = (future_assignments_dates) => {
-        const empty_string = '-';
+    const generateNextAssignmentDateString = (futureAssignmentsDates) => {
+        const emptyString = '-';
 
-        if (!future_assignments_dates || (future_assignments_dates.length < 1))
-            return empty_string;
+        if (!futureAssignmentsDates || (futureAssignmentsDates.length < 1))
+            return emptyString;
 
         let todayUtc = new Date();
         setUtcZeroTime(todayUtc);
 
-        //since the array is sorted by (e), we can quickly check if there's nothing in future
-        let max_e = new Date(future_assignments_dates[future_assignments_dates.length - 1].e);
+        // since the array is sorted by (e), we can quickly check if there's nothing in future
+        const lastDateIndex = futureAssignmentsDates.length - 1
+        let maxE = new Date(futureAssignmentsDates[lastDateIndex].e);
 
-        if (max_e.getTime() <= todayUtc.getTime())
-            return empty_string;
+        if (maxE.getTime() <= todayUtc.getTime())
+            return emptyString;
 
-        //we need to check all ranges that have (e) > today and find the min (s)
+        // we need to check all ranges that have (e) > today and find the min (s)
         let tomorrowUtc = new Date(todayUtc)
         tomorrowUtc.setDate(tomorrowUtc.getDate() + 1);
 
-        let min_s = max_e; 
-        future_assignments_dates.forEach( ass => {
-            let end = new Date(ass.e)
-            let start = new Date(ass.s)
-            if (end.getTime() > todayUtc.getTime()) {
-                if (min_s.getTime() > start.getTime() )
-                    min_s = start;
+        let minS = maxE; 
+        futureAssignmentsDates.forEach(ass => {
+            const end = new Date(ass.e);
+            const start = new Date(ass.s);
+            if (
+                end.getTime() > todayUtc.getTime() &&
+                minS.getTime() > start.getTime()
+            ) {
+                minS = start;
             }
-        })
+        });
 
-        if (min_s.getTime() > tomorrowUtc.getTime())
-            return toDateOnly(min_s);
-        else
-            return toDateOnly(tomorrowUtc);
+        return minS.getTime() > tomorrowUtc.getTime() 
+            ? toDateOnly(minS)
+            : toDateOnly(tomorrowUtc);
+    }
+
+    const calculateProgress = (currentValue, purposeValue) => {
+        return 100 * (1 - currentValue / purposeValue)
     }
 
     return (
         <Card className={classes.root}>
             <LinearProgress variant="buffer" 
-                value={100*(1-psproject.summary.gap_hours/psproject.summary.planned_hours)} 
-                valueBuffer={100*(1-psproject.summary.backlog_hours/psproject.summary.planned_hours)} />
+                value={calculateProgress(summary.gap_hours, summary.planned_hours)} 
+                valueBuffer={calculateProgress(summary.backlog_hours, summary.planned_hours)} />
             <CardContent>
                 <div className={classes.info}>
                     <div className={classes.leftInfo}>

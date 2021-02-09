@@ -6,15 +6,15 @@ import {
     InMemoryCache
 } from "@apollo/client";
 
-import {RealmContext} from "./context/RealmContext";
-import MainPage from "./containers/MainPage";
+import {AuthContext} from "context/AuthContext";
+import MainPage from "containers/MainPage";
 
 export default function RealmApolloProvider() {
     const {
         realmAppId,
         getUserAccessToken,
         user
-    } = useContext(RealmContext);
+    } = useContext(AuthContext);
 
     const [client, setClient] = useState(createApolloClient(realmAppId, getUserAccessToken));
     useEffect(() => {

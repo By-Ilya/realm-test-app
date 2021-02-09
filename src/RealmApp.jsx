@@ -1,16 +1,16 @@
 import React, {useContext, useRef, useEffect} from "react";
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
-import {RealmContext} from "./context/RealmContext";
-import SignInPage from "./containers/SignInPage";
-import RealmApolloProvider from "./RealmApolloProvider";
+import {AuthContext} from "context/AuthContext";
+import SignInPage from "containers/SignInPage";
+import RealmApolloProvider from "RealmApolloProvider";
 
 export default function RealmApp() {
     const {
         app, appName, copyrightLink,
         googleSignIn, googleHandleRedirect,
-        user, setUser,
-    } = useContext(RealmContext);
+        user, setUser, errorInfo
+    } = useContext(AuthContext);
 
     const appRef = useRef(app);
 
@@ -25,16 +25,20 @@ export default function RealmApp() {
                 exact path="/google-callback"
                 render={() => {
                     googleHandleRedirect();
-                    return <div> Google Callback </div> 
+                    return <div>Google Callback</div> 
                 }}
             />
             <Route path="/*" render={() => 
-                user ?  <RealmApolloProvider /> : <SignInPage
-                    appName={appName}
-                    copyrightLink={copyrightLink}
-                    googleSignIn={googleSignIn}
-                />
-                }/>
+                user
+                    ? <RealmApolloProvider /> 
+                    : (<SignInPage
+                        appName={appName}
+                        copyrightLink={copyrightLink}
+                        googleSignIn={googleSignIn}
+                        errorInfo={errorInfo}
+                    />)
+                }
+            />
           </Switch>
         </Router>
     )

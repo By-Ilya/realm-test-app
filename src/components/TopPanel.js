@@ -8,11 +8,15 @@ import Typography from '@material-ui/core/Typography';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 
-import {RealmContext} from "../context/RealmContext";
-import SearchField from "./common/SearchField";
-import FilterButton from "./common/FilterButton";
-import Profile from "./common/Profile";
-import Avatar from "./common/Avatar";
+import {AuthContext} from "context/AuthContext"
+import {ProjectContext} from "context/ProjectContext";
+import SearchField from "components/common/SearchField";
+import FilterButton from "components/common/FilterButton";
+import Profile from "components/common/Profile";
+import Avatar from "components/common/Avatar";
+
+const DEFAULT_CHOOSE_VALUES = ['Yes', 'No'];
+const ENTER_KEY = 'Enter';
 
 TopPanel.propTypes = {
     fetchProjects: PropTypes.func.isRequired
@@ -92,13 +96,13 @@ export default function TopPanel(props) {
     const classes = useStyles();
 
     const {fetchProjects} = props;
+    const {user, logOut} = useContext(AuthContext);
     const {
         filter, setFilter, sort, setSorting,
         regionsList, ownersList, projectManagersList, stagesList,
         fetchFiltersDefaultValues, setLoadProcessing,
-        getActiveUserFilter, user, logOut,
-        setDefaultPagination
-    } = useContext(RealmContext);
+        getActiveUserFilter, setDefaultPagination
+    } = useContext(ProjectContext);
 
     useEffect(() => {
         fetchFiltersDefaultValues();
@@ -112,13 +116,32 @@ export default function TopPanel(props) {
     const {profile} = user;
     const [localFilter, setLocalFilter] = useState(filter);
 
+    const mapValueToFilterName = (value, isAllowEmptyName = false) => {
+        switch (Boolean(value)) {
+            case true: return 'Yes';
+            case false: return 'No';
+            default: return isAllowEmptyName ? "" : "No";
+        }
+    };
+
+    const mapFilterNameToValue = (filterName, isAllowNullValue = false) => {
+        switch (filterName) {
+            case 'Yes': return true;
+            case 'No': return false;
+            default: return isAllowNullValue ? null : false;
+        }
+    };
+
     const filtersObject = [
         {
             label: 'Region',
             currentValue: localFilter.region,
             values: regionsList,
             setValue: event => {
-                setLocalFilter({...localFilter, region: event.target.value});
+                setLocalFilter({
+                    ...localFilter,
+                    region: event.target.value
+                });
             }
         },
         {
@@ -126,7 +149,10 @@ export default function TopPanel(props) {
             currentValue: localFilter.owner,
             values: ownersList,
             setValue: event => {
-                setLocalFilter({...localFilter, owner: event.target.value});
+                setLocalFilter({
+                    ...localFilter,
+                    owner: event.target.value
+                });
             }
         },
         {
@@ -134,7 +160,10 @@ export default function TopPanel(props) {
             currentValue: localFilter.project_manager,
             values: projectManagersList,
             setValue: event => {
-                setLocalFilter({...localFilter, project_manager: event.target.value});
+                setLocalFilter({
+                    ...localFilter,
+                    project_manager: event.target.value
+                });
             }
         },
         {
@@ -142,41 +171,48 @@ export default function TopPanel(props) {
             currentValue: localFilter.pm_stage,
             values: stagesList,
             setValue: event => {
-                setLocalFilter({...localFilter, pm_stage: event.target.value});
+                setLocalFilter({
+                    ...localFilter,
+                    pm_stage: event.target.value
+                });
             }
         },
         {
             label: 'Only Active',
-            currentValue: localFilter.active ? "Yes" : "No",
-            values: ["Yes","No"],
+            currentValue: mapValueToFilterName(localFilter.active),
+            values: DEFAULT_CHOOSE_VALUES,
             setValue: event => {
                 setLocalFilter({
                     ...localFilter,
-                    active: (event.target.value === "Yes")
+                    active: mapFilterNameToValue(event.target.value)
                 });
             }
         },
         {
             label: 'Planning done',
-            currentValue: localFilter.monthly_forecast_done ? "Yes" : (localFilter.monthly_forecast_done === false) ? "No" : "",
-            values: ["Yes","No"],
+            currentValue: mapValueToFilterName(
+                localFilter.monthly_forecast_done,
+                true
+            ),
+            values: DEFAULT_CHOOSE_VALUES,
             setValue: event => {
                 setLocalFilter({
                     ...localFilter,
-                    monthly_forecast_done: (event.target.value === "Yes")
-                        ? true
-                        : (event.target.value === "No") ? false : null
+                    monthly_forecast_done: mapFilterNameToValue(
+                        event.target.value,
+                        true
+                    )
                 });
             }
         },
         {
             label: 'Only my projects',
-            currentValue: localFilter.active_user_filter ? "Yes" : "No",
-            values: [null,"Yes","No"],
+            currentValue: mapValueToFilterName(localFilter.active_user_filter),
+            values: DEFAULT_CHOOSE_VALUES,
             setValue: event => {
                 setLocalFilter({
                     ...localFilter,
-                    active_user_filter: (event.target.value === "Yes")
+                    active_user_filter: mapFilterNameToValue(event.target.value)
                         ? getActiveUserFilter()
                         : null
                 });
@@ -219,7 +255,7 @@ export default function TopPanel(props) {
     }
 
     const handleSearchKeyDown = async (event) => {
-        if (event.key === 'Enter') {
+        if (event.key === ENTER_KEY) {
             onApplyFilters(event.target.value);
         }
     }

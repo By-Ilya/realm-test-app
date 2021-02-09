@@ -2,8 +2,8 @@ import React, {useContext, useState, useEffect} from 'react';
 import PropTypes from 'prop-types';
 import MaterialTable from "material-table";
 
-import generateTableIcons from "./helpers/TableIcons";
-import {RealmContext} from "../../context/RealmContext";
+import generateTableIcons from "components/common/helpers/TableIcons";
+import {ProjectContext} from "context/ProjectContext";
 
 SimpleETable.propTypes = {
     projectId: PropTypes.string.isRequired,
@@ -20,7 +20,7 @@ export default function SimpleETable(props) {
         onUpdate
     } = props;
 
-    const {isEditing, setIsEditing} = useContext(RealmContext);
+    const {isEditing, setIsEditing} = useContext(ProjectContext);
 
     const [columns, setColumns] = useState(currentColumns);
     const [data, setData] = useState(currentData);

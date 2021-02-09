@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import IconButton from "@material-ui/core/IconButton";
 import MoreIcon from '@material-ui/icons/MoreVert';
 
-import Avatar from "./Avatar";
+import Avatar from "components/common/Avatar";
 
 Profile.propTypes = {
     classes: PropTypes.object.isRequired,

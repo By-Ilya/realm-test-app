@@ -1,10 +1,11 @@
 import React, {useContext} from 'react';
 import {useLazyQuery} from "@apollo/client";
 
-import {RealmContext} from "../context/RealmContext";
-import TopPanel from "../components/TopPanel";
-import ProjectsContainer from "../components/ProjectsContainer";
-import {FIND_PROJECTS} from "../graphql/graphql-operations";
+import {ProjectContext} from "context/ProjectContext";
+import {AuthContext} from "context/AuthContext";
+import TopPanel from "components/TopPanel";
+import ProjectsContainer from "components/ProjectsContainer";
+import {FIND_PROJECTS} from "graphql/graphql-operations";
 
 export default function MainPage() {
     const {
@@ -13,7 +14,7 @@ export default function MainPage() {
         filter, getSortOrder, pagination,
         setMoreProjectsLoadProcessing,
         fetchProjectsTotalCount
-    } = useContext(RealmContext);
+    } = useContext(ProjectContext);
 
     const {limit} = pagination;
     const queryOptions = {

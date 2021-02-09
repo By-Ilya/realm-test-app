@@ -6,8 +6,8 @@ import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import Divider from "@material-ui/core/Divider";
 
-import {RealmContext} from "../../context/RealmContext";
-import MilestonesInfo from "./MilestonesInfo";
+import {ProjectContext} from "context/ProjectContext";
+import MilestonesInfo from "components/projects/MilestonesInfo";
 
 const useStyles = makeStyles({
     tableContainer: {
@@ -22,14 +22,13 @@ MilestonesInfoPaper.propTypes = {
 export default function MilestonesInfoPaper(props) {
     const containerClasses = useStyles();
     const {classes} = props;
-    const {projectWithCurrentMilestone, projects} = useContext(RealmContext);
+    const {projectWithCurrentMilestone} = useContext(ProjectContext);
 
     let project = null;
     let currentMilestone = null;
     let forecast = null;
     if (projectWithCurrentMilestone) {
         project = projectWithCurrentMilestone.project
-        //project = projects.filter(p => p._id === project._id)[0];
         currentMilestone = projectWithCurrentMilestone.milestone
         forecast = projectWithCurrentMilestone.forecast
     }

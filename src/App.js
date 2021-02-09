@@ -1,17 +1,20 @@
 import React, {Component} from 'react';
 
-import RealmContextContainer from "./context/RealmContext";
-import RealmApp from "./RealmApp";
+import AuthContextContainer from "context/AuthContext";
+import ProjectContextContainer from "context/ProjectContext";
+import RealmApp from "RealmApp";
 
-import './App.css';
+import 'App.css';
 
 class App extends Component {
     render() {
         return (
             <div className="App">
-                <RealmContextContainer>
-                    <RealmApp />
-                </RealmContextContainer>
+                <AuthContextContainer>
+                    <ProjectContextContainer>
+                        <RealmApp />
+                    </ProjectContextContainer>
+                </AuthContextContainer>
             </div>
         );
     }

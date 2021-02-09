@@ -1,9 +1,12 @@
-import {toDateOnly} from "../../../helpers/dateFormatter";
-import {convertForecastIntoRows} from "../../../helpers/forecast-util";
-import React, { Component } from 'react';
+import React from 'react';
+
+import {toDateOnly} from "helpers/dateFormatter";
+import {convertForecastIntoRows} from "helpers/forecast-util";
+
+const TAB_INDENT = "   ";
 
 function generateSFLink(id) {
-    return "https://mongodb.my.salesforce.com/" + id;
+    return `https://mongodb.my.salesforce.com/${id}`;
 }
 
 export function generateMilestoneTableData(project, onClickPMStageButton) {
@@ -28,16 +31,26 @@ export function generateMilestoneTableData(project, onClickPMStageButton) {
         {title: 'Project / Milestone Fields', field: 'name', editable: 'never'},
         {title: 'Value', field: 'value', editable: 'onUpdate',
         render: rowData => {
-                if (rowData.name === "PM Stage" && rowData.value === "Closed" && !rowData.survey_sent)
-                    return [rowData.value,"   ",<button onClick={() => onClickPMStageButton(project)}>Send surveys</button>];
-
-                if (rowData.link)
-                    return <a href={rowData.link} target = "_blank" rel = "noopener noreferrer">{rowData.value}</a>;
+                if (rowData.name === "PM Stage" && rowData.value === "Closed" && !rowData.survey_sent) {
+                    return [
+                        rowData.value,
+                        TAB_INDENT,
+                        <button onClick={() => onClickPMStageButton(project)}>Send surveys</button>
+                    ];
+                }
                 
-                return rowData.value;
+                return rowData.link ? (
+                    <a
+                        href={rowData.link}
+                        target = "_blank"
+                        rel = "noopener noreferrer">
+                            {rowData.value}
+                    </a>
+                ) : rowData.value;
              }
         }
     ];
+
     const milestonesTableRows = [
         {name: 'Project Owner', value: owner, editable: false},
         {name: 'Region', value: region, editable: false},
@@ -83,18 +96,21 @@ export function generateDocumentsTableData(project) {
         documentsTableRows: []
     };
 
-    const {
-        documents
-    } = project;
+    const { documents } = project;
 
     const documentsTableColumns = [
         {title: 'Name', field: 'name', editable: 'always'},
         {title: 'Link', field: 'url', editable: 'always',
         render: rowData => {
-                if (rowData.url)
-                    return <a href={rowData.url} target = "_blank" rel = "noopener noreferrer">{rowData.url_name ? rowData.url_name : rowData.url}</a>;
-                
-                return rowData.url;
+                return rowData.url ? (
+                    <a
+                        href={rowData.url}
+                        target = "_blank"
+                        rel = "noopener noreferrer"
+                    >
+                        {rowData.url_name ? rowData.url_name : rowData.url}
+                    </a>
+                ) : rowData.url
              }
         }
     ];
@@ -102,14 +118,14 @@ export function generateDocumentsTableData(project) {
     const documentsTableRows = [];
 
     if (documents && documents.length > 0) {
-        for(let i in documents) {
+        for (let i in documents) {
             documentsTableRows.push({...documents[i], editable: true})
         }
     } else
         documentsTableRows.push({
-                    name:"Report",
-                    editable:true
-                });
+            name: "Report",
+            editable: true
+        });
 
     return {documentsTableColumns, documentsTableRows}
 }
@@ -120,10 +136,7 @@ export function generateContactsTableData(project) {
         contactsTableRows: []
     };
 
-    const {
-        _id,
-        contacts
-    } = project;
+    const { contacts } = project;
 
     const contactsTableColumns = [
         {title: 'Type', field: 'type', editable: 'never'},
@@ -188,7 +201,7 @@ export function generateForecastTableData(project) {
         forecastTableRows: []
     };
 
-    const {forecast} = project;
+    const { forecast } = project;
 
     const forecastTableColumns = [
         {title: 'N3M', field: 'name'},
