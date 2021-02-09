@@ -15,8 +15,7 @@ const DEFAULT_FILTER = {
     active: true,
     active_user_filter: null,
     pm_stage: '',
-    // TODO: temporary remove
-    // monthly_forecast_done: null
+    monthly_forecast_done: null
 }
 const DEFAULT_SORT = {
     field: 'details.pm_stage_sortid',
