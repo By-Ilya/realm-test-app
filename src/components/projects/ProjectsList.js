@@ -7,8 +7,8 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 
-import {RealmContext} from "../../context/RealmContext";
-import ProjectCard from "./ProjectCard";
+import {ProjectContext} from "context/ProjectContext";
+import ProjectCard from "components/projects/ProjectCard";
 
 ProjectsList.propTypes = {
     classes: PropTypes.object.isRequired,
@@ -26,7 +26,7 @@ export default function ProjectsList(props) {
         hasMoreProjects,
         moreProjectsLoadProcessing,
         setMoreProjectsLoadProcessing
-    } = useContext(RealmContext);
+    } = useContext(ProjectContext);
 
     const fetchMoreProjects = async () => {
         const {increaseOn, limit} = pagination;
@@ -82,7 +82,9 @@ export default function ProjectsList(props) {
                         >
                             Get more
                         </Button>}
-                        {moreProjectsLoadProcessing && <CircularProgress size={24} className={classes.buttonProgress} />}
+                        {moreProjectsLoadProcessing && <CircularProgress size={24}
+                            className={classes.buttonProgress} 
+                        />}
                     </ListItem>}
                 </ul>
             </li>

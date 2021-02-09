@@ -1,14 +1,14 @@
 import React, {useContext, useState, useEffect} from 'react';
 import PropTypes from 'prop-types';
 import MaterialTable from "material-table";
-
-import generateTableIcons from "./helpers/TableIcons";
-import {getThisMonth,getNextMonth} from "../../helpers/date-util";
-import {RealmContext} from "../../context/RealmContext";
-import {getCallFromThree} from "../../helpers/forecast-util";
 import Checkbox from '@material-ui/core/Checkbox';
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
+
+import {ProjectContext} from "context/ProjectContext";
+import generateTableIcons from "components/common/helpers/TableIcons";
+import {getThisMonth,getNextMonth} from "helpers/date-util";
+import {getCallFromThree} from "helpers/forecast-util";
 
 EditableCellTable.propTypes = {
     projectId: PropTypes.string.isRequired,
@@ -28,7 +28,7 @@ export default function EditableCellTable(props) {
         onCheckboxUpdate
     } = props;
 
-    const {isEditing, setIsEditing} = useContext(RealmContext);
+    const {isEditing, setIsEditing} = useContext(ProjectContext);
 
     const [columns, setColumns] = useState(currentColumns);
     const [data, setData] = useState(currentData);
@@ -45,18 +45,13 @@ export default function EditableCellTable(props) {
 
     return (
         <MaterialTable
-            title= <Box display='flex' alignItems="center"> 
-                        <Typography
-                          variant="h6"
-                          style={{
-                            whiteSpace: "nowrap",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                          }}>
-                            {tableName}
-                        </Typography>
-                        <Checkbox checked={checkboxValue} onChange={onCheckboxUpdate}/> 
-                    </Box>
+            title={
+                <TableTitle
+                    checkboxValue={checkboxValue}
+                    onCheckboxUpdate={onCheckboxUpdate}
+                    tableName={tableName}
+                />
+            }
             icons={generateTableIcons({onClickEditButton})}
             columns={columns}
             data={data}
@@ -64,15 +59,15 @@ export default function EditableCellTable(props) {
                 search:false,
                 sorting:false,
                 paging:false,
-                //padding:"dense"
+                // padding:"dense"
             }}
             cellEditable={{
-                isCellEditable: (rowData, columnDef) => { //our hacked material table
+                isCellEditable: (rowData, columnDef) => { // our hacked material table
                     return (rowData.tableData.id > 4) && 
                             (columnDef.tableData.columnOrder >= 1) && (columnDef.tableData.columnOrder <= 3);
                 },
-                onCellEditStarted: (rowData, columnDef) => { //our hacked material table
-                    //setIsEditing(true);
+                onCellEditStarted: (rowData, columnDef) => { // our hacked material table
+                    // setIsEditing(true);
                 },
                 onCellEditApproved: (newValue, oldValue, rowData, columnDef) => {
                     // console.log(rowData)
@@ -93,7 +88,7 @@ export default function EditableCellTable(props) {
                         case 6: updateKey = "upside"; break;
                         default: updateKey = null; break;
                     }
-                    //console.log({month, updateKey, value: parseFloat(newValue)})
+                    // console.log({month, updateKey, value: parseFloat(newValue)})
                     if (!month || !updateKey)
                         return Promise.reject();
 
@@ -103,12 +98,10 @@ export default function EditableCellTable(props) {
                     dataUpdate[row][column] = parseFloat(newValue);
                     dataUpdate[row]["cq_call"] = getCallFromThree([dataUpdate[row][0], dataUpdate[row][1], dataUpdate[row][2]]);
                     setData([...dataUpdate]);
-                    //console.log(data);
+                    // console.log(data);
 
-                    var promise = onUpdate({month, updateKey, value: parseFloat(newValue)});
-
-                    //setIsEditing(false); //will generate a warning but that's ok I guess
-
+                    const promise = onUpdate({month, updateKey, value: parseFloat(newValue)});
+                    // setIsEditing(false); // will generate a warning but that's ok I guess
                     return promise;
                 }
             }}
@@ -131,5 +124,22 @@ export default function EditableCellTable(props) {
             //     onRowUpdateCancelled: () => setIsEditing(false)
             // }}
         />
+    );
+}
+
+function TableTitle(checkboxValue, onCheckboxUpdate, tableName) {
+    return (
+        <Box display='flex' alignItems="center">
+            <Typography
+                variant="h6"
+                style={{
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                }}>
+                    {tableName}
+            </Typography>
+            <Checkbox checked={checkboxValue} onChange={onCheckboxUpdate}/> 
+        </Box>
     );
 }

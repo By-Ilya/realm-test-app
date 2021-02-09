@@ -2,8 +2,8 @@ import React, {useContext, useState, useEffect} from 'react';
 import PropTypes from 'prop-types';
 import MaterialTable from "material-table";
 
-import generateTableIcons from "./helpers/TableIcons";
-import {RealmContext} from "../../context/RealmContext";
+import generateTableIcons from "components/common/helpers/TableIcons";
+import {ProjectContext} from "context/ProjectContext";
 
 const BSON = require('bson');
 
@@ -26,7 +26,7 @@ export default function DocumentsTable(props) {
         onDelete
     } = props;
 
-    const {isEditing, setIsEditing} = useContext(RealmContext);
+    const {isEditing, setIsEditing} = useContext(ProjectContext);
 
     const [columns, setColumns] = useState(currentColumns);
     const [data, setData] = useState(currentData);
@@ -83,8 +83,7 @@ export default function DocumentsTable(props) {
                     }
                 },
                 onRowDelete: async (oldData) => {
-                    if (oldData.name === "Report")
-                        return;
+                    if (oldData.name === "Report") return;
                     try {
                         await onDelete({doc: oldData});
                         const dataDelete = [...data];

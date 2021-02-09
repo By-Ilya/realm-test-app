@@ -1,4 +1,4 @@
-import { custMessageHTMLBody, ceMessageHTMLBody } from "./MessageTemplate";
+import { custMessageHTMLBody, ceMessageHTMLBody } from "helpers/survey/MessageTemplate";
 
 // export function genCustMessage(origEmail,custName,custEmail,projectId) {
 // 	const messageParts = [
@@ -31,16 +31,16 @@ import { custMessageHTMLBody, ceMessageHTMLBody } from "./MessageTemplate";
 // }
 
 export function custMailParams(origEmail,custName,custEmail,projectId) {
-  var toEmail = custEmail, 
-      subject = "Thank you",
-      html = custMessageHTMLBody(custName, custEmail, projectId);
+  const toEmail = custEmail, 
+        subject = "Thank you",
+        html = custMessageHTMLBody(custName, custEmail, projectId);
   return {origEmail, toEmail, subject, html}
 }
 
 export function ceMailParams(origEmail,ceName,ceEmail,projectId) {
-  var toEmail = ceEmail, 
-      subject = "Complete post-engagement survey",
-      html = ceMessageHTMLBody(ceName, ceEmail, projectId);
+  const toEmail = ceEmail, 
+        subject = "Complete post-engagement survey",
+        html = ceMessageHTMLBody(ceName, ceEmail, projectId);
   return {origEmail, toEmail, subject, html}
 }
 

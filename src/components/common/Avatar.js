@@ -44,7 +44,7 @@ export default function Avatar(props) {
 
     return (<>
         {avatarImage ?
-            <img src={avatarImage} className={classes.img}/> :
+            <img src={avatarImage} className={classes.img} alt='avatar'/> :
             <AccountCircle />
         }
         <div className={classes.textBlock}>

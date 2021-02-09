@@ -16,7 +16,7 @@ import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
 
 export default function generateTableIcons(props) {
-    const {onClickEditButton} = props;
+    const { onClickEditButton } = props;
 
     return  {
         Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),

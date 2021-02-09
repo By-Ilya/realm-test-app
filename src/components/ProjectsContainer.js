@@ -2,8 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 
-import ProjectsList from "./projects/ProjectsList";
-import MilestonesInfoPaper from "./projects/MilestonesInfoPaper";
+import ProjectsList from "components/projects/ProjectsList";
+import MilestonesInfoPaper from "components/projects/MilestonesInfoPaper";
 
 const useStyles = makeStyles((theme) => ({
     container: {

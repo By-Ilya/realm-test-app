@@ -1,23 +1,24 @@
 import React, {useContext} from 'react';
 import PropTypes from 'prop-types';
 
-import SimpleTable from "../common/SimpleTable";
-import SimpleETable from "../common/SimpleETable";
-import DocumentsTable from "../common/DocumentsTable";
-import EditableCellTable from "../common/EditableCellTable";
-import ContactsTable from "../common/ContactsTable";
+import SimpleTable from "components/common/SimpleTable";
+import SimpleETable from "components/common/SimpleETable";
+import DocumentsTable from "components/common/DocumentsTable";
+import EditableCellTable from "components/common/EditableCellTable";
+import ContactsTable from "components/common/ContactsTable";
 import {
     generateMilestoneTableData,
     generateScheduleTableData,
     generateForecastTableData,
     generateContactsTableData,
     generateDocumentsTableData
-} from "../common/helpers/generateTablesData";
+} from "components/common/helpers/generateTablesData";
 import {
     custMailParams,
     ceMailParams
-} from "../../helpers/survey/survey";
-import {RealmContext} from "../../context/RealmContext";
+} from "helpers/survey/survey";
+import {AuthContext} from "context/AuthContext";
+import {ProjectContext} from "context/ProjectContext";
 
 MilestonesInfo.propTypes = {
     classes: PropTypes.object.isRequired,
@@ -26,10 +27,17 @@ MilestonesInfo.propTypes = {
 
 export default function MilestonesInfo(props) {
     const {classes, project} = props;
-    const {dbCollection, fcstCollection, setProjectWithCurrentMilestone, user} = useContext(RealmContext);
+    const {
+        user,
+        dbCollection,
+        fcstCollection
+    } = useContext(AuthContext);
+    const {
+        setProjectWithCurrentMilestone
+    } = useContext(ProjectContext);
 
     const onClickPMStageButton = async (project) => {
-        var origEmail = user.profile.email,
+        const origEmail = user.profile.email,
             contacts = project.contacts,
             custName = (contacts && contacts.customer) ? contacts.customer.name : null,
             custEmail = (contacts && contacts.customer) ? contacts.customer.email : null,
@@ -43,12 +51,21 @@ export default function MilestonesInfo(props) {
         }
         //console.log(custMailParams(origEmail,custName,custEmail,projectId))
         //console.log(ceMailParams(origEmail,ceName,ceEmail,projectId))
-        await user.callFunction("sendMail",custMailParams(origEmail,custName,custEmail,projectId));
-        await user.callFunction("sendMail",ceMailParams(origEmail,ceName,ceEmail,projectId));
+        await user.callFunction(
+            "sendMail",
+            custMailParams(origEmail,custName,custEmail,projectId)
+        );
+        await user.callFunction(
+            "sendMail",
+            ceMailParams(origEmail,ceName,ceEmail,projectId)
+        );
 
-        await dbCollection.updateOne({_id: project._id},{$set:{survey_sent:true, survey_sent_ts: new Date()}});
+        await dbCollection.updateOne(
+            {_id: project._id},
+            {$set: {survey_sent: true, survey_sent_ts: new Date()}}
+        );
 
-        alert(`Surveys sent!`);
+        alert('Surveys sent!');
     }
 
     const {
@@ -77,7 +94,7 @@ export default function MilestonesInfo(props) {
     } = generateDocumentsTableData(project);
 
     const handleUpdateRow = async ({updateKey, value}) => {
-        const query = {_id: project._id, 'milestones._id':project.currentMilestone._id};
+        const query = {_id: project._id, 'milestones._id': project.currentMilestone._id};
         const update = {'$set': {[updateKey]: value}};
         const options = {'upsert': false};
         await dbCollection.updateOne(query, update, options);
@@ -89,22 +106,25 @@ export default function MilestonesInfo(props) {
             return;
         }
 
-        const query = {_id: project._id, 'documents._id':doc._id};
-        const update = {'$set': {'documents.$.name':doc.name, 'documents.$.url':doc.url},'$unset': {'documents.$.url_name':1}};
+        const query = {_id: project._id, 'documents._id': doc._id};
+        const update = {
+            '$set': {'documents.$.name': doc.name, 'documents.$.url': doc.url},
+            '$unset': {'documents.$.url_name': 1}
+        };
         const options = {'upsert': false};
         await dbCollection.updateOne(query, update, options);
     }
 
    const handleAddDocumentsRow = async ({doc}) => {
         const query = {_id: project._id};
-        const update = {'$push': {'documents':{name:doc.name, url: doc.url, _id: doc._id}}};
+        const update = {'$push': {'documents': {name: doc.name, url: doc.url, _id: doc._id}}};
         const options = {'upsert': false};
         await dbCollection.updateOne(query, update, options);
     }
 
    const handleDeleteDocumentsRow = async ({doc}) => {
         const query = {_id: project._id};
-        const update = {'$pull': {'documents':{_id:doc._id}}};
+        const update = {'$pull': {'documents': {_id:doc._id}}};
         const options = {'upsert': false};
         await dbCollection.updateOne(query, update, options);
     }
@@ -115,8 +135,8 @@ export default function MilestonesInfo(props) {
         const options = {'upsert': true};
         await fcstCollection.updateOne(query, update, options);
 
-        //refresh the forecast data
-        var forecast = await user.functions.getMilestoneForecast(project.currentMilestone._id);
+        // refresh the forecast data
+        const forecast = await user.functions.getMilestoneForecast(project.currentMilestone._id);
         setProjectWithCurrentMilestone({
             project: project,
             milestone: project.currentMilestone,

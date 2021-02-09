@@ -44,11 +44,11 @@ SignInPage.propTypes = {
     appName: PropTypes.string.isRequired,
     copyrightLink: PropTypes.string.isRequired,
     googleSignIn: PropTypes.func.isRequired,
-    signInError: PropTypes.string
+    errorInfo: PropTypes.string
 }
 
 SignInPage.defaultProps = {
-    signInError: null
+    errorInfo: null
 }
 
 export default function SignInPage(props) {
@@ -56,7 +56,7 @@ export default function SignInPage(props) {
         appName,
         copyrightLink,
         googleSignIn,
-        signInError
+        errorInfo
     } = props;
 
     const classes = useStyles();
@@ -79,9 +79,9 @@ export default function SignInPage(props) {
                     />
                 </div>
 
-                {signInError && <div className={classes.errorBox}>
+                {errorInfo && <div className={classes.errorBox}>
                     <Typography variant="body2" color="error" align="center">
-                        {signInError}
+                        {errorInfo}
                     </Typography>
                 </div>}
             </div>
