@@ -86,17 +86,23 @@ export default function EditableCellTable(props) {
                     switch (rowData.tableData.id) {
                         case 5: updateKey = "risk"; break;
                         case 6: updateKey = "upside"; break;
+                        case 7: updateKey = "upside_ml"; break;
                         default: updateKey = null; break;
                     }
                     // console.log({month, updateKey, value: parseFloat(newValue)})
                     if (!month || !updateKey)
                         return Promise.reject();
 
+                    var val_parsed = parseFloat(newValue);
+                    if (isNaN(val_parsed))
+                        val_parsed = 0;
+
                     const dataUpdate = [...data];
                     const row = rowData.tableData.id;
                     const column = columnDef.field;
-                    dataUpdate[row][column] = parseFloat(newValue);
-                    dataUpdate[row]["cq_call"] = getCallFromThree([dataUpdate[row][0], dataUpdate[row][1], dataUpdate[row][2]]);
+                    dataUpdate[row][column] = val_parsed;
+                    if (dataUpdate[row]["cq_field"])
+                        dataUpdate[row]["cq_call"] = getCallFromThree([dataUpdate[row][0], dataUpdate[row][1], dataUpdate[row][2]]);
                     setData([...dataUpdate]);
                     // console.log(data);
 

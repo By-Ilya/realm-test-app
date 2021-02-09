@@ -150,6 +150,13 @@ function convertForecastIntoRows(forecast) {
         cq_call: roqUpside
     });
 
+    row.push({
+        name: "Upside ML $",
+        "0": forecast.upside_ml["0"],
+        "1" : forecast.upside_ml["1"],
+        "2" : forecast.upside_ml["2"]
+    });
+
     return row;
 }
 

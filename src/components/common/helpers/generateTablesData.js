@@ -1,12 +1,27 @@
 import React from 'react';
 
 import {toDateOnly} from "helpers/dateFormatter";
-import {convertForecastIntoRows} from "helpers/forecast-util";
+import {
+    convertForecastIntoRows,
+    projectHasCESurvey,
+    projectHasCustSurvey
+} from "helpers/forecast-util";
 
 const TAB_INDENT = "   ";
 
 function generateSFLink(id) {
     return `https://mongodb.my.salesforce.com/${id}`;
+}
+
+function projectNeedsSurveys(project) {
+    var contacts = project.contacts,
+        custEmail = (contacts && contacts.customer) ? contacts.customer.email : null,
+        ceEmail = (contacts && contacts.ce) ? contacts.ce.email : null;
+
+    if (!project.survey_sent)
+        return true;
+
+    return (!projectHasCustSurvey(project,custEmail) || !projectHasCESurvey(project,ceEmail));
 }
 
 export function generateMilestoneTableData(project, onClickPMStageButton) {
@@ -23,7 +38,6 @@ export function generateMilestoneTableData(project, onClickPMStageButton) {
         name, custom_name,
         account_id,
         opportunity, details,
-        survey_sent,
         currentMilestone
     } = project;
 
@@ -59,7 +73,7 @@ export function generateMilestoneTableData(project, onClickPMStageButton) {
             name: 'PM Stage',
             value: details.pm_stage,
             editable: true,
-            survey_sent: survey_sent,
+            survey_sent: !projectNeedsSurveys(project),
             tableKey: 'value',
             updateKey: 'details.pm_stage'
         },
@@ -128,6 +142,47 @@ export function generateDocumentsTableData(project) {
         });
 
     return {documentsTableColumns, documentsTableRows}
+}
+
+export function generateSurveyTableData(project) {
+    if (!project || !project.survey_responses) return {
+        surveyTableColumns: [],
+        surveyTableRows: []
+    };
+
+    const surveyTableColumns = [
+        {title: 'Name', field: 'name', editable: 'never'},
+        {title: 'Questions', field: 'questions', editable: 'never',
+            render: rowData => {
+                return <table>
+                          { rowData.questions.map(q => (
+                            <tr>
+                                <td>{q.text}</td>
+                                <td>{q.score}</td>
+                            </tr>
+                          )) }
+                        </table>;
+             }
+        }
+    ];
+    const surveyTableRows = project.survey_responses.map(r => {
+        // let qs = "";
+
+        // r.questions.map(q => {
+        //     if (qs !== "")
+        //         qs += "\n";
+
+        //     qs += q.text + "\n" + q.score;
+        // });
+
+        return {
+            name: r.survey,
+            questions: r.questions,
+            editable: false
+        };
+    });
+
+    return {surveyTableColumns, surveyTableRows}
 }
 
 export function generateContactsTableData(project) {

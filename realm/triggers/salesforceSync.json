@@ -1,0 +1,9 @@
+{
+    "name": "salesforceSync",
+    "type": "SCHEDULED",
+    "config": {
+        "schedule": "0 */3 * * *"
+    },
+    "function_name": "requestSync",
+    "disabled": false
+}

@@ -55,7 +55,7 @@ exports = async function findProjects({filter, sort, count_only}) {
         {
           "text": {
             "query": name,
-            "path": "name"
+            "path": ["name","custom_name"]
           }
         }
       }

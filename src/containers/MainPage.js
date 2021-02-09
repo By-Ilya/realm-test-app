@@ -21,8 +21,7 @@ export default function MainPage() {
         variables: {
             filtersInput: {
                 filter: {...filter, limit },
-                sort: getSortOrder(),
-                count_only: false
+                sort: getSortOrder()
             }
         }
     }

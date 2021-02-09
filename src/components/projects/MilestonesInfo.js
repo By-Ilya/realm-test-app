@@ -11,12 +11,17 @@ import {
     generateScheduleTableData,
     generateForecastTableData,
     generateContactsTableData,
-    generateDocumentsTableData
+    generateDocumentsTableData,
+    generateSurveyTableData
 } from "components/common/helpers/generateTablesData";
 import {
     custMailParams,
     ceMailParams
 } from "helpers/survey/survey";
+import {
+    projectHasCESurvey,
+    projectHasCustSurvey
+} from "helpers/project-util";
 import {AuthContext} from "context/AuthContext";
 import {ProjectContext} from "context/ProjectContext";
 
@@ -51,21 +56,23 @@ export default function MilestonesInfo(props) {
         }
         //console.log(custMailParams(origEmail,custName,custEmail,projectId))
         //console.log(ceMailParams(origEmail,ceName,ceEmail,projectId))
-        await user.callFunction(
-            "sendMail",
-            custMailParams(origEmail,custName,custEmail,projectId)
-        );
-        await user.callFunction(
-            "sendMail",
-            ceMailParams(origEmail,ceName,ceEmail,projectId)
-        );
+        if (!projectHasCustSurvey(project,custEmail))
+            await user.callFunction(
+                "sendMail",
+                custMailParams(origEmail,custName,custEmail,projectId)
+            );
+        if (!projectHasCESurvey(project,ceEmail))
+            await user.callFunction(
+                "sendMail",
+                ceMailParams(origEmail,ceName,ceEmail,projectId)
+            );
 
         await dbCollection.updateOne(
             {_id: project._id},
             {$set: {survey_sent: true, survey_sent_ts: new Date()}}
         );
-
-        alert('Surveys sent!');
+        
+        alert(`Surveys sent!`);
     }
 
     const {
@@ -77,6 +84,11 @@ export default function MilestonesInfo(props) {
         scheduleTableColumns,
         scheduleTableRows
     } = generateScheduleTableData(project);
+
+    const {
+        surveyTableColumns,
+        surveyTableRows
+    } = generateSurveyTableData(project);
 
     const {
         forecastTableColumns,
@@ -178,6 +190,14 @@ export default function MilestonesInfo(props) {
                 currentColumns={contactsTableColumns}
                 currentData={contactsTableRows}
                 onUpdate={handleUpdateRow}
+            />
+        </div>}
+        {surveyTableRows.length !== 0 && <div className={classes.tableContainer}>
+            <SimpleTable
+                projectId={project._id}
+                tableName='Survey Responses'
+                currentColumns={surveyTableColumns}
+                currentData={surveyTableRows}
             />
         </div>}
         {scheduleTableRows.length !== 0 && <div className={classes.tableContainer}>

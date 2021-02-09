@@ -101,7 +101,8 @@ export default function TopPanel(props) {
         filter, setFilter, sort, setSorting,
         regionsList, ownersList, projectManagersList, stagesList,
         fetchFiltersDefaultValues, setLoadProcessing,
-        getActiveUserFilter, setDefaultPagination
+        getActiveUserFilter, setDefaultPagination,
+        requestSync
     } = useContext(ProjectContext);
 
     useEffect(() => {
@@ -230,6 +231,10 @@ export default function TopPanel(props) {
         setDefaultPagination();
     }
 
+    const onTriggerSync = () => {
+        requestSync();
+    }
+
     const [localSort, setLocalSorting] = useState(sort);
     const sortObject = [
         {
@@ -288,6 +293,7 @@ export default function TopPanel(props) {
         logOut();
         handleMenuClose();
     }
+    
 
     return (
         <div className={classes.grow}>
@@ -331,6 +337,13 @@ export default function TopPanel(props) {
                         showEmptyValue={false}
                     />
                     <div className={classes.grow} />
+                    <SyncButton
+                        classes={{
+                            formContainer: classes.formContainer,
+                            formControl: classes.formControl
+                        }}
+                        onTriggerSync={onTriggerSync}
+                    />
 
                     <Profile
                         classes={{

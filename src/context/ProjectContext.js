@@ -84,7 +84,8 @@ class ContextContainer extends React.Component {
             setDefaultPagination: this.setDefaultPagination,
             setProjectWithCurrentMilestone: this.setProjectWithCurrentMilestone,
             setIsEditing: this.setIsEditing,
-            getActiveUserFilter: this.getActiveUserFilter
+            getActiveUserFilter: this.getActiveUserFilter,
+            requestSync: this.requestSync
         };
 
         this.lastUpdateTime = null;
@@ -139,7 +140,6 @@ class ContextContainer extends React.Component {
         const { findProjects } = user.functions;
         const fetchedData = await findProjects({
             filter,
-            sort: this.getSortOrder(),
             count_only: true
         });
         if (fetchedData && fetchedData.length) {
@@ -198,9 +198,20 @@ class ContextContainer extends React.Component {
         };
     }
 
+    requestSync = async () => {
+        const {user, app} = this.state;
+        if (!user || !app.currentUser) return;
+        await user.callFunction("requestSync", {origin: "user"});
+    }
+
     watchForUpdates = async () => {
         if (this.watcherTimerId) clearTimeout(this.watcherTimerId);
-        await this.watcher();
+        try {
+            await this.watcher();
+        } catch(err) {
+            console.log("Watcher exception:", err)
+        }
+        
         this.watcherTimerId = setTimeout(
             this.watchForUpdates,
             WATCHER_TIMEOUT
@@ -234,9 +245,24 @@ class ContextContainer extends React.Component {
                 projectWithCurrentMilestone &&
                 projectWithCurrentMilestone._id === _id
             ) {
+                let ms = projectWithCurrentMilestone.milestone;
+                const pr = updatedDocument;
+                const {schedule} = ms;
+                if (ms) {
+                    pr.milestones.some(prMilestone => {
+                        if (ms._id === prMilestone._id) {
+                            ms = prMilestone;
+                            return true;
+                        }
+                        return false;
+                    });
+                }
+                ms.schedule = schedule;
+
                 this.setProjectWithCurrentMilestone({
                     ...projectWithCurrentMilestone,
-                    project: updatedDocument
+                    project: pr,
+                    milestone: ms
                 });
             }
         }
