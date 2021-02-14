@@ -1,21 +1,11 @@
-import React, {useContext, useState, useEffect} from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import MaterialTable from "material-table";
+import MaterialTable from 'material-table';
 
-import generateTableIcons from "components/common/helpers/TableIcons";
-import {ProjectContext} from "context/ProjectContext";
+import generateTableIcons from 'components/common/helpers/TableIcons';
+import { ProjectContext } from 'context/ProjectContext';
 
 const BSON = require('bson');
-
-DocumentsTable.propTypes = {
-    projectId: PropTypes.string.isRequired,
-    tableName: PropTypes.string.isRequired,
-    currentColumns: PropTypes.array.isRequired,
-    currentData: PropTypes.array.isRequired,
-    onUpdate: PropTypes.func,
-    onAdd: PropTypes.func,
-    onDelete: PropTypes.func
-}
 
 export default function DocumentsTable(props) {
     const {
@@ -23,10 +13,10 @@ export default function DocumentsTable(props) {
         currentColumns, currentData,
         onUpdate,
         onAdd,
-        onDelete
+        onDelete,
     } = props;
 
-    const {isEditing, setIsEditing} = useContext(ProjectContext);
+    const { isEditing, setIsEditing } = useContext(ProjectContext);
 
     const [columns, setColumns] = useState(currentColumns);
     const [data, setData] = useState(currentData);
@@ -44,23 +34,22 @@ export default function DocumentsTable(props) {
     return (
         <MaterialTable
             title={tableName}
-            icons={generateTableIcons({onClickEditButton})}
+            icons={generateTableIcons({ onClickEditButton })}
             columns={columns}
             data={data}
             options={{
-                search:false,
-                sorting:false,
-                paging:false,
-                padding:"dense"
+                search: false,
+                sorting: false,
+                paging: false,
+                padding: 'dense',
             }}
             editable={{
-                isEditable: rowData => rowData.editable,
+                isEditable: (rowData) => rowData.editable,
                 onRowUpdate: async (newData, oldData) => {
                     try {
-                        let isVirtual = !newData._id;
-                        if (isVirtual)
-                            newData._id = new BSON.ObjectID().toString();
-                        await onUpdate({doc: newData, isVirtual});
+                        const isVirtual = !newData._id;
+                        if (isVirtual) newData._id = new BSON.ObjectID().toString();
+                        await onUpdate({ doc: newData, isVirtual });
                         const dataUpdate = [...data];
                         const index = oldData.tableData.id;
                         dataUpdate[index] = newData;
@@ -75,7 +64,7 @@ export default function DocumentsTable(props) {
                 onRowAdd: async (newData) => {
                     try {
                         newData._id = new BSON.ObjectID().toString();
-                        await onAdd({doc: newData});
+                        await onAdd({ doc: newData });
                         newData.editable = true;
                         setData([...data, newData]);
                     } catch (e) {
@@ -83,9 +72,9 @@ export default function DocumentsTable(props) {
                     }
                 },
                 onRowDelete: async (oldData) => {
-                    if (oldData.name === "Report") return;
+                    if (oldData.name === 'Report') return;
                     try {
-                        await onDelete({doc: oldData});
+                        await onDelete({ doc: oldData });
                         const dataDelete = [...data];
                         const index = oldData.tableData.id;
                         dataDelete.splice(index, 1);
@@ -98,3 +87,19 @@ export default function DocumentsTable(props) {
         />
     );
 }
+
+DocumentsTable.propTypes = {
+    projectId: PropTypes.string.isRequired,
+    tableName: PropTypes.string.isRequired,
+    currentColumns: PropTypes.array.isRequired,
+    currentData: PropTypes.array.isRequired,
+    onUpdate: PropTypes.func,
+    onAdd: PropTypes.func,
+    onDelete: PropTypes.func,
+};
+
+DocumentsTable.defaultProps = {
+    onUpdate: () => console.log('onUpdate'),
+    onAdd: () => console.log('onAdd'),
+    onDelete: () => console.log('onDelete'),
+};

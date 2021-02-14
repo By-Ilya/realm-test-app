@@ -30,7 +30,7 @@ export default class ContextContainer extends React.Component {
             errorInfo: null,
             user: null,
             dbCollection: null,
-            fcstCollection: null
+            fcstCollection: null,
         };
         this.funcs = {
             setUser: this.setUser,
@@ -43,18 +43,19 @@ export default class ContextContainer extends React.Component {
     }
 
     setUser = (user) => {
-        this.setState({user});
-        if (this.state.app && user) {
+        this.setState({ user });
+        const { app } = this.state;
+        if (app && user) {
             const dbCollection = user
                 .mongoClient(REALM_SERVICE_NAME)
                 .db(REALM_DATABASE_NAME)
                 .collection(REALM_COLLECTION_NAME);
-            this.setState({dbCollection});
+            this.setState({ dbCollection });
             const fcstCollection = user
                 .mongoClient(REALM_SERVICE_NAME)
                 .db(REALM_DATABASE_NAME)
                 .collection(REALM_FCST_COLLECTION_NAME);
-            this.setState({fcstCollection});
+            this.setState({ fcstCollection });
         }
     };
 
@@ -79,17 +80,18 @@ export default class ContextContainer extends React.Component {
     };
 
     setErrorInfo = (errorInfo) => {
-        this.setState({errorInfo});
+        this.setState({ errorInfo });
     }
 
     logOut = async () => {
-        await this.state.app.currentUser.logOut();
-        this.setUser(this.state.app.currentUser);
+        const { currentUser } = this.state.app;
+        await currentUser.logOut();
+        this.setUser(currentUser);
     }
 
     render() {
         return (
-            <AuthContext.Provider value={{...this.state, ...this.funcs}}>
+            <AuthContext.Provider value={{ ...this.state, ...this.funcs }}>
                 {this.props.children}
             </AuthContext.Provider>
         );

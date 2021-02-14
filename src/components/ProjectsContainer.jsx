@@ -2,14 +2,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 
-import ProjectsList from "components/projects/ProjectsList";
-import MilestonesInfoPaper from "components/projects/MilestonesInfoPaper";
+import ProjectsList from 'components/projects/ProjectsList';
+import MilestonesInfoPaper from 'components/projects/MilestonesInfoPaper';
 
 const useStyles = makeStyles((theme) => ({
     container: {
         marginTop: 70,
         display: 'flex',
-        flexDirection: 'row'
+        flexDirection: 'row',
     },
     root: {
         width: '90vh',
@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme) => ({
         position: 'relative',
         overflow: 'auto',
         minHeight: '90vh',
-        height: '90vh'
+        height: '90vh',
     },
     section: {
         backgroundColor: 'inherit',
@@ -25,16 +25,16 @@ const useStyles = makeStyles((theme) => ({
     ul: {
         backgroundColor: 'inherit',
         padding: 0,
-        overflowAnchor: 'none'
+        overflowAnchor: 'none',
     },
     progress: {
         position: 'absolute',
         top: '50%',
-        left: '50%'
+        left: '50%',
     },
     buttonProgress: {
         position: 'absolute',
-        marginLeft: '2.5rem'
+        marginLeft: '2.5rem',
     },
     paper: {
         padding: theme.spacing(1),
@@ -45,18 +45,14 @@ const useStyles = makeStyles((theme) => ({
         marginLeft: theme.spacing(2),
         marginRight: theme.spacing(1),
         maxHeight: '90vh',
-        overflow: 'auto'
+        overflow: 'auto',
     },
 }));
-
-ProjectsContainer.propTypes = {
-    fetchProjects: PropTypes.func
-};
 
 export default function ProjectsContainer(props) {
     const classes = useStyles();
 
-    const {fetchProjects} = props;
+    const { fetchProjects } = props;
 
     return (
         <div className={classes.container}>
@@ -66,11 +62,15 @@ export default function ProjectsContainer(props) {
                     listSection: classes.section,
                     ul: classes.ul,
                     progress: classes.progress,
-                    buttonProgress: classes.buttonProgress
+                    buttonProgress: classes.buttonProgress,
                 }}
                 fetchProjects={fetchProjects}
             />
-            <MilestonesInfoPaper classes={{paper: classes.paper}}/>
+            <MilestonesInfoPaper classes={{ paper: classes.paper }} />
         </div>
-    )
+    );
 }
+
+ProjectsContainer.propTypes = {
+    fetchProjects: PropTypes.func.isRequired,
+};

@@ -1,4 +1,4 @@
-import gql from 'graphql-tag'
+import gql from 'graphql-tag';
 
 export const FIND_PROJECTS = gql`
     query FindProjectsCustomResolver($filtersInput: FiltersInput!) {

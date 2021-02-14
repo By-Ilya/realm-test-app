@@ -47,6 +47,13 @@
       "import/prefer-default-export": 0,
       "template-curly-spacing": 0,
       "array-callback-return": 0
+    },
+    "settings": {
+      "import/resolver": {
+        "node": {
+        "paths": ["src"]
+      }
     }
   }
+}
   
