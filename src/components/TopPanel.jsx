@@ -102,9 +102,15 @@ export default function TopPanel(props) {
         requestSync,
     } = useContext(ProjectContext);
 
+    const [localFilter, setLocalFilter] = useState(filter);
+
     useEffect(() => {
         fetchFiltersDefaultValues();
     }, []);
+
+    useEffect(() => {
+        setLocalFilter(filter); 
+    }, [filter]); //we need to reload the local filter when the underlying object changes
 
     useEffect(() => {
         setLoadProcessing(true);
@@ -112,7 +118,6 @@ export default function TopPanel(props) {
     }, [filter, sort]);
 
     const { profile } = user;
-    const [localFilter, setLocalFilter] = useState(filter);
 
     const mapValueToFilterName = (value, isAllowEmptyName = false) => {
         switch (Boolean(value)) {
