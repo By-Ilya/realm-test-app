@@ -115,6 +115,12 @@ class ContextContainer extends React.Component {
                 ownersList: owners ? owners.sort() : [],
                 projectManagersList: projectManagers ? projectManagers.sort() : [],
             });
+            this.setFilter({
+                active_user_filter: {
+                    name: user.profile.name,
+                    email: user.profile.email
+                }
+            });
         }
     }
 
