@@ -121,7 +121,8 @@ export default function EditableCellTable(props) {
     );
 }
 
-function TableTitle(checkboxValue, onCheckboxUpdate, tableName) {
+function TableTitle(props) {
+    const {checkboxValue, onCheckboxUpdate, tableName} = props;
     return (
         <Box display="flex" alignItems="center">
             <Typography
