@@ -1,16 +1,8 @@
-import React, {useContext, useState, useEffect} from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import MaterialTable from "material-table";
+import MaterialTable from 'material-table';
 
-import generateTableIcons from "./helpers/TableIcons";
-import {RealmContext} from "../../context/RealmContext";
-
-SimpleTable.propTypes = {
-    projectId: PropTypes.string.isRequired,
-    tableName: PropTypes.string.isRequired,
-    currentColumns: PropTypes.array.isRequired,
-    currentData: PropTypes.array.isRequired
-}
+import { ProjectContext } from 'context/ProjectContext';
 
 export default function SimpleTable(props) {
     const {
@@ -18,7 +10,7 @@ export default function SimpleTable(props) {
         currentColumns, currentData,
     } = props;
 
-    const {isEditing, setIsEditing} = useContext(RealmContext);
+    const { isEditing } = useContext(ProjectContext);
 
     const [columns, setColumns] = useState(currentColumns);
     const [data, setData] = useState(currentData);
@@ -37,11 +29,18 @@ export default function SimpleTable(props) {
             columns={columns}
             data={data}
             options={{
-                search:false,
-                sorting:false,
-                paging:false,
-                padding:"dense"
+                search: false,
+                sorting: false,
+                paging: false,
+                padding: 'dense',
             }}
         />
     );
 }
+
+SimpleTable.propTypes = {
+    projectId: PropTypes.string.isRequired,
+    tableName: PropTypes.string.isRequired,
+    currentColumns: PropTypes.array.isRequired,
+    currentData: PropTypes.array.isRequired,
+};

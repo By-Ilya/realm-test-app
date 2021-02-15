@@ -1,4 +1,3 @@
-export const SIGN_IN_ERRORS = {
-    googleOAuth: 'Something went wrong while getting Google account info.',
-    realmUser: 'Something went wrong while signing in.\nPlease, try again later.'
-}
+const SIGN_IN_ERROR = 'Something went wrong while signing in. Please, try again later.';
+
+module.exports = SIGN_IN_ERROR;

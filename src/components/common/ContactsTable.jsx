@@ -1,26 +1,18 @@
-import React, {useContext, useState, useEffect} from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import MaterialTable from "material-table";
+import MaterialTable from 'material-table';
 
-import generateTableIcons from "./helpers/TableIcons";
-import {RealmContext} from "../../context/RealmContext";
-
-ContactsTable.propTypes = {
-    projectId: PropTypes.string.isRequired,
-    tableName: PropTypes.string.isRequired,
-    currentColumns: PropTypes.array.isRequired,
-    currentData: PropTypes.array.isRequired,
-    onUpdate: PropTypes.func
-}
+import generateTableIcons from 'components/common/helpers/TableIcons';
+import { ProjectContext } from 'context/ProjectContext';
 
 export default function ContactsTable(props) {
     const {
         projectId, tableName,
         currentColumns, currentData,
-        onUpdate
+        onUpdate,
     } = props;
 
-    const {isEditing, setIsEditing} = useContext(RealmContext);
+    const { isEditing, setIsEditing } = useContext(ProjectContext);
 
     const [columns, setColumns] = useState(currentColumns);
     const [data, setData] = useState(currentData);
@@ -38,21 +30,21 @@ export default function ContactsTable(props) {
     return (
         <MaterialTable
             title={tableName}
-            icons={generateTableIcons({onClickEditButton})}
+            icons={generateTableIcons({ onClickEditButton })}
             columns={columns}
             data={data}
             options={{
-                search:false,
-                sorting:false,
-                paging:false,
-                padding:"dense"
+                search: false,
+                sorting: false,
+                paging: false,
+                padding: 'dense',
             }}
             editable={{
-                isEditable: rowData => rowData.editable,
+                isEditable: (rowData) => rowData.editable,
                 onRowUpdate: async (newData, oldData) => {
                     try {
-                        const {name, email, updateKey} = newData;
-                        await onUpdate({updateKey, value: {name, email}});
+                        const { name, email, updateKey } = newData;
+                        await onUpdate({ updateKey, value: { name, email } });
                         const dataUpdate = [...data];
                         const index = oldData.tableData.id;
                         dataUpdate[index] = newData;
@@ -63,8 +55,20 @@ export default function ContactsTable(props) {
                         setIsEditing(false);
                     }
                 },
-                onRowUpdateCancelled: () => setIsEditing(false)
+                onRowUpdateCancelled: () => setIsEditing(false),
             }}
         />
     );
 }
+
+ContactsTable.propTypes = {
+    projectId: PropTypes.string.isRequired,
+    tableName: PropTypes.string.isRequired,
+    currentColumns: PropTypes.array.isRequired,
+    currentData: PropTypes.array.isRequired,
+    onUpdate: PropTypes.func,
+};
+
+ContactsTable.defaultProps = {
+    onUpdate: () => console.log('onUpdate'),
+};

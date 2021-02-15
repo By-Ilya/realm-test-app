@@ -1,10 +1,10 @@
-import React, {useContext} from 'react';
-import {useLazyQuery} from "@apollo/client";
+import React, { useContext } from 'react';
+import { useLazyQuery } from '@apollo/client';
 
-import {RealmContext} from "../context/RealmContext";
-import TopPanel from "../components/TopPanel";
-import ProjectsContainer from "../components/ProjectsContainer";
-import {FIND_PROJECTS} from "../graphql/graphql-operations";
+import { ProjectContext } from 'context/ProjectContext';
+import TopPanel from 'components/TopPanel';
+import ProjectsContainer from 'components/ProjectsContainer';
+import { FIND_PROJECTS } from 'graphql/graphql-operations';
 
 export default function MainPage() {
     const {
@@ -12,27 +12,27 @@ export default function MainPage() {
         setLoadProcessing, cleanLocalProjects,
         filter, getSortOrder, pagination,
         setMoreProjectsLoadProcessing,
-        fetchProjectsTotalCount
-    } = useContext(RealmContext);
+        fetchProjectsTotalCount,
+    } = useContext(ProjectContext);
 
-    const {limit} = pagination;
+    const { limit } = pagination;
     const queryOptions = {
         variables: {
             filtersInput: {
-                filter: {...filter, limit },
-                sort: getSortOrder()
-            }
-        }
-    }
+                filter: { ...filter, limit },
+                sort: getSortOrder(),
+            },
+        },
+    };
 
-    const isMoreProjects = projects => projects && projects.length >= limit + 1;
+    const isMoreProjects = (projects) => projects && projects.length >= limit + 1;
 
     const [fetchProjects] = useLazyQuery(
         FIND_PROJECTS,
         {
             ...queryOptions,
-            onCompleted: data => {
-                const {psprojectsData} = data;
+            onCompleted: (data) => {
+                const { psprojectsData } = data;
                 const psprojects = [...psprojectsData];
                 if (isMoreProjects(psprojects)) {
                     psprojects.pop();
@@ -45,23 +45,25 @@ export default function MainPage() {
                 setMoreProjectsLoadProcessing(false);
                 fetchProjectsTotalCount();
             },
-            onError: error => {
+            onError: (error) => {
                 console.error(error);
                 setHasMoreProjects(false);
                 setLoadProcessing(false);
                 setMoreProjectsLoadProcessing(false);
             },
-            fetchPolicy: 'network-only'
-        }
+            fetchPolicy: 'network-only',
+        },
     );
 
-    const fetchProjectsByTrigger = async ({needToClean}) => {
+    const fetchProjectsByTrigger = async ({ needToClean }) => {
         needToClean && await cleanLocalProjects();
         fetchProjects();
     };
 
-    return (<>
-        <TopPanel fetchProjects={fetchProjectsByTrigger} />
-        <ProjectsContainer fetchProjects={fetchProjectsByTrigger} />
-    </>)
+    return (
+        <>
+            <TopPanel fetchProjects={fetchProjectsByTrigger} />
+            <ProjectsContainer fetchProjects={fetchProjectsByTrigger} />
+        </>
+    );
 }
