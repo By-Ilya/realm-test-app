@@ -250,7 +250,7 @@ class ContextContainer extends React.Component {
             this.setProjects(projects);
             if (
                 projectWithCurrentMilestone &&
-                projectWithCurrentMilestone._id === _id
+                projectWithCurrentMilestone.project._id === _id
             ) {
                 let ms = projectWithCurrentMilestone.milestone;
                 const pr = updatedDocument;
