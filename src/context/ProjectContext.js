@@ -210,7 +210,8 @@ class ContextContainer extends React.Component {
     }
 
     requestSync = async () => {
-        const { user, app } = this.state;
+        const { authValue } = this.props;
+        const { user, app } = authValue;
         if (!user || !app.currentUser) return;
         await user.callFunction('requestSync', { origin: 'user' });
     }
