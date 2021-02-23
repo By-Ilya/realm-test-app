@@ -2,6 +2,7 @@ import React from 'react';
 
 import AuthContextContainer from 'context/AuthContext';
 import ProjectContextContainer from 'context/ProjectContext';
+import OpportunityContextContainer from 'context/OpportunityContext';
 import RealmApp from 'RealmApp';
 
 import 'App.css';
@@ -11,7 +12,9 @@ export default function App() {
         <div className="App">
             <AuthContextContainer>
                 <ProjectContextContainer>
-                    <RealmApp />
+                    <OpportunityContextContainer>
+                        <RealmApp />
+                    </OpportunityContextContainer>
                 </ProjectContextContainer>
             </AuthContextContainer>
         </div>

@@ -1,7 +1,7 @@
 import gql from 'graphql-tag';
 
 export const FIND_PROJECTS = gql`
-    query FindProjectsCustomResolver($filtersInput: FiltersInput!) {
+    query FindProjectsCustomResolver($filtersInput: PsprojectsFiltersInput!) {
         psprojectsData(input: $filtersInput) {
             _id
             account
@@ -84,6 +84,34 @@ export const FIND_PROJECTS = gql`
                 text
               }
             }
+        }
+    }
+`;
+
+export const FIND_OPPORTUNITIES = gql`
+    query FindOpportunitiesCustomResolver($filtersInput: OpportunitiesFiltersInput!) {
+        opportunitiesData(input: $filtersInput) {
+            _id
+            account
+            account_id
+            amount
+            close_date
+            em {
+                call
+                call_amount
+                engagement_manager
+                esd_created
+                ps_status
+            }
+            forecast_category
+            has_services
+            name
+            owner
+            owner_region
+            ps_notes
+            ps_region
+            services_post_carve
+            stage
         }
     }
 `;

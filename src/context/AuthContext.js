@@ -1,7 +1,7 @@
 import React from 'react';
 import * as Realm from 'realm-web';
 
-import SIGN_IN_ERROR from 'helpers/constants/errorMessages';
+import { SIGN_IN_ERROR, PAGES } from 'helpers/constants/common';
 
 const AuthContext = React.createContext('auth');
 
@@ -31,6 +31,7 @@ export default class ContextContainer extends React.Component {
             user: null,
             dbCollection: null,
             fcstCollection: null,
+            activePage: PAGES.projects,
         };
         this.funcs = {
             setUser: this.setUser,
@@ -38,6 +39,8 @@ export default class ContextContainer extends React.Component {
             googleHandleRedirect: this.googleHandleRedirect,
             getUserAccessToken: this.getUserAccessToken,
             setErrorInfo: this.setErrorInfo,
+            setActivePage: this.setActivePage,
+            getActiveUserFilter: this.getActiveUserFilter,
             logOut: this.logOut,
         };
     }
@@ -81,6 +84,29 @@ export default class ContextContainer extends React.Component {
 
     setErrorInfo = (errorInfo) => {
         this.setState({ errorInfo });
+    }
+
+    isSameOrUndefinedPage = (page) => {
+        const { activePage } = this.state;
+        return !Object.values(PAGES).includes(page) || page === activePage;
+    }
+
+    setActivePage = (newActivePage) => {
+        if (this.isSameOrUndefinedPage(newActivePage)) {
+            return;
+        }
+        this.setState({ activePage: newActivePage });
+    }
+
+    getActiveUserFilter = () => {
+        const { user } = this.state;
+
+        if (!user) return null;
+        const { profile } = user;
+        return {
+            email: profile.email,
+            name: profile.name,
+        };
     }
 
     logOut = async () => {

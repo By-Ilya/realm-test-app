@@ -3,21 +3,28 @@ import PropTypes from 'prop-types';
 import { fade, makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-import IconButton from '@material-ui/core/IconButton';
-import Typography from '@material-ui/core/Typography';
-import MenuItem from '@material-ui/core/MenuItem';
-import Menu from '@material-ui/core/Menu';
 
 import { AuthContext } from 'context/AuthContext';
 import { ProjectContext } from 'context/ProjectContext';
+import { OpportunityContext } from 'context/OpportunityContext';
+import HeaderSelect from 'components/topPanel/HeaderSelect';
 import SearchField from 'components/common/SearchField';
 import FilterButton from 'components/common/FilterButton';
 import Profile from 'components/common/Profile';
-import Avatar from 'components/common/Avatar';
+import ProfileMenu from 'components/common/ProfileMenu';
+import ProfileMobileMenu from 'components/common/ProfileMobileMenu';
 import SyncButton from 'components/common/SyncButton';
 
-const DEFAULT_CHOOSE_VALUES = ['Yes', 'No'];
-const ENTER_KEY = 'Enter';
+import { PAGES } from 'helpers/constants/common';
+import { ENTER_KEY } from 'components/constants/common';
+import {
+    getProjectFilters,
+    getProjectSortValues,
+} from 'components/projects/filters';
+import {
+    getOpportunityFilters,
+    getOpportunitySortValues,
+} from 'components/opportunities/filters';
 
 const useStyles = makeStyles((theme) => ({
     grow: {
@@ -25,12 +32,6 @@ const useStyles = makeStyles((theme) => ({
     },
     menuButton: {
         marginRight: theme.spacing(2),
-    },
-    title: {
-        display: 'none',
-        [theme.breakpoints.up('sm')]: {
-            display: 'block',
-        },
     },
     search: {
         position: 'relative',
@@ -91,170 +92,152 @@ const useStyles = makeStyles((theme) => ({
 
 export default function TopPanel(props) {
     const classes = useStyles();
-
-    const { fetchProjects } = props;
-    const { user, logOut } = useContext(AuthContext);
     const {
-        filter, setFilter, sort, setSorting,
-        regionsList, ownersList, projectManagersList, stagesList,
-        fetchFiltersDefaultValues, setLoadProcessing,
-        getActiveUserFilter, setDefaultPagination,
+        activePage,
+        setActivePage,
+        fetchProjects,
+        fetchOpportunities,
+    } = props;
+
+    const {
+        user,
+        getActiveUserFilter,
+        logOut,
+    } = useContext(AuthContext);
+    const {
+        filter: projectFilter,
+        setFilter: setProjectFilter,
+        sortFields: projectSortFields,
+        sort: projectSort,
+        setSorting: setProjectSorting,
+        regionsList: projectRegionsList,
+        ownersList: projectOwnersList,
+        projectManagersList,
+        stagesList: projectStagesList,
+        fetchFiltersDefaultValues: fetchProjectDefaultFilters,
+        setLoadProcessing: setProjectLoadProcessing,
+        setDefaultPagination: setProjectDefaultPagination,
         requestSync,
     } = useContext(ProjectContext);
+    const {
+        filter: opportunityFilter,
+        setFilter: setOpportunityFilter,
+        sortFields: opportunitySortFields,
+        sort: opportunitySort,
+        setSorting: setOpportunitySorting,
+        ownerRegionsList: opportunityOwnerRegionsList,
+        psRegionsList: opportunityPsRegionsList,
+        emManagersList: opportunityEmManagersList,
+        fetchFiltersDefaultValues: fetchOpportunityDefaultFilters,
+        setLoadProcessing: setOpportunityLoadProcessing,
+        setDefaultPagination: setOpportunitiesDefaultPagination,
+    } = useContext(OpportunityContext);
+
+    const isProjectsPage = activePage === PAGES.projects;
+
+    const [localFilter, setLocalFilter] = useState(isProjectsPage
+        ? projectFilter
+        : opportunityFilter);
+    const [localSort, setLocalSorting] = useState(isProjectsPage
+        ? projectSort
+        : opportunitySort);
+
+    const getProjectFiltersObject = () => {
+        const filtersList = {
+            regionsList: projectRegionsList,
+            ownersList: projectOwnersList,
+            projectManagersList,
+            stagesList: projectStagesList,
+        };
+        return getProjectFilters({
+            localFilter,
+            setLocalFilter,
+            filtersList,
+            getActiveUserFilter,
+        });
+    };
+    const getProjectSortObject = () => getProjectSortValues({
+        localSort,
+        setLocalSorting,
+        fieldsList: projectSortFields,
+    });
+
+    const getOpportunityFiltersObject = () => {
+        const filtersList = {
+            ownerRegionsList: opportunityOwnerRegionsList,
+            psRegionsList: opportunityPsRegionsList,
+            emManagersList: opportunityEmManagersList,
+        };
+
+        return getOpportunityFilters({
+            localFilter,
+            setLocalFilter,
+            filtersList,
+            getActiveUserFilter,
+        });
+    };
+    const getOpportunitySortObject = () => getOpportunitySortValues({
+        localSort,
+        setLocalSorting,
+        fieldsList: opportunitySortFields,
+    });
+
+    let filtersObject = isProjectsPage
+        ? getProjectFiltersObject()
+        : getOpportunityFiltersObject();
+
+    let sortObject = isProjectsPage
+        ? getProjectSortObject()
+        : getOpportunitySortObject();
 
     useEffect(() => {
-        fetchFiltersDefaultValues();
-    }, []);
-
-    useEffect(() => {
-        setLoadProcessing(true);
-        fetchProjects({ needToClean: true });
-    }, [filter, sort]);
-
-    const { profile } = user;
-    const [localFilter, setLocalFilter] = useState(filter);
-
-    const mapValueToFilterName = (value, isAllowEmptyName = false) => {
-        switch (Boolean(value)) {
-            case true: return 'Yes';
-            case false: return 'No';
-            default: return isAllowEmptyName ? '' : 'No';
+        if (isProjectsPage) {
+            fetchProjectDefaultFilters();
+            setLocalFilter(projectFilter);
+            setLocalSorting(projectSort);
+            filtersObject = getProjectFiltersObject();
+            sortObject = getProjectSortObject();
+        } else {
+            fetchOpportunityDefaultFilters();
+            setLocalFilter(opportunityFilter);
+            setLocalSorting(opportunitySort);
+            filtersObject = getOpportunityFiltersObject();
+            sortObject = getOpportunitySortObject();
         }
-    };
-
-    const mapFilterNameToValue = (filterName, isAllowNullValue = false) => {
-        switch (filterName) {
-            case 'Yes': return true;
-            case 'No': return false;
-            default: return isAllowNullValue ? null : false;
-        }
-    };
-
-    const filtersObject = [
-        {
-            label: 'Region',
-            currentValue: localFilter.region,
-            values: regionsList,
-            setValue: (event) => {
-                setLocalFilter({
-                    ...localFilter,
-                    region: event.target.value,
-                });
-            },
-        },
-        {
-            label: 'Owner',
-            currentValue: localFilter.owner,
-            values: ownersList,
-            setValue: (event) => {
-                setLocalFilter({
-                    ...localFilter,
-                    owner: event.target.value,
-                });
-            },
-        },
-        {
-            label: 'PM',
-            currentValue: localFilter.project_manager,
-            values: projectManagersList,
-            setValue: (event) => {
-                setLocalFilter({
-                    ...localFilter,
-                    project_manager: event.target.value,
-                });
-            },
-        },
-        {
-            label: 'Stage',
-            currentValue: localFilter.pm_stage,
-            values: stagesList,
-            setValue: (event) => {
-                setLocalFilter({
-                    ...localFilter,
-                    pm_stage: event.target.value,
-                });
-            },
-        },
-        {
-            label: 'Only Active',
-            currentValue: mapValueToFilterName(localFilter.active),
-            values: DEFAULT_CHOOSE_VALUES,
-            setValue: (event) => {
-                setLocalFilter({
-                    ...localFilter,
-                    active: mapFilterNameToValue(event.target.value),
-                });
-            },
-        },
-        {
-            label: 'Planning done',
-            currentValue: mapValueToFilterName(
-                localFilter.monthly_forecast_done,
-                true,
-            ),
-            values: DEFAULT_CHOOSE_VALUES,
-            setValue: (event) => {
-                setLocalFilter({
-                    ...localFilter,
-                    monthly_forecast_done: mapFilterNameToValue(
-                        event.target.value,
-                        true,
-                    ),
-                });
-            },
-        },
-        {
-            label: 'Only my projects',
-            currentValue: mapValueToFilterName(localFilter.active_user_filter),
-            values: DEFAULT_CHOOSE_VALUES,
-            setValue: (event) => {
-                setLocalFilter({
-                    ...localFilter,
-                    active_user_filter: mapFilterNameToValue(event.target.value)
-                        ? getActiveUserFilter()
-                        : null,
-                });
-            },
-        },
-    ];
+    }, [isProjectsPage]);
 
     const onApplyFilters = (searchQuery = undefined) => {
+        const setFilterFunc = isProjectsPage
+            ? setProjectFilter
+            : setOpportunityFilter;
         if (searchQuery !== undefined) {
             setLocalFilter({ ...localFilter, name: searchQuery });
-            setFilter({ ...localFilter, name: searchQuery });
+            setFilterFunc({ ...localFilter, name: searchQuery });
         } else {
-            setFilter(localFilter);
+            setFilterFunc(localFilter);
         }
-        setDefaultPagination();
+        const setDefaultPaginationFunc = isProjectsPage
+            ? setProjectDefaultPagination
+            : setOpportunitiesDefaultPagination;
+        setDefaultPaginationFunc();
     };
-
-    const onTriggerSync = () => {
-        requestSync();
-    };
-
-    const [localSort, setLocalSorting] = useState(sort);
-    const sortObject = [
-        {
-            label: 'Field',
-            currentValue: localSort.field,
-            values: ['name', 'region', 'owner', 'expiration', 'stage'],
-            setValue: (event) => {
-                setLocalSorting({ ...localSort, field: event.target.value });
-            },
-        },
-        {
-            label: 'Order',
-            currentValue: localSort.order,
-            values: ['ASC', 'DESC'],
-            setValue: (event) => {
-                setLocalSorting({ ...localSort, order: event.target.value });
-            },
-        },
-    ];
 
     const onApplySorting = () => {
-        setSorting(localSort);
+        const setSortingFunc = isProjectsPage
+            ? setProjectSorting
+            : setOpportunitySorting;
+        setSortingFunc(localSort);
     };
+
+    useEffect(() => {
+        setProjectLoadProcessing(true);
+        fetchProjects({ needToClean: true });
+    }, [projectFilter, projectSort]);
+
+    useEffect(() => {
+        setOpportunityLoadProcessing(true);
+        fetchOpportunities({ needToClean: true });
+    }, [opportunityFilter, opportunitySort]);
 
     const handleSearchKeyDown = async (event) => {
         if (event.key === ENTER_KEY) {
@@ -270,18 +253,20 @@ export default function TopPanel(props) {
 
     const isMenuOpen = Boolean(anchorEl);
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+    const { profile } = user;
 
+    const onTriggerSync = () => {
+        requestSync();
+    };
     const handleProfileMenuOpen = (event) => {
         setAnchorEl(event.currentTarget);
     };
-
     const handleMobileMenuOpen = (event) => {
         setMobileMoreAnchorEl(event.currentTarget);
     };
     const handleMobileMenuClose = () => {
         setMobileMoreAnchorEl(null);
     };
-
     const handleMenuClose = () => {
         setAnchorEl(null);
         handleMobileMenuClose();
@@ -295,9 +280,11 @@ export default function TopPanel(props) {
         <div className={classes.grow}>
             <AppBar position="fixed">
                 <Toolbar>
-                    <Typography className={classes.title} variant="h6" noWrap>
-                        Projects
-                    </Typography>
+                    <HeaderSelect
+                        currentValue={activePage}
+                        setValue={setActivePage}
+                        allValues={Object.values(PAGES)}
+                    />
                     <SearchField
                         classes={{
                             searchContainer: classes.search,
@@ -305,7 +292,7 @@ export default function TopPanel(props) {
                             inputBaseRoot: classes.inputRoot,
                             inputBaseInput: classes.inputInput,
                         }}
-                        inputPlaceHolder="Search projects"
+                        inputPlaceHolder={`Search ${activePage.toLowerCase()}`}
                         onKeyDown={handleSearchKeyDown}
                     />
                     <FilterButton
@@ -314,7 +301,7 @@ export default function TopPanel(props) {
                             formControl: classes.formControl,
                         }}
                         filterButtonText="Filters"
-                        filterDialogTitle="Filter projects"
+                        filterDialogTitle={`Filter ${activePage.toLowerCase()}`}
                         filtersObject={filtersObject}
                         applyButtonText="Apply filters"
                         onApplyFilters={onApplyFilters}
@@ -326,7 +313,7 @@ export default function TopPanel(props) {
                             formControl: classes.formControl,
                         }}
                         filterButtonText="Sort"
-                        filterDialogTitle="Sort projects"
+                        filterDialogTitle={`Sort ${activePage.toLowerCase()}`}
                         filtersObject={sortObject}
                         applyButtonText="Sort"
                         onApplyFilters={onApplySorting}
@@ -340,7 +327,6 @@ export default function TopPanel(props) {
                         }}
                         onTriggerSync={onTriggerSync}
                     />
-
                     <Profile
                         classes={{
                             sectionDesktop: classes.sectionDesktop,
@@ -355,7 +341,7 @@ export default function TopPanel(props) {
                 </Toolbar>
             </AppBar>
 
-            <MobileMenu
+            <ProfileMobileMenu
                 mobileMoreAnchorEl={mobileMoreAnchorEl}
                 mobileMenuId={mobileMenuId}
                 isMobileMenuOpen={isMobileMenuOpen}
@@ -363,76 +349,20 @@ export default function TopPanel(props) {
                 onProfileMenuOpen={handleProfileMenuOpen}
                 profile={profile}
             />
-
             <ProfileMenu
                 anchorEl={anchorEl}
                 menuId={menuId}
                 isMenuOpen={isMenuOpen}
                 onMenuClose={handleMenuClose}
-                onLogOut={handleLogOut}
+                onLogout={handleLogOut}
             />
         </div>
     );
 }
 
-function ProfileMenu(props) {
-    const {
-        anchorEl, menuId, isMenuOpen,
-        onMenuClose, onLogOut,
-    } = props;
-
-    return (
-        <Menu
-            anchorEl={anchorEl}
-            anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-            id={menuId}
-            keepMounted
-            transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-            open={isMenuOpen}
-            onClose={onMenuClose}
-        >
-            <MenuItem onClick={onLogOut}>Log Out</MenuItem>
-        </Menu>
-    );
-}
-
-function MobileMenu(props) {
-    const {
-        mobileMoreAnchorEl, mobileMenuId,
-        isMobileMenuOpen, onMobileMenuClose,
-        onProfileMenuOpen, profile,
-    } = props;
-
-    const { name, email, pictureUrl } = profile;
-
-    return (
-        <Menu
-            anchorEl={mobileMoreAnchorEl}
-            anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-            id={mobileMenuId}
-            keepMounted
-            transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-            open={isMobileMenuOpen}
-            onClose={onMobileMenuClose}
-        >
-            <MenuItem onClick={onProfileMenuOpen}>
-                <IconButton
-                    aria-label="account of current user"
-                    aria-controls="primary-search-account-menu"
-                    aria-haspopup="true"
-                    color="inherit"
-                >
-                    <Avatar
-                        avatarImage={pictureUrl}
-                        accountName={name}
-                        accountEmail={email}
-                    />
-                </IconButton>
-            </MenuItem>
-        </Menu>
-    );
-}
-
 TopPanel.propTypes = {
     fetchProjects: PropTypes.func.isRequired,
+    fetchOpportunities: PropTypes.func.isRequired,
+    activePage: PropTypes.string.isRequired,
+    setActivePage: PropTypes.func.isRequired,
 };

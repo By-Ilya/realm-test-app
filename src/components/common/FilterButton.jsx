@@ -8,7 +8,6 @@ import DialogActions from '@material-ui/core/DialogActions';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
-
 import Input from '@material-ui/core/Input';
 
 export default function FilterButton(props) {
