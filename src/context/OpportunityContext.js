@@ -160,6 +160,7 @@ class OpportunityContainer extends React.Component {
             amountTotal: 0,
             servicesTotal: 0,
             hasMoreOpportunities: true,
+            activeOpportunity: null,
         };
         this.funcs = {
             setLoadProcessing: this.setLoadProcessing,
@@ -174,6 +175,7 @@ class OpportunityContainer extends React.Component {
             getSortOrder: this.getSortOrder,
             setPagination: this.setPagination,
             setDefaultPagination: this.setDefaultPagination,
+            setActiveOpportunity: this.setActiveOpportunity,
         };
     }
 
@@ -282,6 +284,10 @@ class OpportunityContainer extends React.Component {
 
     setDefaultPagination = () => {
         this.setState({ pagination: DEFAULT_PAGINATION });
+    }
+
+    setActiveOpportunity = (activeOpportunity) => {
+        this.setState({ activeOpportunity });
     }
 
     render() {

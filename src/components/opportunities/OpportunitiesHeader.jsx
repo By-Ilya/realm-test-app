@@ -40,17 +40,17 @@ export default function OpportunitiesHeader(props) {
                     {`${totalCountOpportunities} opportunities (showing ${countOpportunities})`}
                 </Typography>
             </Grid>
-            <Grid item xs={6} sm={2} className={classes.leftContent}>
+            <Grid item xs={6} sm={3} className={classes.leftContent}>
                 <Typography variant="body1">
                     {`Amount total: ${amountTotal}`}
                 </Typography>
             </Grid>
-            <Grid item xs={6} sm={2} className={classes.leftContent}>
+            <Grid item xs={6} sm={3} className={classes.leftContent}>
                 <Typography variant="body1">
                     {`Services total: ${servicesTotal}`}
                 </Typography>
             </Grid>
-            <Grid item xs={6} sm={5} className={classes.rightContent}>
+            <Grid item xs={6} sm={3} className={classes.rightContent}>
                 <ChooseButton
                     chooseButtonText="Columns"
                     chooseDialogTitle="Show columns"

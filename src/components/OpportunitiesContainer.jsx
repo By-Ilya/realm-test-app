@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
+import PropTypes from 'prop-types';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import MaterialTable from 'material-table';
@@ -12,6 +12,7 @@ import OpportunitiesHeader from 'components/opportunities/OpportunitiesHeader';
 import {
     generateOpportunityTableData,
 } from 'components/opportunities/tableData';
+import OpportunityDetailedInfo from 'components/opportunities/OpportunitiyDetailedInfo';
 
 const useStyles = makeStyles((theme) => ({
     container: {
@@ -60,6 +61,8 @@ export default function OpportunitiesContainer(props) {
         defaultPageLimit,
         pagination,
         setPagination,
+        activeOpportunity,
+        setActiveOpportunity,
     } = useContext(OpportunityContext);
 
     const [tableData, setTableData] = useState(
@@ -101,9 +104,22 @@ export default function OpportunitiesContainer(props) {
         }
     }, [pagination]);
 
+    const handleClickOpportunity = (event, rowData) => {
+        const { id } = rowData;
+        const foundOpportunities = opportunities.filter(
+            (o) => o._id === id,
+        );
+        if (foundOpportunities && foundOpportunities.length) {
+            setActiveOpportunity(foundOpportunities[0]);
+        }
+    };
+    const handleCloseActiveOpportunity = () => {
+        setActiveOpportunity(null);
+    };
+
     return (
         <Grid container className={classes.container}>
-            <Grid item xs={12}>
+            <Grid item xs={activeOpportunity ? 9 : 12}>
                 <Paper className={classes.paper}>
                     <OpportunitiesHeader
                         opportunityColumns={opportunityColumns}
@@ -122,6 +138,7 @@ export default function OpportunitiesContainer(props) {
                             title="Opportunities"
                             columns={opportunitiesTableColumns}
                             data={opportunitiesTableRows}
+                            onRowClick={handleClickOpportunity}
                             options={{
                                 search: false,
                                 sorting: false,
@@ -153,6 +170,15 @@ export default function OpportunitiesContainer(props) {
                     )}
                 </Paper>
             </Grid>
+
+            {activeOpportunity && (
+                <Grid item xs={3}>
+                    <OpportunityDetailedInfo
+                        opportunity={activeOpportunity}
+                        onClose={handleCloseActiveOpportunity}
+                    />
+                </Grid>
+            )}
         </Grid>
     );
 }
