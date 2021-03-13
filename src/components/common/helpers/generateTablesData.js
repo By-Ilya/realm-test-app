@@ -20,6 +20,18 @@ function projectNeedsSurveys(project) {
     return (!projectHasCustSurvey(project, custEmail) || !projectHasCESurvey(project, ceEmail));
 }
 
+function getUnscheduledHoursString(ms_summary) {
+    return (ms_summary.billable_hours_scheduled_undelivered != null && ms_summary.billable_hours_in_financials != null)
+        ? `${ms_summary.planned_hours - ms_summary.billable_hours_in_financials - ms_summary.billable_hours_scheduled_undelivered} (${ms_summary.unscheduled_hours} in FF)`
+        : ms_summary.unscheduled_hours
+}
+
+function getGapHoursString(ms_summary) {
+    return (ms_summary.billable_hours_in_financials != null)
+        ? `${ms_summary.planned_hours - ms_summary.billable_hours_in_financials} (${ms_summary.gap_hours} in FF)`
+        : ms_summary.gap_hours
+}
+
 export function generateMilestoneTableData(project, onClickPMStageButton) {
     if (!project) {
         return {
@@ -106,8 +118,9 @@ export function generateMilestoneTableData(project, onClickPMStageButton) {
         { name: 'Milestone amount', value: currentMilestone.details.milestone_amount, editable: false },
         { name: 'Bill rate', value: currentMilestone.details.bill_rate, editable: false },
         { name: 'Planned Hours', value: currentMilestone.summary.planned_hours, editable: false },
-        { name: 'Gap Hours', value: currentMilestone.summary.gap_hours, editable: false },
-        { name: 'Unscheduled Hours', value: currentMilestone.summary.unscheduled_hours, editable: false },
+        { name: 'Gap Hours', value: getGapHoursString(currentMilestone.summary), editable: false },
+        { name: 'Unscheduled Hours', value: getUnscheduledHoursString(currentMilestone.summary), editable: false },
+        { name: 'Non-billable hours submitted', value: currentMilestone.summary.non_billable_hours_submitted, editable: false },
     ];
 
     return { milestonesTableColumns, milestonesTableRows };
