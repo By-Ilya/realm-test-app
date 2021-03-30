@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
@@ -10,7 +10,8 @@ import {
     EMTable,
     PSNotes,
 } from 'components/opportunities/detailedInfo';
-import Button from '@material-ui/core/Button';
+import { AuthContext } from 'context/AuthContext';
+import { OpportunityContext } from 'context/OpportunityContext';
 
 const useStyles = makeStyles((theme) => ({
     listRoot: {
@@ -31,6 +32,7 @@ const useStyles = makeStyles((theme) => ({
     rightButton: {
         display: 'flex',
         justifyContent: 'flex-end',
+        alignItems: 'center',
         paddingRight: theme.spacing(2),
         paddingTop: 0,
     },
@@ -42,8 +44,20 @@ export default function OpportunityDetailedInfo(props) {
         opportunity,
         onClose,
     } = props;
+    const { opportunityCollection } = useContext(AuthContext);
+    const { updateLocalPsNotes } = useContext(OpportunityContext);
 
-    const { em, ps_notes } = opportunity;
+    const { _id, em, ps_notes } = opportunity;
+
+    const handleOnClickSavePsNotes = async (newPsNotes) => {
+        const query = { _id };
+        const update = {
+            $set: { ps_notes: newPsNotes },
+        };
+        const options = { upsert: false };
+        await opportunityCollection.updateOne(query, update, options);
+        await updateLocalPsNotes(_id, newPsNotes);
+    };
 
     return (
         <List
@@ -68,26 +82,17 @@ export default function OpportunityDetailedInfo(props) {
                     </ListItem>
 
                     <ListItem key="em_table">
-                        <EMTable em={em} />
-                    </ListItem>
-
-                    <ListItem key="ps_notes">
-                        <PSNotes
-                            countRows={10}
-                            textValue={ps_notes}
+                        <EMTable
+                            opportunityId={_id}
+                            em={em}
                         />
                     </ListItem>
-                    <ListItem key="save_ps_notes">
-                        <div className={classes.rightButton}>
-                            <Button
-                                variant="contained"
-                                color="primary"
-                                onClick={() => {}}
-                            >
-                                Save notes
-                            </Button>
-                        </div>
-                    </ListItem>
+
+                    <PSNotes
+                        countRows={10}
+                        textValue={ps_notes}
+                        onSave={handleOnClickSavePsNotes}
+                    />
                 </ul>
             </li>
         </List>

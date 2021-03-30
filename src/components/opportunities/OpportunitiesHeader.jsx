@@ -37,7 +37,7 @@ export default function OpportunitiesHeader(props) {
         <Grid container spacing={3} className={classes.root}>
             <Grid item xs={6} sm={3} className={classes.leftContent}>
                 <Typography variant="body1">
-                    {`${totalCountOpportunities} opportunities (showing ${countOpportunities})`}
+                    {`${totalCountOpportunities} opportunities [showing ${countOpportunities}]`}
                 </Typography>
             </Grid>
             <Grid item xs={6} sm={3} className={classes.leftContent}>

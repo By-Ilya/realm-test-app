@@ -61,6 +61,8 @@ export default function OpportunitiesContainer(props) {
         defaultPageLimit,
         pagination,
         setPagination,
+        isEditing,
+        setIsEditing,
         activeOpportunity,
         setActiveOpportunity,
     } = useContext(OpportunityContext);
@@ -105,6 +107,9 @@ export default function OpportunitiesContainer(props) {
     }, [pagination]);
 
     const handleClickOpportunity = (event, rowData) => {
+        if (isEditing) {
+            return;
+        }
         const { id } = rowData;
         const foundOpportunities = opportunities.filter(
             (o) => o._id === id,
@@ -114,6 +119,7 @@ export default function OpportunitiesContainer(props) {
         }
     };
     const handleCloseActiveOpportunity = () => {
+        setIsEditing(false);
         setActiveOpportunity(null);
     };
 

@@ -25,6 +25,7 @@ export default function getOpportunityFilters(props) {
                     owner_region: event.target.value,
                 });
             },
+            showEmptyValue: true,
         },
         {
             label: 'PS Region',
@@ -36,6 +37,19 @@ export default function getOpportunityFilters(props) {
                     ps_region: event.target.value,
                 });
             },
+            showEmptyValue: true,
+        },
+        {
+            label: 'Close date',
+            currentValue: localFilter.close_date,
+            values: ['All', 'This Q', 'Next Q'],
+            setValue: (event) => {
+                setLocalFilter({
+                    ...localFilter,
+                    close_date: event.target.value,
+                });
+            },
+            showEmptyValue: false,
         },
         {
             label: 'EM',
@@ -47,6 +61,7 @@ export default function getOpportunityFilters(props) {
                     engagement_manager: event.target.value,
                 });
             },
+            showEmptyValue: true,
         },
         {
             label: 'Only my opportunities',
@@ -65,6 +80,7 @@ export default function getOpportunityFilters(props) {
                         : null,
                 });
             },
+            showEmptyValue: false,
         },
     ];
 }

@@ -18,6 +18,7 @@ export default function getOpportunitySortValues(props) {
                     field: event.target.value,
                 });
             },
+            showEmptyValue: false,
         },
         {
             label: 'Order',
@@ -26,6 +27,7 @@ export default function getOpportunitySortValues(props) {
             setValue: (event) => {
                 setLocalSorting({ ...localSort, order: event.target.value });
             },
+            showEmptyValue: false,
         },
     ];
 }

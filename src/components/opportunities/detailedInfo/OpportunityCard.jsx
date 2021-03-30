@@ -9,6 +9,9 @@ import Grid from '@material-ui/core/Grid';
 import { toDateOnly } from 'helpers/dateFormatter';
 
 const useStyles = makeStyles((theme) => ({
+    card: {
+        width: '100%',
+    },
     info: {
         display: 'inline-block',
         width: '100%',
@@ -30,6 +33,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function OpportunityCard(props) {
+    const classes = useStyles();
     const { opportunity } = props;
     const {
         account,
@@ -40,13 +44,13 @@ export default function OpportunityCard(props) {
         ps_region,
         close_date,
         amount,
-        services,
+        services_post_carve,
         em,
     } = opportunity;
     const { engagement_manager } = em;
 
     return (
-        <Card>
+        <Card className={classes.card}>
             <CardContent>
                 <TopInfo
                     account={account}
@@ -65,7 +69,7 @@ export default function OpportunityCard(props) {
                     psRegion={ps_region}
                     closeDate={toDateOnly(close_date)}
                     amount={amount}
-                    services={services}
+                    services={services_post_carve}
                     engagementManager={engagement_manager}
                 />
             </CardContent>
@@ -107,6 +111,7 @@ function Details(props) {
     const classes = useStyles();
     const {
         owner,
+        type,
         stage,
         closeDate,
         amount,
@@ -118,7 +123,7 @@ function Details(props) {
         <Grid container className={classes.innerContainer} spacing={2}>
             <Grid item={2} className={classes.leftInfo}>
                 <CommonText text={`Owner: ${owner}`} />
-                <CommonText text="Type: no info" />
+                <CommonText text={`Type: ${type || ''}`} />
                 <CommonText text={`Stage: ${stage}`} />
                 <CommonText text={`Closes: ${closeDate}`} />
                 <CommonText text={`Amount: ${amount}`} />
@@ -135,6 +140,7 @@ function Details(props) {
 
 Details.propTypes = {
     owner: PropTypes.string,
+    type: PropTypes.string,
     stage: PropTypes.string,
     closeDate: PropTypes.string,
     amount: PropTypes.number,
@@ -145,6 +151,7 @@ Details.propTypes = {
 
 Details.defaultProps = {
     owner: 'Owner',
+    type: 'type',
     stage: 'Stage',
     closeDate: 'MM-DD-YYYY',
     amount: 0,

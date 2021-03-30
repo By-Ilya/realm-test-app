@@ -84,10 +84,16 @@ export default function generateMilestoneTableData(project, onClickPMStageButton
             updateKey: 'details.pm_stage',
         },
         {
-            name: 'Account', value: account, link: generateSFLink(account_id), editable: false,
+            name: 'Account',
+            value: account,
+            link: generateSFLink(account_id),
+            editable: false,
         },
         {
-            name: 'Opportunity', value: opportunity.name, link: generateSFLink(opportunity._id), editable: false,
+            name: 'Opportunity',
+            value: opportunity.name,
+            link: generateSFLink(opportunity._id),
+            editable: false,
         },
         {
             name: 'PS Project Name',

@@ -15,6 +15,7 @@ export default function getProjectSortValues(props) {
             setValue: (event) => {
                 setLocalSorting({ ...localSort, field: event.target.value });
             },
+            showEmptyValue: false,
         },
         {
             label: 'Order',
@@ -23,6 +24,7 @@ export default function getProjectSortValues(props) {
             setValue: (event) => {
                 setLocalSorting({ ...localSort, order: event.target.value });
             },
+            showEmptyValue: false,
         },
     ];
 }

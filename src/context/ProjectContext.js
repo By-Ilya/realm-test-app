@@ -53,11 +53,17 @@ const WATCHER_TIMEOUT = 5000;
 class ProjectContainer extends React.Component {
     constructor(props) {
         super(props);
+        const localFilter = JSON.parse(
+            localStorage.getItem('projectFilter'),
+        );
+        const localSort = JSON.parse(
+            localStorage.getItem('projectSort'),
+        );
         this.state = {
             ...this.state,
-            filter: DEFAULT_FILTER,
+            filter: localFilter || DEFAULT_FILTER,
             sortFields: SORT_FIELDS,
-            sort: DEFAULT_SORT,
+            sort: localSort || DEFAULT_SORT,
             pagination: DEFAULT_PAGINATION,
             defaultPageLimit: DEFAULT_PAGE_LIMIT,
             regionsList: [],
@@ -186,10 +192,18 @@ class ProjectContainer extends React.Component {
         let { filter } = this.state;
         filter = { ...filter, ...newFilter };
         this.setState({ filter });
+        localStorage.setItem(
+            'projectFilter',
+            JSON.stringify(filter),
+        );
     }
 
     setSorting = (newSort) => {
         this.setState({ sort: newSort });
+        localStorage.setItem(
+            'projectSort',
+            JSON.stringify(newSort),
+        );
     }
 
     setPagination = (newPagination) => {

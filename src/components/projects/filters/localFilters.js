@@ -26,6 +26,7 @@ export default function getProjectFilters(props) {
                     region: event.target.value,
                 });
             },
+            showEmptyValue: true,
         },
         {
             label: 'Owner',
@@ -37,6 +38,7 @@ export default function getProjectFilters(props) {
                     owner: event.target.value,
                 });
             },
+            showEmptyValue: true,
         },
         {
             label: 'PM',
@@ -48,6 +50,7 @@ export default function getProjectFilters(props) {
                     project_manager: event.target.value,
                 });
             },
+            showEmptyValue: true,
         },
         {
             label: 'Stage',
@@ -59,6 +62,7 @@ export default function getProjectFilters(props) {
                     pm_stage: event.target.value,
                 });
             },
+            showEmptyValue: true,
         },
         {
             label: 'Only Active',
@@ -70,6 +74,7 @@ export default function getProjectFilters(props) {
                     active: mapFilterNameToValue(event.target.value),
                 });
             },
+            showEmptyValue: false,
         },
         {
             label: 'Planning done',
@@ -87,6 +92,7 @@ export default function getProjectFilters(props) {
                     ),
                 });
             },
+            showEmptyValue: false,
         },
         {
             label: 'Only my projects',
@@ -105,6 +111,7 @@ export default function getProjectFilters(props) {
                         : null,
                 });
             },
+            showEmptyValue: false,
         },
     ];
 }

@@ -1,34 +1,48 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
-import MaterialTable from 'material-table';
 
-import {
-    generateEmTableData,
-} from 'components/opportunities/tableData';
+import { AuthContext } from 'context/AuthContext';
+import { OpportunityContext } from 'context/OpportunityContext';
+import EditableTable from 'components/opportunities/customTable/EditableTable';
+
+import { generateEmTableData } from 'components/opportunities/tableData';
 
 export default function EMTable(props) {
-    const { em } = props;
+    const { opportunityId, em } = props;
+
+    const { opportunityCollection } = useContext(AuthContext);
+    const {
+        updateLocalEmInfo,
+        fetchFiltersDefaultValues,
+    } = useContext(OpportunityContext);
 
     const {
         emTableColumns,
         emTableRows,
     } = generateEmTableData(em);
 
+    const handleUpdateEmRow = async ({ updateKey, value }) => {
+        const query = { _id: opportunityId };
+        const update = {
+            $set: { [`em.${updateKey}`]: value },
+        };
+        const options = { upsert: false };
+        await opportunityCollection.updateOne(query, update, options);
+        await updateLocalEmInfo(opportunityId, { updateKey, value });
+        fetchFiltersDefaultValues();
+    };
+
     return (
-        <MaterialTable
-            title="EM Fields Values"
+        <EditableTable
+            tableName="EM Fields Values"
             columns={emTableColumns}
-            data={emTableRows}
-            options={{
-                search: false,
-                sorting: false,
-                paging: false,
-                padding: 'dense',
-            }}
+            currentRows={emTableRows}
+            onUpdate={handleUpdateEmRow}
         />
     );
 }
 
 EMTable.propTypes = {
+    opportunityId: PropTypes.string.isRequired,
     em: PropTypes.object.isRequired,
 };

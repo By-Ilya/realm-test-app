@@ -305,7 +305,6 @@ export default function TopPanel(props) {
                         filtersObject={filtersObject}
                         applyButtonText="Apply filters"
                         onApplyFilters={onApplyFilters}
-                        showEmptyValue
                     />
                     <FilterButton
                         classes={{
@@ -317,7 +316,6 @@ export default function TopPanel(props) {
                         filtersObject={sortObject}
                         applyButtonText="Sort"
                         onApplyFilters={onApplySorting}
-                        showEmptyValue={false}
                     />
                     <div className={classes.grow} />
                     <SyncButton

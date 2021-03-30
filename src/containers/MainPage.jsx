@@ -34,13 +34,20 @@ export default function MainPage() {
         fetchOpportunitiesTotalInfo,
     } = useContext(OpportunityContext);
 
+    const isApplyActiveUserFilter = (localKey, filterObj) => {
+        if (localStorage.getItem(localKey)) {
+            return false;
+        }
+        return !filterObj.active_user_filter;
+    };
+
     useEffect(() => {
         if (user) {
-            if (!projectFilter.active_user_filter) {
+            if (isApplyActiveUserFilter('projectFilter', projectFilter)) {
                 const { name, email } = user.profile;
                 projectFilter.active_user_filter = { name, email };
             }
-            if (!opportunityFilter.active_user_filter) {
+            if (isApplyActiveUserFilter('opportunityFilter', opportunityFilter)) {
                 const { name, email } = user.profile;
                 opportunityFilter.active_user_filter = { name, email };
             }

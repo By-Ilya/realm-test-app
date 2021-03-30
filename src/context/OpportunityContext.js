@@ -123,6 +123,7 @@ const DEFAULT_FILTER = {
     owner_region: '',
     ps_region: '',
     engagement_manager: '',
+    close_date: 'All',
     active_user_filter: null,
 };
 
@@ -141,18 +142,30 @@ const DEFAULT_SORT = {
 class OpportunityContainer extends React.Component {
     constructor(props) {
         super(props);
+        const localFilter = JSON.parse(
+            localStorage.getItem('opportunityFilter'),
+        );
+        const localSort = JSON.parse(
+            localStorage.getItem('opportunitySort'),
+        );
+        const localHiddenColumns = localStorage.getItem(
+            'opportunityHiddenColumns',
+        );
+        const hiddenColumns = localHiddenColumns
+            ? localHiddenColumns.split(',')
+            : [];
         this.state = {
             ...this.state,
             opportunityColumns: OPPORTUNITIES_COLUMNS,
-            hiddenColumns: [],
+            hiddenColumns,
             loadProcessing: false,
             moreOpportunitiesLoadProcessing: false,
             ownerRegionsList: [],
             psRegionsList: [],
             emManagersList: [],
-            filter: DEFAULT_FILTER,
+            filter: localFilter || DEFAULT_FILTER,
             sortFields: SORT_FIELDS,
-            sort: DEFAULT_SORT,
+            sort: localSort || DEFAULT_SORT,
             defaultPageLimit: DEFAULT_PAGE_LIMIT,
             pagination: DEFAULT_PAGINATION,
             opportunities: [],
@@ -161,6 +174,7 @@ class OpportunityContainer extends React.Component {
             servicesTotal: 0,
             hasMoreOpportunities: true,
             activeOpportunity: null,
+            isEditing: false,
         };
         this.funcs = {
             setLoadProcessing: this.setLoadProcessing,
@@ -176,6 +190,9 @@ class OpportunityContainer extends React.Component {
             setPagination: this.setPagination,
             setDefaultPagination: this.setDefaultPagination,
             setActiveOpportunity: this.setActiveOpportunity,
+            setIsEditing: this.setIsEditing,
+            updateLocalEmInfo: this.updateLocalEmInfo,
+            updateLocalPsNotes: this.updateLocalPsNotes,
         };
     }
 
@@ -191,6 +208,10 @@ class OpportunityContainer extends React.Component {
 
     setHiddenColumns = (hiddenColumns) => {
         this.setState({ hiddenColumns });
+        localStorage.setItem(
+            'opportunityHiddenColumns',
+            hiddenColumns.join(','),
+        );
     }
 
     fetchFiltersDefaultValues = async () => {
@@ -215,10 +236,18 @@ class OpportunityContainer extends React.Component {
         let { filter } = this.state;
         filter = { ...filter, ...newFilter };
         this.setState({ filter });
+        localStorage.setItem(
+            'opportunityFilter',
+            JSON.stringify(filter),
+        );
     }
 
     setSorting = (newSort) => {
         this.setState({ sort: newSort });
+        localStorage.setItem(
+            'opportunitySort',
+            JSON.stringify(newSort),
+        );
     }
 
     setOpportunities = (opportunities) => {
@@ -288,6 +317,45 @@ class OpportunityContainer extends React.Component {
 
     setActiveOpportunity = (activeOpportunity) => {
         this.setState({ activeOpportunity });
+    }
+
+    setIsEditing = (isEditing) => {
+        this.setState({ isEditing });
+    }
+
+    updateLocalEmInfo = (opportunityId, dataToUpdate) => {
+        const { opportunities } = this.state;
+        const newOpportunities = opportunities.map((o) => {
+            if (o._id !== opportunityId) {
+                return o;
+            }
+            const { em } = o;
+            const { updateKey, value } = dataToUpdate;
+            const newEm = { ...em, [updateKey]: value };
+            const newOpportunity = { ...o, em: newEm };
+            const { activeOpportunity } = this.state;
+            if (opportunityId === activeOpportunity._id) {
+                this.setActiveOpportunity(newOpportunity);
+            }
+            return newOpportunity;
+        });
+        this.setState({ opportunities: newOpportunities });
+    }
+
+    updateLocalPsNotes = (opportunityId, newPsNotes) => {
+        const { opportunities } = this.state;
+        const newOpportunities = opportunities.map((o) => {
+            if (o._id !== opportunityId) {
+                return o;
+            }
+            const newOpportunity = { ...o, ps_notes: newPsNotes };
+            const { activeOpportunity } = this.state;
+            if (opportunityId === activeOpportunity._id) {
+                this.setActiveOpportunity(newOpportunity);
+            }
+            return newOpportunity;
+        });
+        this.setState({ opportunities: newOpportunities });
     }
 
     render() {
