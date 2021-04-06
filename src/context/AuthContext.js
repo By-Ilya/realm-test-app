@@ -18,12 +18,20 @@ const REALM_OPPORTUNITY_COLLECTION_NAME = `${process.env.REACT_APP_OPPORTUNITY_C
 const REALM_FCST_COLLECTION_NAME = `${process.env.REACT_APP_FCST_COLLECTION_NAME}` || '';
 const GOOGLE_REDIRECT_URI = `${process.env.REACT_APP_GOOGLE_REDIRECT_URI}` || 'http://localhost:3000/google-callback';
 
+const DEFAULT_LOCAL_STORAGE_KEYS = Object.freeze({
+    activePage: 'activePage',
+    projectFilter: 'projectFilter',
+    projectSort: 'projectSort',
+    opportunityFilter: 'opportunityFilter',
+    opportunitySort: 'opportunitySort',
+    opportunityHiddenColumns: 'opportunityHiddenColumns',
+});
+
 export default class ContextContainer extends React.Component {
     constructor(props) {
         super(props);
-        const localActivePage = localStorage.getItem(
-            'activePage',
-        );
+        const { activePage } = DEFAULT_LOCAL_STORAGE_KEYS;
+        const localActivePage = localStorage.getItem(activePage);
         this.state = {
             ...this.state,
             googleClientId: GOOGLE_CLIENT_ID,
@@ -37,8 +45,10 @@ export default class ContextContainer extends React.Component {
             opportunityCollection: null,
             fcstCollection: null,
             activePage: localActivePage || PAGES.projects,
+            localStorageKeys: DEFAULT_LOCAL_STORAGE_KEYS,
         };
         this.funcs = {
+            setLocalStorageValue: this.setLocalStorageValue,
             setUser: this.setUser,
             googleSignIn: this.googleSignIn,
             googleHandleRedirect: this.googleHandleRedirect,
@@ -48,6 +58,14 @@ export default class ContextContainer extends React.Component {
             getActiveUserFilter: this.getActiveUserFilter,
             logOut: this.logOut,
         };
+    }
+
+    setLocalStorageValue = (key, value) => {
+        const { localStorageKeys } = this.state;
+        if (!Object.prototype.hasOwnProperty.call(localStorageKeys, key)) {
+            return;
+        }
+        localStorage.setItem(key, value);
     }
 
     setUser = (user) => {
@@ -102,7 +120,9 @@ export default class ContextContainer extends React.Component {
             return;
         }
         this.setState({ activePage: newActivePage });
-        localStorage.setItem('activePage', newActivePage);
+
+        const { localStorageKeys: { activePage } } = this.state;
+        localStorage.setItem(activePage, newActivePage);
     }
 
     getActiveUserFilter = () => {
@@ -120,6 +140,16 @@ export default class ContextContainer extends React.Component {
         const { currentUser } = this.state.app;
         await currentUser.logOut();
         this.setUser(currentUser);
+        this.removeLocalData();
+    }
+
+    removeLocalData() {
+        const { localStorageKeys } = this.state;
+        Object
+            .keys(localStorageKeys)
+            .forEach((key) => {
+                localStorage.removeItem(key);
+            });
     }
 
     render() {

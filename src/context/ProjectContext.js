@@ -53,12 +53,10 @@ const WATCHER_TIMEOUT = 5000;
 class ProjectContainer extends React.Component {
     constructor(props) {
         super(props);
-        const localFilter = JSON.parse(
-            localStorage.getItem('projectFilter'),
-        );
-        const localSort = JSON.parse(
-            localStorage.getItem('projectSort'),
-        );
+        const { authValue } = this.props;
+        const { projectFilter, projectSort } = authValue.localStorageKeys;
+        const localFilter = JSON.parse(localStorage.getItem(projectFilter));
+        const localSort = JSON.parse(localStorage.getItem(projectSort));
         this.state = {
             ...this.state,
             filter: localFilter || DEFAULT_FILTER,
@@ -192,18 +190,20 @@ class ProjectContainer extends React.Component {
         let { filter } = this.state;
         filter = { ...filter, ...newFilter };
         this.setState({ filter });
-        localStorage.setItem(
-            'projectFilter',
-            JSON.stringify(filter),
-        );
+
+        const { authValue } = this.props;
+        const { projectFilter } = authValue.localStorageKeys;
+        const { setLocalStorageValue } = authValue;
+        setLocalStorageValue(projectFilter, JSON.stringify(filter));
     }
 
     setSorting = (newSort) => {
         this.setState({ sort: newSort });
-        localStorage.setItem(
-            'projectSort',
-            JSON.stringify(newSort),
-        );
+
+        const { authValue } = this.props;
+        const { projectSort } = authValue.localStorageKeys;
+        const { setLocalStorageValue } = authValue;
+        setLocalStorageValue(projectSort, JSON.stringify(newSort));
     }
 
     setPagination = (newPagination) => {

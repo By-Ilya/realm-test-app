@@ -142,15 +142,15 @@ const DEFAULT_SORT = {
 class OpportunityContainer extends React.Component {
     constructor(props) {
         super(props);
-        const localFilter = JSON.parse(
-            localStorage.getItem('opportunityFilter'),
-        );
-        const localSort = JSON.parse(
-            localStorage.getItem('opportunitySort'),
-        );
-        const localHiddenColumns = localStorage.getItem(
-            'opportunityHiddenColumns',
-        );
+        const { authValue } = this.props;
+        const {
+            opportunityFilter,
+            opportunitySort,
+            opportunityHiddenColumns,
+        } = authValue.localStorageKeys;
+        const localFilter = JSON.parse(localStorage.getItem(opportunityFilter));
+        const localSort = JSON.parse(localStorage.getItem(opportunitySort));
+        const localHiddenColumns = localStorage.getItem(opportunityHiddenColumns);
         const hiddenColumns = localHiddenColumns
             ? localHiddenColumns.split(',')
             : [];
@@ -208,10 +208,11 @@ class OpportunityContainer extends React.Component {
 
     setHiddenColumns = (hiddenColumns) => {
         this.setState({ hiddenColumns });
-        localStorage.setItem(
-            'opportunityHiddenColumns',
-            hiddenColumns.join(','),
-        );
+
+        const { authValue } = this.props;
+        const { opportunityHiddenColumns } = authValue.localStorageKeys;
+        const { setLocalStorageValue } = authValue;
+        setLocalStorageValue(opportunityHiddenColumns, hiddenColumns.join(','));
     }
 
     fetchFiltersDefaultValues = async () => {
@@ -236,18 +237,20 @@ class OpportunityContainer extends React.Component {
         let { filter } = this.state;
         filter = { ...filter, ...newFilter };
         this.setState({ filter });
-        localStorage.setItem(
-            'opportunityFilter',
-            JSON.stringify(filter),
-        );
+
+        const { authValue } = this.props;
+        const { opportunityFilter } = authValue.localStorageKeys;
+        const { setLocalStorageValue } = authValue;
+        setLocalStorageValue(opportunityFilter, JSON.stringify(filter));
     }
 
     setSorting = (newSort) => {
         this.setState({ sort: newSort });
-        localStorage.setItem(
-            'opportunitySort',
-            JSON.stringify(newSort),
-        );
+
+        const { authValue } = this.props;
+        const { opportunitySort } = authValue.localStorageKeys;
+        const { setLocalStorageValue } = authValue;
+        setLocalStorageValue(opportunitySort, JSON.stringify(newSort));
     }
 
     setOpportunities = (opportunities) => {
