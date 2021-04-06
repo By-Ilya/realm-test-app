@@ -58,6 +58,7 @@ export function generateMilestoneTableData(project, onClickPMStageButton) {
             field: 'value',
             editable: 'onUpdate',
             render: (rowData) => {
+                
                 if (rowData.name === 'PM Stage' && !(rowData.value === "Not Started" || rowData.value === "Planning")
                  && !rowData.survey_sent) {
                     return [
@@ -80,7 +81,7 @@ export function generateMilestoneTableData(project, onClickPMStageButton) {
         }
     ];
 
-    const milestonesTableRows = [
+    var milestonesTableRows = [
         { name: 'Project Owner', value: owner, editable: false },
         { name: 'Region', value: region, editable: false },
         { name: 'Project Manager', value: project_manager, editable: false },
@@ -122,6 +123,17 @@ export function generateMilestoneTableData(project, onClickPMStageButton) {
         { name: 'Unscheduled Hours', value: getUnscheduledHoursString(currentMilestone.summary), editable: false },
         { name: 'Non-billable hours submitted', value: currentMilestone.summary.non_billable_hours_submitted, editable: false },
     ];
+
+    if (details.pm_stage === "On Hold") {
+        var on_hold_reason_row = {
+            name: 'On Hold Reason',
+            value: details.on_hold_reason,
+            editable: true,
+            tableKey: 'value',
+            updateKey: 'details.on_hold_reason',
+        }
+        milestonesTableRows.splice(4, 0, on_hold_reason_row);
+    }
 
     return { milestonesTableColumns, milestonesTableRows };
 }

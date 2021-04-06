@@ -10,6 +10,7 @@ export const FIND_PROJECTS = gql`
             monthly_forecast_done
             details {
                 pm_stage
+                on_hold_reason
                 pm_project_status
                 product_end_date
             }
