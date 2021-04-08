@@ -8,7 +8,6 @@ import DialogActions from '@material-ui/core/DialogActions';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
-
 import Input from '@material-ui/core/Input';
 
 export default function FilterButton(props) {
@@ -19,7 +18,6 @@ export default function FilterButton(props) {
         filtersObject,
         applyButtonText,
         onApplyFilters,
-        showEmptyValue,
     } = props;
 
     const { formContainer } = classes;
@@ -58,7 +56,7 @@ export default function FilterButton(props) {
                                 currentValue={obj.currentValue}
                                 values={obj.values}
                                 setValue={obj.setValue}
-                                showEmptyValue={showEmptyValue}
+                                showEmptyValue={obj.showEmptyValue}
                             />
                         ))}
                     </form>
@@ -110,7 +108,6 @@ FilterButton.propTypes = {
     filtersObject: PropTypes.array.isRequired,
     applyButtonText: PropTypes.string.isRequired,
     onApplyFilters: PropTypes.func.isRequired,
-    showEmptyValue: PropTypes.bool.isRequired,
 };
 
 FilterOption.propTypes = {
@@ -119,10 +116,11 @@ FilterOption.propTypes = {
     currentValue: PropTypes.string.isRequired,
     values: PropTypes.array.isRequired,
     setValue: PropTypes.func,
-    showEmptyValue: PropTypes.bool.isRequired,
+    showEmptyValue: PropTypes.bool,
 };
 
 FilterOption.defaultProps = {
     label: '',
-    setValue: () => console.log('setValue'),
+    setValue: () => {},
+    showEmptyValue: true,
 };

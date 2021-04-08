@@ -1,7 +1,7 @@
 import React from 'react';
 import * as Realm from 'realm-web';
 
-import SIGN_IN_ERROR from 'helpers/constants/errorMessages';
+import { SIGN_IN_ERROR, PAGES } from 'helpers/constants/common';
 
 const AuthContext = React.createContext('auth');
 
@@ -14,12 +14,24 @@ const REALM_APP_ID = `${process.env.REACT_APP_REALM_APP_ID}` || '';
 const REALM_SERVICE_NAME = `${process.env.REACT_APP_SERVICE_NAME}` || 'mongodb-atlas';
 const REALM_DATABASE_NAME = `${process.env.REACT_APP_DATABASE_NAME}` || '';
 const REALM_COLLECTION_NAME = `${process.env.REACT_APP_COLLECTION_NAME}` || '';
+const REALM_OPPORTUNITY_COLLECTION_NAME = `${process.env.REACT_APP_OPPORTUNITY_COLLECTION_NAME}` || '';
 const REALM_FCST_COLLECTION_NAME = `${process.env.REACT_APP_FCST_COLLECTION_NAME}` || '';
 const GOOGLE_REDIRECT_URI = `${process.env.REACT_APP_GOOGLE_REDIRECT_URI}` || 'http://localhost:3000/google-callback';
+
+const DEFAULT_LOCAL_STORAGE_KEYS = Object.freeze({
+    activePage: 'activePage',
+    projectFilter: 'projectFilter',
+    projectSort: 'projectSort',
+    opportunityFilter: 'opportunityFilter',
+    opportunitySort: 'opportunitySort',
+    opportunityHiddenColumns: 'opportunityHiddenColumns',
+});
 
 export default class ContextContainer extends React.Component {
     constructor(props) {
         super(props);
+        const { activePage } = DEFAULT_LOCAL_STORAGE_KEYS;
+        const localActivePage = localStorage.getItem(activePage);
         this.state = {
             ...this.state,
             googleClientId: GOOGLE_CLIENT_ID,
@@ -30,32 +42,47 @@ export default class ContextContainer extends React.Component {
             errorInfo: null,
             user: null,
             dbCollection: null,
+            opportunityCollection: null,
             fcstCollection: null,
+            activePage: localActivePage || PAGES.projects,
+            localStorageKeys: DEFAULT_LOCAL_STORAGE_KEYS,
         };
         this.funcs = {
+            setLocalStorageValue: this.setLocalStorageValue,
             setUser: this.setUser,
             googleSignIn: this.googleSignIn,
             googleHandleRedirect: this.googleHandleRedirect,
             getUserAccessToken: this.getUserAccessToken,
             setErrorInfo: this.setErrorInfo,
+            setActivePage: this.setActivePage,
+            getActiveUserFilter: this.getActiveUserFilter,
             logOut: this.logOut,
         };
+    }
+
+    setLocalStorageValue = (key, value) => {
+        const { localStorageKeys } = this.state;
+        if (!Object.prototype.hasOwnProperty.call(localStorageKeys, key)) {
+            return;
+        }
+        localStorage.setItem(key, value);
     }
 
     setUser = (user) => {
         this.setState({ user });
         const { app } = this.state;
         if (app && user) {
-            const dbCollection = user
+            const db = user
                 .mongoClient(REALM_SERVICE_NAME)
-                .db(REALM_DATABASE_NAME)
-                .collection(REALM_COLLECTION_NAME);
-            this.setState({ dbCollection });
-            const fcstCollection = user
-                .mongoClient(REALM_SERVICE_NAME)
-                .db(REALM_DATABASE_NAME)
-                .collection(REALM_FCST_COLLECTION_NAME);
-            this.setState({ fcstCollection });
+                .db(REALM_DATABASE_NAME);
+            const dbCollection = db.collection(REALM_COLLECTION_NAME);
+            const opportunityCollection = db.collection(REALM_OPPORTUNITY_COLLECTION_NAME);
+            const fcstCollection = db.collection(REALM_FCST_COLLECTION_NAME);
+            this.setState({
+                dbCollection,
+                opportunityCollection,
+                fcstCollection,
+            });
         }
     };
 
@@ -83,10 +110,46 @@ export default class ContextContainer extends React.Component {
         this.setState({ errorInfo });
     }
 
+    isSameOrUndefinedPage = (page) => {
+        const { activePage } = this.state;
+        return !Object.values(PAGES).includes(page) || page === activePage;
+    }
+
+    setActivePage = (newActivePage) => {
+        if (this.isSameOrUndefinedPage(newActivePage)) {
+            return;
+        }
+        this.setState({ activePage: newActivePage });
+
+        const { localStorageKeys: { activePage } } = this.state;
+        localStorage.setItem(activePage, newActivePage);
+    }
+
+    getActiveUserFilter = () => {
+        const { user } = this.state;
+
+        if (!user) return null;
+        const { profile } = user;
+        return {
+            email: profile.email,
+            name: profile.name,
+        };
+    }
+
     logOut = async () => {
         const { currentUser } = this.state.app;
         await currentUser.logOut();
         this.setUser(currentUser);
+        this.removeLocalData();
+    }
+
+    removeLocalData() {
+        const { localStorageKeys } = this.state;
+        Object
+            .keys(localStorageKeys)
+            .forEach((key) => {
+                localStorage.removeItem(key);
+            });
     }
 
     render() {

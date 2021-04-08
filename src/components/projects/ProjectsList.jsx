@@ -20,7 +20,7 @@ export default function ProjectsList(props) {
         pagination, setPagination,
         hasMoreProjects,
         moreProjectsLoadProcessing,
-        setMoreProjectsLoadProcessing,
+        setLoadProcessing,
     } = useContext(ProjectContext);
 
     const fetchMoreProjects = async () => {
@@ -30,7 +30,7 @@ export default function ProjectsList(props) {
 
     useEffect(() => {
         if (pagination.limit > defaultPageLimit) {
-            setMoreProjectsLoadProcessing(true);
+            setLoadProcessing(true, true);
             fetchProjects({ needToClean: false });
         }
     }, [pagination]);

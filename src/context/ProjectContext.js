@@ -2,11 +2,19 @@ import React from 'react';
 
 import { AuthContext } from 'context/AuthContext';
 
-const ProjectContext = React.createContext('realm');
+const ProjectContext = React.createContext('projects');
 
 require('dotenv').config();
 
-const DEFAULT_PAGE_LIMIT = parseInt(process.env.REACT_APP_PROJECTS_PAGE, 10) || 50;
+const DEFAULT_PAGE_LIMIT = parseInt(
+    process.env.REACT_APP_PROJECTS_PAGE,
+    10,
+) || 50;
+const DEFAULT_PAGINATION = {
+    increaseOn: DEFAULT_PAGE_LIMIT,
+    limit: DEFAULT_PAGE_LIMIT,
+};
+
 const DEFAULT_FILTER = {
     region: '',
     owner: '',
@@ -17,14 +25,19 @@ const DEFAULT_FILTER = {
     pm_stage: '',
     monthly_forecast_done: null,
 };
+
+const SORT_FIELDS = [
+    'Name',
+    'Region',
+    'Owner',
+    'Expiration',
+    'Stage',
+];
 const DEFAULT_SORT = {
-    field: 'details.pm_stage_sortid',
+    field: SORT_FIELDS[SORT_FIELDS.length - 1],
     order: 'ASC',
 };
-const DEFAULT_PAGINATION = {
-    increaseOn: DEFAULT_PAGE_LIMIT,
-    limit: DEFAULT_PAGE_LIMIT,
-};
+
 const DEFAULT_STAGE_LIST = [
     '-None-',
     'Not Started',
@@ -37,24 +50,18 @@ const DEFAULT_STAGE_LIST = [
 
 const WATCHER_TIMEOUT = 5000;
 
-function sortNameToField(name) {
-    switch (name) {
-        case 'name': return name;
-        case 'region': return name;
-        case 'owner': return name;
-        case 'expiration': return 'details.product_end_date';
-        case 'stage': return 'details.pm_stage_sortid';
-        default: return 'details.pm_stage_sortid';
-    }
-}
-
-class ContextContainer extends React.Component {
+class ProjectContainer extends React.Component {
     constructor(props) {
         super(props);
+        const { authValue } = this.props;
+        const { projectFilter, projectSort } = authValue.localStorageKeys;
+        const localFilter = JSON.parse(localStorage.getItem(projectFilter));
+        const localSort = JSON.parse(localStorage.getItem(projectSort));
         this.state = {
             ...this.state,
-            filter: DEFAULT_FILTER,
-            sort: DEFAULT_SORT,
+            filter: localFilter || DEFAULT_FILTER,
+            sortFields: SORT_FIELDS,
+            sort: localSort || DEFAULT_SORT,
             pagination: DEFAULT_PAGINATION,
             defaultPageLimit: DEFAULT_PAGE_LIMIT,
             regionsList: [],
@@ -72,7 +79,6 @@ class ContextContainer extends React.Component {
         this.funcs = {
             fetchFiltersDefaultValues: this.fetchFiltersDefaultValues,
             setLoadProcessing: this.setLoadProcessing,
-            setMoreProjectsLoadProcessing: this.setMoreProjectsLoadProcessing,
             setProjects: this.setProjects,
             setHasMoreProjects: this.setHasMoreProjects,
             fetchProjectsTotalCount: this.fetchProjectsTotalCount,
@@ -84,7 +90,6 @@ class ContextContainer extends React.Component {
             setDefaultPagination: this.setDefaultPagination,
             setProjectWithCurrentMilestone: this.setProjectWithCurrentMilestone,
             setIsEditing: this.setIsEditing,
-            getActiveUserFilter: this.getActiveUserFilter,
             requestSync: this.requestSync,
         };
 
@@ -104,12 +109,12 @@ class ContextContainer extends React.Component {
         const { authValue } = this.props;
         const { user } = authValue;
         if (user) {
-            const { getFiltersDefaultValues } = user.functions;
+            const { getProjectFiltersDefaultValues } = user.functions;
             const {
                 regions,
                 owners,
                 projectManagers,
-            } = await getFiltersDefaultValues();
+            } = await getProjectFiltersDefaultValues();
             this.setState({
                 regionsList: regions ? regions.sort() : [],
                 ownersList: owners ? owners.sort() : [],
@@ -118,12 +123,14 @@ class ContextContainer extends React.Component {
         }
     }
 
-    setLoadProcessing = (loadProcessing) => {
-        this.setState({ loadProcessing });
-    }
-
-    setMoreProjectsLoadProcessing = (moreProjectsLoadProcessing) => {
-        this.setState({ moreProjectsLoadProcessing });
+    setLoadProcessing = (loadProcessing, more = false) => {
+        if (more) {
+            this.setState({
+                moreProjectsLoadProcessing: loadProcessing,
+            });
+        } else {
+            this.setState({ loadProcessing });
+        }
     }
 
     setProjects = (projects) => {
@@ -150,11 +157,25 @@ class ContextContainer extends React.Component {
         }
     }
 
+    sortNameToField = (name) => {
+        switch (name) {
+            case 'Name': return 'name';
+            case 'Region': return 'region';
+            case 'Owner': return 'owner';
+            case 'Expiration': return 'details.product_end_date';
+            case 'Stage': return 'details.pm_stage_sortid';
+            default: return 'details.pm_stage_sortid';
+        }
+    }
+
     getSortOrder = () => {
         const { sort } = this.state;
         const { field, order } = sort;
 
-        return { field, order: order === 'DESC' ? -1 : 1 };
+        return {
+            field: this.sortNameToField(field),
+            order: order === 'DESC' ? -1 : 1,
+        };
     }
 
     cleanLocalProjects = async () => {
@@ -169,11 +190,20 @@ class ContextContainer extends React.Component {
         let { filter } = this.state;
         filter = { ...filter, ...newFilter };
         this.setState({ filter });
+
+        const { authValue } = this.props;
+        const { projectFilter } = authValue.localStorageKeys;
+        const { setLocalStorageValue } = authValue;
+        setLocalStorageValue(projectFilter, JSON.stringify(filter));
     }
 
     setSorting = (newSort) => {
-        newSort.field = sortNameToField(newSort.field);
         this.setState({ sort: newSort });
+
+        const { authValue } = this.props;
+        const { projectSort } = authValue.localStorageKeys;
+        const { setLocalStorageValue } = authValue;
+        setLocalStorageValue(projectSort, JSON.stringify(newSort));
     }
 
     setPagination = (newPagination) => {
@@ -192,15 +222,6 @@ class ContextContainer extends React.Component {
 
     setIsEditing = (isEditing) => {
         this.setState({ isEditing });
-    }
-
-    getActiveUserFilter = () => {
-        const { authValue } = this.props;
-        const { profile } = authValue.user;
-        return {
-            email: profile.email,
-            name: profile.name,
-        };
     }
 
     requestSync = async () => {
@@ -328,7 +349,7 @@ class ContextContainer extends React.Component {
 export default function Container(props) {
     return (
         <AuthContext.Consumer>
-            {(value) => <ContextContainer authValue={value} {...props} />}
+            {(value) => <ProjectContainer authValue={value} {...props} />}
         </AuthContext.Consumer>
     );
 }

@@ -13,7 +13,7 @@ import {
     generateContactsTableData,
     generateDocumentsTableData,
     generateSurveyTableData,
-} from 'components/common/helpers/generateTablesData';
+} from 'components/projects/tableData';
 import {
     custMailParams,
     ceMailParams,
