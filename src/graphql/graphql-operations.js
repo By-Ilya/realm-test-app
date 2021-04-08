@@ -10,6 +10,7 @@ export const FIND_PROJECTS = gql`
             monthly_forecast_done
             details {
                 pm_stage
+                on_hold_reason
                 pm_project_status
                 product_end_date
             }
@@ -36,6 +37,10 @@ export const FIND_PROJECTS = gql`
                     delivered_hours
                     gap_hours
                     unscheduled_hours
+                    billable_hours_submitted
+                    non_billable_hours_submitted
+                    billable_hours_in_financials
+                    billable_hours_scheduled_undelivered
                 }
                 details {
                     first_scheduled_date

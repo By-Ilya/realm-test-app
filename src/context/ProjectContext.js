@@ -120,6 +120,12 @@ class ProjectContainer extends React.Component {
                 ownersList: owners ? owners.sort() : [],
                 projectManagersList: projectManagers ? projectManagers.sort() : [],
             });
+            this.setFilter({
+                active_user_filter: {
+                    name: user.profile.name,
+                    email: user.profile.email,
+                },
+            });
         }
     }
 
@@ -225,7 +231,8 @@ class ProjectContainer extends React.Component {
     }
 
     requestSync = async () => {
-        const { user, app } = this.state;
+        const { authValue } = this.props;
+        const { user, app } = authValue;
         if (!user || !app.currentUser) return;
         await user.callFunction('requestSync', { origin: 'user' });
     }
@@ -265,7 +272,7 @@ class ProjectContainer extends React.Component {
             this.setProjects(projects);
             if (
                 projectWithCurrentMilestone &&
-                projectWithCurrentMilestone._id === _id
+                projectWithCurrentMilestone.project._id === _id
             ) {
                 let ms = projectWithCurrentMilestone.milestone;
                 const pr = updatedDocument;

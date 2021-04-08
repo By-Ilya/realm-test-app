@@ -94,7 +94,7 @@ export default function EditableCellTable(props) {
                     setData([...dataUpdate]);
                     // console.log(data);
 
-                    const promise = onUpdate({ month, updateKey, value: parseFloat(newValue) });
+                    const promise = onUpdate({ month, updateKey, value: parsedVal });
                     // setIsEditing(false); // will generate a warning but that's ok I guess
                     return promise;
                 },
@@ -121,7 +121,8 @@ export default function EditableCellTable(props) {
     );
 }
 
-function TableTitle(checkboxValue, onCheckboxUpdate, tableName) {
+function TableTitle(props) {
+    const {checkboxValue, onCheckboxUpdate, tableName} = props;
     return (
         <Box display="flex" alignItems="center">
             <Typography
