@@ -92,7 +92,7 @@ export default function getProjectFilters(props) {
                     ),
                 });
             },
-            showEmptyValue: false,
+            showEmptyValue: true,
         },
         {
             label: 'Only my projects',
