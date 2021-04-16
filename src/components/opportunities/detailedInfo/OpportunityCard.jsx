@@ -53,7 +53,7 @@ export default function OpportunityCard(props) {
         <Card className={classes.card}>
             <CardContent>
                 <TopInfo
-                    account={account}
+                    account={account.name}
                     owner={owner}
                 />
                 <Typography

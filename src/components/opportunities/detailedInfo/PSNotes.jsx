@@ -35,7 +35,7 @@ export default function PSNotes(props) {
     const [updateProcessing, setUpdateProcessing] = useState(false);
 
     useEffect(() => {
-        console.log(textValue);
+        //console.log(textValue);
         setCurrentText(textValue);
     }, [textValue]);
 

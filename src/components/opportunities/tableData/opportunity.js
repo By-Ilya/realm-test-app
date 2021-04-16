@@ -40,7 +40,7 @@ export default function generateOpportunityTableData(data) {
             ownerRegion: owner_region,
             owner,
             name,
-            account,
+            account: account.name,
             closeDate: toDateOnly(close_date),
             stage,
             forecastCategory: forecast_category,

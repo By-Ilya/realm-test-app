@@ -97,8 +97,10 @@ export const FIND_OPPORTUNITIES = gql`
     query FindOpportunitiesCustomResolver($filtersInput: OpportunitiesFiltersInput!) {
         opportunitiesData(input: $filtersInput) {
             _id
-            account
-            account_id
+            account {
+                _id
+                name
+            }
             amount
             close_date
             em {
