@@ -9,6 +9,7 @@ exports = async function(arg){
     SOQ.setHours(0);
     SOQ.setMinutes(0);
     SOQ.setSeconds(0);
+    SOQ.setMilliseconds(0);
     
     return SOQ;
   }
@@ -17,7 +18,7 @@ exports = async function(arg){
     d = new Date(d);
     var day = d.getDay(),
     diff = d.getDate() - day;
-    d.setHours(0);	d.setMinutes(0); d.setSeconds(0);
+    d.setHours(0);	d.setMinutes(0); d.setSeconds(0); d.setMilliseconds(0);
     return new Date(d.setDate(diff));
   }
   // function getSoNQ() {
@@ -39,6 +40,7 @@ exports = async function(arg){
     current.setHours(0);
     current.setMinutes(0);
     current.setSeconds(0);
+    current.setMilliseconds(0);
     
     return current;
   }
@@ -54,6 +56,7 @@ exports = async function(arg){
     current.setHours(0);
     current.setMinutes(0);
     current.setSeconds(0);
+    current.setMilliseconds(0);
     
     return current;
   }
@@ -175,6 +178,15 @@ exports = async function(arg){
     upside_2 = fcst_m2.upside ? fcst_m2.upside : 0;
     upside_ml_2 = fcst_m2.upside_ml ? fcst_m2.upside_ml : 0;
   }
+  
+  //adjust expiring
+  let expiring_adjustment = upside_ml_0 + upside_ml_1 + upside_ml_2;
+  if (expiring_0 > 0)
+    expiring_0 = (expiring_0 > expiring_adjustment) ? expiring_0 - expiring_adjustment : 0;
+  else if (expiring_1 > 0)
+    expiring_1 = (expiring_1 > expiring_adjustment) ? expiring_1 - expiring_adjustment : 0;
+  else if (expiring_2 > 0)
+    expiring_2 = (expiring_2 > expiring_adjustment) ? expiring_2 - expiring_adjustment : 0;  
   
         var forecast = {
             "delivered_qtd" : delivered_qtd,

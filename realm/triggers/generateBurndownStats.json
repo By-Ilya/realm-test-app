@@ -1,0 +1,9 @@
+{
+    "name": "generateBurndownStats",
+    "type": "SCHEDULED",
+    "config": {
+        "schedule": "0 0 * * 0"
+    },
+    "function_name": "generateBurndownStats",
+    "disabled": false
+}

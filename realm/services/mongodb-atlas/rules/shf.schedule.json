@@ -18,7 +18,15 @@
                 "bsonType": "date"
             },
             "_id": {
-                "bsonType": "string"
+                "bsonType": "object",
+                "properties": {
+                    "id": {
+                        "bsonType": "string"
+                    },
+                    "ms_id": {
+                        "bsonType": "string"
+                    }
+                }
             },
             "actual": {
                 "bsonType": "object",

@@ -1,5 +1,6 @@
 {
     "can_evaluate": {},
     "name": "projectOnClose",
-    "private": true
+    "private": true,
+    "run_as_system": true
 }

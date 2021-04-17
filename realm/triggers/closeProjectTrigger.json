@@ -1,5 +1,5 @@
 {
-    "name": "updateProjectTrigger",
+    "name": "closeProjectTrigger",
     "type": "DATABASE",
     "config": {
         "operation_types": [
@@ -15,6 +15,7 @@
         },
         "project": {},
         "full_document": true,
+        "full_document_before_change": false,
         "unordered": false
     },
     "function_name": "projectOnClose",

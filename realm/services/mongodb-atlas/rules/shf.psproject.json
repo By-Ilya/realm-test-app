@@ -68,6 +68,9 @@
                     "next_projected_delivery_date": {
                         "bsonType": "date"
                     },
+                    "on_hold_reason": {
+                        "bsonType": "string"
+                    },
                     "pm_project_status": {
                         "bsonType": "string"
                     },
@@ -171,6 +174,15 @@
                         "summary": {
                             "bsonType": "object",
                             "properties": {
+                                "billable_hours_in_financials": {
+                                    "bsonType": "double"
+                                },
+                                "billable_hours_scheduled_undelivered": {
+                                    "bsonType": "double"
+                                },
+                                "billable_hours_submitted": {
+                                    "bsonType": "double"
+                                },
                                 "delivered_hours": {
                                     "bsonType": "double"
                                 },
@@ -178,6 +190,9 @@
                                     "bsonType": "double"
                                 },
                                 "hours_for_ns": {
+                                    "bsonType": "double"
+                                },
+                                "non_billable_hours_submitted": {
                                     "bsonType": "double"
                                 },
                                 "planned_hours": {

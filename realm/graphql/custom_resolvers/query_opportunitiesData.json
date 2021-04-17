@@ -1,6 +1,6 @@
 {
-    "field_name": "psprojectsData",
-    "function_name": "findProjects",
+    "field_name": "opportunitiesData",
+    "function_name": "findOpportunities",
     "input_type": {
         "bsonType": "object",
         "properties": {
@@ -10,9 +10,6 @@
             "filter": {
                 "bsonType": "object",
                 "properties": {
-                    "active": {
-                        "bsonType": "bool"
-                    },
                     "active_user_filter": {
                         "bsonType": "object",
                         "properties": {
@@ -28,35 +25,30 @@
                             "email"
                         ]
                     },
+                    "close_date": {
+                        "bsonType": "string"
+                    },
+                    "engagement_manager": {
+                        "bsonType": "string"
+                    },
                     "limit": {
                         "bsonType": "int"
-                    },
-                    "monthly_forecast_done": {
-                        "bsonType": "bool"
                     },
                     "name": {
                         "bsonType": "string"
                     },
-                    "owner": {
+                    "owner_region": {
                         "bsonType": "string"
                     },
-                    "pm_stage": {
-                        "bsonType": "string"
-                    },
-                    "project_manager": {
-                        "bsonType": "string"
-                    },
-                    "region": {
+                    "ps_region": {
                         "bsonType": "string"
                     }
                 },
                 "required": [
-                    "active",
-                    "name",
-                    "region",
-                    "owner",
-                    "project_manager",
-                    "pm_stage"
+                    "owner_region",
+                    "ps_region",
+                    "engagement_manager",
+                    "name"
                 ]
             },
             "sort": {
@@ -79,10 +71,10 @@
             "filter",
             "sort"
         ],
-        "title": "PsprojectsFiltersInput"
+        "title": "OpportunitiesFiltersInput"
     },
     "input_type_format": "custom",
     "on_type": "Query",
-    "payload_type": "Psproject",
+    "payload_type": "Opportunity",
     "payload_type_format": "generated-list"
 }

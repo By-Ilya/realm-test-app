@@ -16,7 +16,7 @@ exports = async function(arg){
     d = new Date(d);
     var day = d.getDay(),
     diff = d.getDate() - day;
-    d.setHours(0);	d.setMinutes(0); d.setSeconds(0);
+    d.setHours(0);	d.setMinutes(0); d.setSeconds(0); d.setMilliseconds(0)
     return new Date(d.setDate(diff));
   }
 
