@@ -56,6 +56,13 @@ export const FIND_PROJECTS = gql`
                 url
                 url_name
             }
+            attachments {
+                _id
+                type
+                name
+                url
+                body
+            }
             name
             custom_name
             owner

@@ -45,6 +45,7 @@ export default function DocumentsTable(props) {
             }}
             editable={{
                 isEditable: (rowData) => rowData.editable,
+                isDeletable: (rowData) => rowData.editable,
                 onRowUpdate: async (newData, oldData) => {
                     try {
                         const isVirtual = !newData._id;

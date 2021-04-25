@@ -8,12 +8,12 @@ export default function generateDocumentsTableData(project) {
         };
     }
 
-    const { documents } = project;
+    const { documents, attachments } = project;
 
     const documentsTableColumns = [
         { title: 'Name', field: 'name', editable: 'always' },
         {
-            title: 'Link',
+            title: 'Link/Text',
             field: 'url',
             editable: 'always',
             render: (rowData) => (rowData.url ? (
@@ -24,7 +24,8 @@ export default function generateDocumentsTableData(project) {
                 >
                     {rowData.url_name ? rowData.url_name : rowData.url}
                 </a>
-            ) : rowData.url),
+            ) : rowData.body ? rowData.body.split('\n').map((item, i) => <p key={i}>{item}</p>) : ""
+            ),
         },
     ];
 
@@ -41,6 +42,15 @@ export default function generateDocumentsTableData(project) {
         documentsTableRows.push({
             name: 'Report',
             editable: true,
+        });
+    }
+
+    if (attachments && attachments.length > 0) {
+        attachments.forEach((att) => {
+            documentsTableRows.push({
+                ...att,
+                editable: false,
+            });
         });
     }
 
