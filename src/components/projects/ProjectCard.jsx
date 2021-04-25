@@ -42,7 +42,7 @@ const useStyles = makeStyles({
 
 export default function ProjectCard(props) {
     const classes = useStyles();
-    const { user } = useContext(AuthContext);
+    const { user, ceMode } = useContext(AuthContext);
     const {
         setProjectWithCurrentMilestone,
     } = useContext(ProjectContext);
@@ -61,10 +61,16 @@ export default function ProjectCard(props) {
         });
     };
 
-    const generateNextAssignmentDateString = (futureAssignmentsDates) => {
+    const generateNextAssignmentDateString = (_futureAssignmentsDates, resource_email_filter) => {
         const emptyString = '-';
 
-        if (!futureAssignmentsDates || (futureAssignmentsDates.length < 1)) return emptyString;
+        if (!_futureAssignmentsDates) return emptyString;
+
+        const futureAssignmentsDates = resource_email_filter ? _futureAssignmentsDates.filter(ass => {
+          return ass.resource_email === resource_email_filter
+        }) : _futureAssignmentsDates;
+
+        if (futureAssignmentsDates.length < 1) return emptyString;
 
         const todayUtc = new Date();
         setUtcZeroTime(todayUtc);
@@ -148,7 +154,7 @@ export default function ProjectCard(props) {
                 <Typography variant="body2" component="p">
                     <b>Next Assignment:</b>
                     {' '}
-                    {generateNextAssignmentDateString(psproject.future_assignments_dates)}
+                    {generateNextAssignmentDateString(psproject.future_assignments_dates, ceMode ? user.profile.email : null)}
                 </Typography>
                 <Typography variant="body2" component="p">
                     <b>Expires:</b>

@@ -31,6 +31,7 @@ export default function MilestonesInfo(props) {
         user,
         dbCollection,
         fcstCollection,
+        ceMode
     } = useContext(AuthContext);
     const {
         setProjectWithCurrentMilestone,
@@ -214,7 +215,7 @@ export default function MilestonesInfo(props) {
                     />
                 </div>
             )}
-            {forecastTableRows.length !== 0 && (
+            {!ceMode && forecastTableRows.length !== 0 && (
                 <div className={classes.tableContainer}>
                     <EditableCellTable
                         projectId={project._id}
