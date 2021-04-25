@@ -25,13 +25,15 @@ const DEFAULT_LOCAL_STORAGE_KEYS = Object.freeze({
     opportunityFilter: 'opportunityFilter',
     opportunitySort: 'opportunitySort',
     opportunityHiddenColumns: 'opportunityHiddenColumns',
+    ceMode: 'ceMode',
 });
 
 export default class ContextContainer extends React.Component {
     constructor(props) {
         super(props);
-        const { activePage } = DEFAULT_LOCAL_STORAGE_KEYS;
+        const { activePage, ceMode } = DEFAULT_LOCAL_STORAGE_KEYS;
         const localActivePage = localStorage.getItem(activePage);
+        const localCeMode = localStorage.getItem(ceMode);
         this.state = {
             ...this.state,
             googleClientId: GOOGLE_CLIENT_ID,
@@ -45,6 +47,7 @@ export default class ContextContainer extends React.Component {
             opportunityCollection: null,
             fcstCollection: null,
             activePage: localActivePage || PAGES.projects,
+            ceMode: localCeMode ? localCeMode : false,
             localStorageKeys: DEFAULT_LOCAL_STORAGE_KEYS,
         };
         this.funcs = {
@@ -57,6 +60,7 @@ export default class ContextContainer extends React.Component {
             setActivePage: this.setActivePage,
             getActiveUserFilter: this.getActiveUserFilter,
             logOut: this.logOut,
+            toggleCEMode: this.toggleCEMode
         };
     }
 
@@ -141,6 +145,12 @@ export default class ContextContainer extends React.Component {
         await currentUser.logOut();
         this.setUser(currentUser);
         this.removeLocalData();
+    }
+
+    toggleCEMode = () => {
+        const { ceMode } = this.state;
+        this.setState({ ceMode: !ceMode});
+        this.setLocalStorageValue(DEFAULT_LOCAL_STORAGE_KEYS.ceMode, !ceMode);
     }
 
     removeLocalData() {

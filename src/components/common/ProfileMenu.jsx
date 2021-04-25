@@ -7,6 +7,7 @@ export default function ProfileMenu(props) {
     const {
         anchorEl, menuId, isMenuOpen,
         onMenuClose, onLogout,
+        toggleCEMode, ceMode
     } = props;
 
     return (
@@ -19,6 +20,7 @@ export default function ProfileMenu(props) {
             open={isMenuOpen}
             onClose={onMenuClose}
         >
+            <MenuItem onClick={toggleCEMode}>{ceMode ? "PSM Mode" : "CE Mode"}</MenuItem>
             <MenuItem onClick={onLogout}>Log Out</MenuItem>
         </Menu>
     );
@@ -30,4 +32,6 @@ ProfileMenu.propTypes = {
     isMenuOpen: PropTypes.bool.isRequired,
     onMenuClose: PropTypes.func.isRequired,
     onLogout: PropTypes.func.isRequired,
+    toggleCEMode: PropTypes.func.isRequired,
+    ceMode: PropTypes.bool.isRequired,
 };

@@ -103,6 +103,8 @@ export default function TopPanel(props) {
         user,
         getActiveUserFilter,
         logOut,
+        ceMode,
+        toggleCEMode
     } = useContext(AuthContext);
     const {
         filter: projectFilter,
@@ -353,6 +355,8 @@ export default function TopPanel(props) {
                 isMenuOpen={isMenuOpen}
                 onMenuClose={handleMenuClose}
                 onLogout={handleLogOut}
+                ceMode={ceMode}
+                toggleCEMode={toggleCEMode}
             />
         </div>
     );
