@@ -11,7 +11,7 @@ export default function generateScheduleTableData(project) {
     const { currentMilestone } = project;
 
     const scheduleTableColumns = [
-        { title: 'Date', field: 'date', editable: 'never' },
+        { title: 'Week', field: 'date', editable: 'never' },
         { title: 'Scheduled', field: 'scheduled', editable: 'never' },
         {
             title: 'Hours',
