@@ -83,6 +83,7 @@ export const FIND_PROJECTS = gql`
             future_assignments_dates {
                 s
                 e
+                resource_email
             }
             survey_responses {
               date
