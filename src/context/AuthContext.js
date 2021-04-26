@@ -34,6 +34,7 @@ export default class ContextContainer extends React.Component {
         const { activePage, ceMode } = DEFAULT_LOCAL_STORAGE_KEYS;
         const localActivePage = localStorage.getItem(activePage);
         const localCeMode = localStorage.getItem(ceMode);
+
         this.state = {
             ...this.state,
             googleClientId: GOOGLE_CLIENT_ID,
@@ -47,7 +48,7 @@ export default class ContextContainer extends React.Component {
             opportunityCollection: null,
             fcstCollection: null,
             activePage: localActivePage || PAGES.projects,
-            ceMode: localCeMode ? localCeMode : false,
+            ceMode: (localCeMode === 'true') ? true : false,
             localStorageKeys: DEFAULT_LOCAL_STORAGE_KEYS,
         };
         this.funcs = {
