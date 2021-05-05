@@ -22,7 +22,9 @@ export default function generateDocumentsTableData(project) {
                     target="_blank"
                     rel="noopener noreferrer"
                 >
-                    {rowData.url_name ? rowData.url_name : rowData.url}
+                    {rowData.url_name ? rowData.url_name : 
+                        (rowData.url.length < 50 ? rowData.url.length : rowData.url.slice(0,47) + "...")
+                    }
                 </a>
             ) : rowData.body ? rowData.body.split('\n').map((item, i) => <p key={i}>{item}</p>) : ""
             ),
