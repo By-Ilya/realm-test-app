@@ -107,6 +107,7 @@ export default function generateMilestoneTableData(project, onClickPMStageButton
             tableKey: 'value',
             updateKey: 'details.pm_stage',
         },
+        { name: 'Status Notes', value: details.project_status_notes, editable: false},
         {
             name: 'Account', value: account, link: generateSFLink(account_id), editable: false,
         },

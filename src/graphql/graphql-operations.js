@@ -13,6 +13,7 @@ export const FIND_PROJECTS = gql`
                 on_hold_reason
                 pm_project_status
                 product_end_date
+                project_status_notes
             }
             opportunity {
                 name
