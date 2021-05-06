@@ -112,7 +112,7 @@ export default function MilestonesInfo(props) {
 
     const handleAddDocumentsRow = async ({ doc }) => {
         const query = { _id: project._id };
-        const update = { $push: { documents: { name: doc.name, url: doc.url, _id: doc._id } } };
+        const update = { $push: { documents: { name: doc.name, url: doc.url, _id: doc._id, type: doc.type } } };
         const options = { upsert: false };
         await dbCollection.updateOne(query, update, options);
     };
@@ -124,10 +124,12 @@ export default function MilestonesInfo(props) {
         }
 
         const query = { _id: project._id, 'documents._id': doc._id };
-        const update = {
-            $set: { 'documents.$.name': doc.name, 'documents.$.url': doc.url },
-            $unset: { 'documents.$.url_name': 1 },
-        };
+
+        const update =
+            {
+                $set: { 'documents.$.name': doc.name, 'documents.$.url': doc.url, 'documents.$.type': doc.type },
+                $unset: { 'documents.$.url_name': 1 },
+            };
         const options = { upsert: false };
         await dbCollection.updateOne(query, update, options);
     };

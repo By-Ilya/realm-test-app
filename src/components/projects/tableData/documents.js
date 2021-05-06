@@ -16,17 +16,18 @@ export default function generateDocumentsTableData(project) {
             title: 'Link/Text',
             field: 'url',
             editable: 'always',
-            render: (rowData) => (rowData.url ? (
+            render: (rowData) => (rowData.url && (rowData.type !== "note") ? (
                 <a
                     href={rowData.url}
                     target="_blank"
                     rel="noopener noreferrer"
                 >
                     {rowData.url_name ? rowData.url_name : 
-                        (rowData.url.length < 50 ? rowData.url.length : rowData.url.slice(0,47) + "...")
+                        (rowData.url.length < 50 ? rowData.url : rowData.url.slice(0,47) + "...")
                     }
                 </a>
-            ) : rowData.body ? rowData.body.split('\n').map((item, i) => <p key={i}>{item}</p>) : ""
+            ) : (rowData.url && (rowData.type === "note") ? rowData.url
+             : rowData.body ? rowData.body.split('\n').map((item, i) => <p key={i}>{item}</p>) : "")
             ),
         },
     ];

@@ -56,6 +56,7 @@ export const FIND_PROJECTS = gql`
                 name
                 url
                 url_name
+                type
             }
             attachments {
                 _id

@@ -5,7 +5,19 @@ import MaterialTable from 'material-table';
 import generateTableIcons from 'components/common/helpers/TableIcons';
 import { ProjectContext } from 'context/ProjectContext';
 
+import {
+    stringIsAValidUrl
+} from 'helpers/url';
+
 const BSON = require('bson');
+
+function documentType(newData) {
+    if (stringIsAValidUrl(newData.url)) {
+        newData.type = "url";
+    } else {
+        newData.type = "note";
+    }
+}
 
 export default function DocumentsTable(props) {
     const {
@@ -50,6 +62,7 @@ export default function DocumentsTable(props) {
                     try {
                         const isVirtual = !newData._id;
                         if (isVirtual) newData._id = new BSON.ObjectID().toString();
+                        documentType(newData);
                         await onUpdate({ doc: newData, isVirtual });
                         const dataUpdate = [...data];
                         const index = oldData.tableData.id;
@@ -65,6 +78,7 @@ export default function DocumentsTable(props) {
                 onRowAdd: async (newData) => {
                     try {
                         newData._id = new BSON.ObjectID().toString();
+                        documentType(newData);
                         await onAdd({ doc: newData });
                         newData.editable = true;
                         setData([...data, newData]);
