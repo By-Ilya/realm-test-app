@@ -294,7 +294,7 @@ export default function TopPanel(props) {
                             inputBaseRoot: classes.inputRoot,
                             inputBaseInput: classes.inputInput,
                         }}
-                        inputPlaceHolder={`Search ${activePage.toLowerCase()}`}
+                        inputPlaceHolder={localFilter.name ? localFilter.name : `Search ${activePage.toLowerCase()}`}
                         onKeyDown={handleSearchKeyDown}
                     />
                     <FilterButton
