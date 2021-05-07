@@ -12,7 +12,7 @@ export default function generateScheduleTableData(project) {
 
     const scheduleTableColumns = [
         { title: 'Week', field: 'date', editable: 'never' },
-        { title: 'Scheduled', field: 'scheduled', editable: 'never' },
+        { title: 'Revenue', field: 'scheduled', editable: 'never' },
         {
             title: 'Hours',
             field: 'hours',

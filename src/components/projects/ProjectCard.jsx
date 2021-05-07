@@ -97,9 +97,7 @@ export default function ProjectCard(props) {
             }
         });
 
-        return minS.getTime() > tomorrowUtc.getTime()
-            ? toDateOnly(minS)
-            : toDateOnly(tomorrowUtc);
+        return toDateOnly(minS);
     };
 
     const calculateProgress = (currentValue, purposeValue) => 100 * (1 - currentValue / purposeValue);
@@ -152,7 +150,7 @@ export default function ProjectCard(props) {
                     {psproject.details.pm_stage}
                 </Typography>
                 <Typography variant="body2" component="p">
-                    <b>Next Assignment:</b>
+                    <b>Next Assignment Week:</b>
                     {' '}
                     {generateNextAssignmentDateString(psproject.future_assignments_dates, ceMode ? user.profile.email : null)}
                 </Typography>
