@@ -40,7 +40,12 @@ exports = async function findProjects({filter, sort, count_only}) {
     } else
       names = [active_user_filter.name];
         
-    matchData = {...matchData, "$or" : [{owner : {$in : names}},{project_manager: {$in : names}},{ps_ops_resource: {$in : names}}]};
+    matchData = {...matchData, "$or" : [
+                                  {owner : {$in : names}},
+                                  {project_manager: {$in : names}},
+                                  {ps_ops_resource: {$in : names}},
+                                  {'future_assignments_dates.resource_email': active_user_filter.email}
+                                ]};
   }
   if (monthly_forecast_done === true) {
     matchData = {...matchData, "monthly_forecast_done" : true};

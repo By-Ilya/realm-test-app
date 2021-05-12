@@ -12,9 +12,19 @@ exports = function(arg){
 
     Try running in the console below.
   */
-  var col = context.services.get("mongodb-atlas").db("shf").collection(arg);
+  const attachment_names = ["note", "gdoc"];
+  
+  var coll_name = arg;
+  var query = {};
+  
+  if (attachment_names.includes(arg)) {
+    coll_name = "attachment";
+    query = {"type" : arg};
+  }
+  
+  var col = context.services.get("mongodb-atlas").db("shf").collection(coll_name);
 
-  return col.find({}).sort({SystemModstamp:-1}).limit(1).toArray()
+  return col.find(query).sort({SystemModstamp:-1}).limit(1).toArray()
   .then(items => {
     console.log(`Successfully found ${items.length} documents.`)
     //console.log(JSON.stringify(items[0]))

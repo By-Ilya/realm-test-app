@@ -18,6 +18,7 @@ exports = async function(event){
   var col_schedule = context.services.get("mongodb-atlas").db("shf").collection("schedule");
   
   var d = new Date();
+  d.setMonth(d.getMonth() - 1);
   d.setHours(0);	d.setMinutes(0); d.setSeconds(0); d.setMilliseconds(0);
   
   var res = await col_schedule.aggregate([
@@ -25,7 +26,7 @@ exports = async function(event){
     {$match:{$or:[{"estimated.hours":{$gt:0}},{"estimated.revenue":{$gt:0}}]}},
     {$match:{role:{$ne:"Project Manager"}}},
     {$sort:{"assignment.end_date":1}},
-    {$project:{ass_dates: {s:"$assignment.start_date",e:"$assignment.end_date"}}},
+    {$project:{ass_dates: {s:"$assignment.start_date",e:"$assignment.end_date",resource_email:"$resource_email"}}},
     {$group:{_id:null, dates_array:{$push : "$ass_dates"}}}
   ]).toArray();
   

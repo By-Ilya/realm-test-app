@@ -19,13 +19,21 @@ exports = async function() {
 
     Learn more about http client here: https://docs.mongodb.com/realm/functions/context/#context-http
   */
+  function getDay(d) {
+    d = new Date(d);
+    d.setHours(0);	d.setMinutes(0); d.setSeconds(0); d.setMilliseconds(0)
+    return d;
+  }
   
   var now = new Date()
   var ny = new Date("2019-06-01")
   var num_periods = 12;
   
+  var today = getDay(now);
+  
   const psprojectCol = context.services.get("mongodb-atlas").db("shf").collection("psproject");
   const statsCol = context.services.get("mongodb-atlas").db("shf").collection("burndown_stats");
+  const statsColHist = context.services.get("mongodb-atlas").db("shf").collection("burndown_stats_hist");
   
   const bucket_by_month_pipeline = [
   	{$lookup:{from:"schedule",as:"schedule",localField:"_id",foreignField:"projectId"}},
@@ -56,7 +64,7 @@ exports = async function() {
   	}}
   ];
   
-  var res = await psprojectCol.aggregate([
+  const pipe = [
     {$match:{region:{ $regex: "^NA" }}},
     {$match:{'details.product_start_date':{$gte: ny}}},
     {$match:{$expr:{$lte:[
@@ -83,10 +91,27 @@ exports = async function() {
     	pct_avg_w:{$divide:["$monthly.hours_delivered","$totals.total_hours_planned"]},
     }}//,
     //{$out:"burndown_stats"}
-  ]).toArray();
-  
+  ];
+  var res = await psprojectCol.aggregate(pipe).toArray();
+  res = res.filter(el => el.month < 12);
+  res.forEach(el => {el.asOf = today; el.type = "all"});
   console.log(JSON.stringify(res));
   
+  const small_t = 120;
+  var res_small = await psprojectCol.aggregate([{$match:{'summary.planned_hours':{$lte: small_t}}},...pipe]).toArray();
+  res_small = res_small.filter(el => el.month < 12);
+  res_small.forEach(el => {el.asOf = today; el.type = "small"});
+  
+  var res_large = await psprojectCol.aggregate([{$match:{'summary.planned_hours':{$gt: small_t}}},...pipe]).toArray();
+  res_large = res_large.filter(el => el.month < 12);
+  res_large.forEach(el => {el.asOf = today; el.type = "large"});
+  
+  
   statsCol.deleteMany({});
-  statsCol.insertMany(res.filter(el => el.month < 12));
+  statsCol.insertMany(res);
+  statsCol.insertMany(res_small);
+  statsCol.insertMany(res_large);
+  statsColHist.insertMany(res);
+  statsColHist.insertMany(res_small);
+  statsColHist.insertMany(res_large);
 };

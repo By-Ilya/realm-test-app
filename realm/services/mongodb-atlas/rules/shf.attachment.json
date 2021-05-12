@@ -1,0 +1,47 @@
+{
+    "collection": "attachment",
+    "database": "shf",
+    "roles": [
+        {
+            "name": "default",
+            "apply_when": {},
+            "write": true,
+            "insert": true,
+            "delete": true,
+            "search": true,
+            "additional_fields": {}
+        }
+    ],
+    "schema": {
+        "properties": {
+            "SystemModstamp": {
+                "bsonType": "date"
+            },
+            "_id": {
+                "bsonType": "string"
+            },
+            "body": {
+                "bsonType": "string"
+            },
+            "isDeleted": {
+                "bsonType": "bool"
+            },
+            "name": {
+                "bsonType": "string"
+            },
+            "owner": {
+                "bsonType": "string"
+            },
+            "parentId": {
+                "bsonType": "string"
+            },
+            "type": {
+                "bsonType": "string"
+            },
+            "url": {
+                "bsonType": "string"
+            }
+        },
+        "title": "attachment"
+    }
+}
