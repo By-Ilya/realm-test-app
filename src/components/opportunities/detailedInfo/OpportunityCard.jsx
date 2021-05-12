@@ -8,6 +8,8 @@ import Grid from '@material-ui/core/Grid';
 
 import { toDateOnly } from 'helpers/dateFormatter';
 
+import { valueAsUSD } from 'helpers/misc';
+
 const useStyles = makeStyles((theme) => ({
     card: {
         width: '100%',
@@ -126,13 +128,13 @@ function Details(props) {
                 <CommonText text={`Type: ${type || ''}`} />
                 <CommonText text={`Stage: ${stage}`} />
                 <CommonText text={`Closes: ${closeDate}`} />
-                <CommonText text={`Amount: ${amount}`} />
+                <CommonText text={`Amount: ${valueAsUSD(amount)}`} />
             </Grid>
 
             <Grid item={2} className={classes.rightInfo}>
-                <CommonText text={`EM: ${engagementManager}`} />
+                <CommonText text={`EM: ${engagementManager || '-'}`} />
                 <CommonText text={`PS region: ${psRegion}`} />
-                <CommonText text={`Services: ${services}`} />
+                <CommonText text={`Services: ${valueAsUSD(services)}`} />
             </Grid>
         </Grid>
     );

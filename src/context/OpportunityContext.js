@@ -2,6 +2,11 @@ import React from 'react';
 
 import { AuthContext } from 'context/AuthContext';
 
+import {
+    generateSFLink,
+    valueAsUSD
+} from 'helpers/misc';
+
 const OpportunityContext = React.createContext('opportunities');
 
 require('dotenv').config();
@@ -15,6 +20,17 @@ const OPPORTUNITIES_COLUMNS = [
         title: 'Opportunity ID',
         field: 'id',
         editable: 'never',
+        render: (rowData) => {
+                return (
+                    <a
+                        href={generateSFLink(rowData.id)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        {rowData.id}
+                    </a>
+                );
+            },
         ...HEADER_STYLE,
     },
     {
@@ -32,6 +48,12 @@ const OPPORTUNITIES_COLUMNS = [
     {
         title: 'Owner',
         field: 'owner',
+        editable: 'never',
+        ...HEADER_STYLE,
+    },
+    {
+        title: 'Type',
+        field: 'type',
         editable: 'never',
         ...HEADER_STYLE,
     },
@@ -69,12 +91,14 @@ const OPPORTUNITIES_COLUMNS = [
         title: 'Amount',
         field: 'amount',
         editable: 'never',
+        render: (rowData) => { return valueAsUSD(rowData.amount) },
         ...HEADER_STYLE,
     },
     {
         title: 'Services',
         field: 'services',
         editable: 'never',
+        render: (rowData) => { return valueAsUSD(rowData.services) },
         ...HEADER_STYLE,
     },
     {
@@ -105,6 +129,7 @@ const OPPORTUNITIES_COLUMNS = [
         title: 'EM Call Amount',
         field: 'emCallAmount',
         editable: 'never',
+        render: (rowData) => { return rowData.emCallAmount ? valueAsUSD(rowData.emCallAmount) : "" },
         ...HEADER_STYLE,
     },
 ];

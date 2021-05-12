@@ -129,6 +129,7 @@ export const FIND_OPPORTUNITIES = gql`
             ps_region
             services_post_carve
             stage
+            type
         }
     }
 `;

@@ -4,11 +4,11 @@ import {
     projectHasCustSurvey,
 } from 'helpers/project-util';
 
-const TAB_INDENT = '   ';
+import {
+    generateSFLink
+} from 'helpers/misc';
 
-function generateSFLink(id) {
-    return `https://mongodb.my.salesforce.com/${id}`;
-}
+const TAB_INDENT = '   ';
 
 function projectNeedsSurveys(project) {
     const { contacts } = project;

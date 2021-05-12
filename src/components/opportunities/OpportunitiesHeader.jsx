@@ -6,6 +6,8 @@ import Typography from '@material-ui/core/Typography';
 
 import ChooseButton from 'components/common/ChooseButton';
 
+import { valueAsUSD } from 'helpers/misc';
+
 const useStyles = makeStyles((theme) => ({
     root: {
         marginBottom: '0.5rem',
@@ -42,12 +44,12 @@ export default function OpportunitiesHeader(props) {
             </Grid>
             <Grid item xs={6} sm={3} className={classes.leftContent}>
                 <Typography variant="body1">
-                    {`Amount total: ${amountTotal}`}
+                    {`Amount total: ${valueAsUSD(amountTotal)}`}
                 </Typography>
             </Grid>
             <Grid item xs={6} sm={3} className={classes.leftContent}>
                 <Typography variant="body1">
-                    {`Services total: ${servicesTotal}`}
+                    {`Services total: ${valueAsUSD(servicesTotal)}`}
                 </Typography>
             </Grid>
             <Grid item xs={6} sm={3} className={classes.rightContent}>
