@@ -33,23 +33,29 @@ export default function OpportunitiesHeader(props) {
         countOpportunities,
         amountTotal,
         servicesTotal,
+        servicesForecastSales,
     } = props;
 
     return (
         <Grid container spacing={3} className={classes.root}>
-            <Grid item xs={6} sm={3} className={classes.leftContent}>
+            <Grid item xs={8} sm={2} className={classes.leftContent}>
                 <Typography variant="body1">
                     {`${totalCountOpportunities} opportunities [showing ${countOpportunities}]`}
                 </Typography>
             </Grid>
-            <Grid item xs={6} sm={3} className={classes.leftContent}>
+            <Grid item xs={8} sm={2} className={classes.leftContent}>
                 <Typography variant="body1">
-                    {`Amount total: ${valueAsUSD(amountTotal)}`}
+                    {`Amount: ${valueAsUSD(amountTotal)}`}
                 </Typography>
             </Grid>
-            <Grid item xs={6} sm={3} className={classes.leftContent}>
+            <Grid item xs={8} sm={2} className={classes.leftContent}>
                 <Typography variant="body1">
-                    {`Services total: ${valueAsUSD(servicesTotal)}`}
+                    {`PS attached: ${valueAsUSD(servicesTotal)}`}
+                </Typography>
+            </Grid>
+            <Grid item xs={8} sm={2} className={classes.leftContent}>
+                <Typography variant="body1">
+                    {`PS forecast: ${valueAsUSD(servicesForecastSales)}`}
                 </Typography>
             </Grid>
             <Grid item xs={6} sm={3} className={classes.rightContent}>
@@ -78,6 +84,7 @@ OpportunitiesHeader.propTypes = {
     countOpportunities: PropTypes.number,
     amountTotal: PropTypes.number,
     servicesTotal: PropTypes.number,
+    servicesForecastSales: PropTypes.number,
 };
 
 OpportunitiesHeader.defaultProps = {
@@ -85,4 +92,5 @@ OpportunitiesHeader.defaultProps = {
     countOpportunities: 0,
     amountTotal: 0,
     servicesTotal: 0,
+    servicesForecastSales: 0,
 };

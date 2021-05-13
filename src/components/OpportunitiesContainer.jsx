@@ -52,6 +52,7 @@ export default function OpportunitiesContainer(props) {
         opportunitiesTotalCount,
         amountTotal,
         servicesTotal,
+        servicesForecastSales,
         hiddenColumns,
         setHiddenColumns,
         loadProcessing,
@@ -135,6 +136,7 @@ export default function OpportunitiesContainer(props) {
                         countOpportunities={opportunities.length}
                         amountTotal={amountTotal}
                         servicesTotal={servicesTotal}
+                        servicesForecastSales={servicesForecastSales}
                     />
                     {loadProcessing && (
                         <CircularProgress />

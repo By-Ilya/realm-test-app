@@ -198,6 +198,7 @@ class OpportunityContainer extends React.Component {
             opportunitiesTotalCount: 0,
             amountTotal: 0,
             servicesTotal: 0,
+            servicesForecastSales: 0,
             hasMoreOpportunities: true,
             activeOpportunity: null,
             isEditing: false,
@@ -298,11 +299,12 @@ class OpportunityContainer extends React.Component {
             count_only: true,
         });
         if (fetchedData && fetchedData.length) {
-            const { count, amountTotal, servicesTotal } = fetchedData[0];
+            const { count, amountTotal, servicesTotal, servicesForecastSales } = fetchedData[0];
             this.setState({
                 opportunitiesTotalCount: count,
                 amountTotal,
                 servicesTotal,
+                servicesForecastSales
             });
         }
     }
