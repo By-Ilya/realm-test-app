@@ -82,5 +82,17 @@ export default function getOpportunityFilters(props) {
             },
             showEmptyValue: false,
         },
+        {
+            label: 'Only Forecasted',
+            currentValue: mapValueToFilterName(localFilter.inForecast),
+            values: DEFAULT_CHOOSE_VALUES,
+            setValue: (event) => {
+                setLocalFilter({
+                    ...localFilter,
+                    inForecast: mapFilterNameToValue(event.target.value),
+                });
+            },
+            showEmptyValue: false,
+        },
     ];
 }

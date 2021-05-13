@@ -150,6 +150,7 @@ const DEFAULT_FILTER = {
     engagement_manager: '',
     close_date: 'All',
     active_user_filter: null,
+    inForecast: false
 };
 
 const SORT_FIELDS = [
