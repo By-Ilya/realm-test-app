@@ -34,7 +34,7 @@ export default function EMTable(props) {
 
     return (
         <EditableTable
-            tableName="EM Fields Values"
+            tableName="EM Fields"
             columns={emTableColumns}
             currentRows={emTableRows}
             onUpdate={handleUpdateEmRow}

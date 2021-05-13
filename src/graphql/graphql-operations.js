@@ -120,6 +120,11 @@ export const FIND_OPPORTUNITIES = gql`
                 esd_created
                 ps_status
             }
+            sales_forecast {
+                AE
+                RD
+                amount_services_RD
+            }
             forecast_category
             has_services
             name

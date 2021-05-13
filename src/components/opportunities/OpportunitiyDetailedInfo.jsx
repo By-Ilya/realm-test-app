@@ -9,6 +9,7 @@ import {
     OpportunityCard,
     EMTable,
     PSNotes,
+    OppInfoTable
 } from 'components/opportunities/detailedInfo';
 import { AuthContext } from 'context/AuthContext';
 import { OpportunityContext } from 'context/OpportunityContext';
@@ -77,6 +78,12 @@ export default function OpportunityDetailedInfo(props) {
 
                     <ListItem key="common_info">
                         <OpportunityCard
+                            opportunity={opportunity}
+                        />
+                    </ListItem>
+
+                    <ListItem key="oppinfo_table">
+                        <OppInfoTable
                             opportunity={opportunity}
                         />
                     </ListItem>
