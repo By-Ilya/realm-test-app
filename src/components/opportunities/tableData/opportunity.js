@@ -26,6 +26,7 @@ export default function generateOpportunityTableData(data) {
             em,
             ps_region,
             services_post_carve,
+            line_items,
         } = opportunity;
         const {
             engagement_manager,
@@ -53,6 +54,7 @@ export default function generateOpportunityTableData(data) {
             esdCreated: mapValueToFilterName(esd_created),
             emCall: call,
             emCallAmount: call_amount,
+            lineItems: line_items,
         };
     });
 

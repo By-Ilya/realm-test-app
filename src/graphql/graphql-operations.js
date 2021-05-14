@@ -125,6 +125,16 @@ export const FIND_OPPORTUNITIES = gql`
                 RD
                 amount_services_RD
             }
+            line_items {
+              qty
+              total
+              discount_pct
+              product {
+                name
+                family
+                code
+              }
+            }
             forecast_category
             has_services
             name

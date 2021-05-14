@@ -4,12 +4,30 @@ import { AuthContext } from 'context/AuthContext';
 
 import {
     generateSFLink,
-    valueAsUSD
+    valueAsUSD,
+    consCodeToProductAbbv
 } from 'helpers/misc';
 
 const OpportunityContext = React.createContext('opportunities');
 
 require('dotenv').config();
+
+const generateServicesSummaryJSX = (line_items) => {
+    if (line_items != null && line_items.length > 0) {
+        let summary_map = {};
+        const cons_items = line_items.filter(it => ["Consulting","Training"].includes(it.product.family));
+        if (cons_items.length == 0)
+            return null;
+
+        cons_items.forEach(it => {
+            summary_map[it.product.code] = summary_map[it.product.code]?summary_map[it.product.code]:0 + it.qty;
+        })
+
+        let it_ordered = Object.keys(summary_map).sort();
+        return (it_ordered.map((item, i) => <div>{`${summary_map[item]}x ${consCodeToProductAbbv(item)}`}</div>))
+    }
+    return null;
+}
 
 const HEADER_STYLE = {
     headerStyle: { fontWeight: 'bold' },
@@ -99,6 +117,13 @@ const OPPORTUNITIES_COLUMNS = [
         field: 'services',
         editable: 'never',
         render: (rowData) => { return valueAsUSD(rowData.services) },
+        ...HEADER_STYLE,
+    },
+    {
+        title: 'Services Summary',
+        field: 'lineItems',
+        editable: 'never',
+        render: (rowData) => { return generateServicesSummaryJSX(rowData.lineItems) },
         ...HEADER_STYLE,
     },
     {
