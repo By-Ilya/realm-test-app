@@ -8,6 +8,7 @@ export default function SimpleTable(props) {
     const {
         projectId, tableName,
         currentColumns, currentData,
+        tableLayout
     } = props;
 
     const { isEditing } = useContext(ProjectContext);
@@ -33,6 +34,7 @@ export default function SimpleTable(props) {
                 sorting: false,
                 paging: false,
                 padding: 'dense',
+                tableLayout: tableLayout ? tableLayout : "fixed"
             }}
         />
     );

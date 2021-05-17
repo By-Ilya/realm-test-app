@@ -19,13 +19,12 @@ export default function generateCasesTableData(project) {
     ]
 
     const casesTableColumns = [
-        { title: 'FTS', field: 'fts', editable: 'never' },
-        { title: 'Priority', field: 'severity', editable: 'never',
+        { title: 'Priority', field: 'severity', editable: 'never', width: "10%",
             render: (rowData) => (
                    rowData.fts ? rowData.severity + " (FTS)" : rowData.severity
             ),
         },
-        { title: 'Case #', field: 'case_number', editable: 'never',
+        { title: 'Case #', field: 'case_number', editable: 'never', width: "15%",
           render: (rowData) => (
                 <a
                     href={generateSFLink(rowData._id)}
@@ -35,12 +34,20 @@ export default function generateCasesTableData(project) {
                 </a>
             ),
         },
-        { title: 'Status', field: 'status', editable: 'never' },
-        { title: 'Project', field: 'cloud_project_name', editable: 'never' },
-        { title: 'Created', field: 'date', editable: 'never' },
-        { title: 'Subject', field: 'subject', editable: 'never' },
-        { title: 'Reporter', field: 'reporter', editable: 'never' },
-        { title: 'Owner', field: 'owner', editable: 'never' },
+        { title: 'Status', field: 'status', editable: 'never', width: "15%", },
+        { title: 'Created', field: 'date', editable: 'never', width: "15%", },
+        { title: 'Details', field: 'subject', editable: 'never', width: "55%",
+          render: (rowData) => (
+                <>
+                <p> <i>Project:</i> {rowData.cloud_project_name || rowData.project_name} </p>
+                <p> <i>Reporter:</i> {rowData.reporter} </p>
+                <p> <i>Owner:</i> {rowData.owner} </p>
+                <p> <i>Summary:</i> {rowData.subject} </p>
+                </>
+            ),
+        },
+        //{ title: 'Reporter', field: 'reporter', editable: 'never' },
+        //{ title: 'Owner', field: 'owner', editable: 'never' },
     ];
     const casesTableRows = cases.map((s) => ({
         ...s,

@@ -244,6 +244,7 @@ export default function MilestonesInfo(props) {
                         tableName="Support Cases"
                         currentColumns={casesTableColumns}
                         currentData={casesTableRows}
+                        tableLayout="fixed"
                     />
                 </div>
             )}
