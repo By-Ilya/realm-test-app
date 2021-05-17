@@ -4,3 +4,4 @@ export { default as generateForecastTableData } from './forecast';
 export { default as generateMilestoneTableData } from './milestones';
 export { default as generateScheduleTableData } from './schedule';
 export { default as generateSurveyTableData } from './survey';
+export { default as generateCasesTableData} from './cases';

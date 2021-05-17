@@ -13,6 +13,7 @@ import {
     generateContactsTableData,
     generateDocumentsTableData,
     generateSurveyTableData,
+    generateCasesTableData,
 } from 'components/projects/tableData';
 import {
     custMailParams,
@@ -102,6 +103,11 @@ export default function MilestonesInfo(props) {
         documentsTableColumns,
         documentsTableRows,
     } = generateDocumentsTableData(project);
+
+    const {
+        casesTableColumns,
+        casesTableRows,
+    } = generateCasesTableData(project);
 
     const handleUpdateRow = async ({ updateKey, value }) => {
         const query = { _id: project._id, 'milestones._id': project.currentMilestone._id };
@@ -228,6 +234,16 @@ export default function MilestonesInfo(props) {
                         onUpdate={handleUpdateForecast}
                         onCheckboxUpdate={handleUpdateForecastCheckbox}
                         checkboxValue={!!project.monthly_forecast_done}
+                    />
+                </div>
+            )}
+            {ceMode && casesTableRows.length !== 0 && (
+                <div className={classes.tableContainer}>
+                    <SimpleTable
+                        projectId={project._id}
+                        tableName="Support Cases"
+                        currentColumns={casesTableColumns}
+                        currentData={casesTableRows}
                     />
                 </div>
             )}

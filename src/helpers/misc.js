@@ -1,3 +1,7 @@
+require('dotenv').config();
+
+const SALESFORCE_URL = `${process.env.REACT_APP_SALESFORCE_URL}` || 'https://mongodb.my.salesforce.com';
+
 // Create our number formatter.
 const formatter = new Intl.NumberFormat('en-US', {
   style: 'currency',
@@ -9,7 +13,7 @@ const valueAsUSD = (val) => {
 };
 
 const generateSFLink = (id) => {
-    return `https://mongodb.my.salesforce.com/${id}`;
+    return `${SALESFORCE_URL}/${id}`;
 }
 
 
