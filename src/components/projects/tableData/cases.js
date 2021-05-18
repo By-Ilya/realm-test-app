@@ -1,4 +1,4 @@
-import { toDateOnly } from 'helpers/dateFormatter';
+import { toDateOnly_local } from 'helpers/dateFormatter';
 import {
     generateSFLink
 } from 'helpers/misc';
@@ -6,17 +6,14 @@ import {
 import React from 'react';
 
 export default function generateCasesTableData(project) {
-    if (!project) {
+    if (!project || !project.cases) {
         return {
             casesTableColumns: [],
             casesTableRows: [],
         };
     }
 
-    //const { cases } = project;
-    const cases = [
-    {"_id":"5002K00000sdfF9QAI","account_id":"001A000001UtqK4IAJ","case_number":"00749221","cloud_project_id":"aFy2K000000mbKLSAY","cloud_project_name":"Staging","customer_escalated":false,"date_created": new Date(1613547112000),"fts":false,"owner":"Martins Abolins","reporter":"Jaime Viloria","severity":"S4","status":"Closed","subject":"migrate multiple databases in active usage from a single cluster to multiple clusters"},
-    ]
+    const { cases } = project;
 
     const casesTableColumns = [
         { title: 'Priority', field: 'severity', editable: 'never', width: "10%",
@@ -42,6 +39,8 @@ export default function generateCasesTableData(project) {
                 <p> <i>Project:</i> {rowData.cloud_project_name || rowData.project_name} </p>
                 <p> <i>Reporter:</i> {rowData.reporter} </p>
                 <p> <i>Owner:</i> {rowData.owner} </p>
+                <p> <i>Last Modified:</i> {rowData.last_modified ? rowData.last_modified.toString('YYYY-MM-dd') : "Unknown"} </p>
+                
                 <p> <i>Summary:</i> {rowData.subject} </p>
                 </>
             ),
@@ -51,7 +50,7 @@ export default function generateCasesTableData(project) {
     ];
     const casesTableRows = cases.map((s) => ({
         ...s,
-        date: toDateOnly(s.date_created),
+        date: toDateOnly_local(s.date_created),
         editable: false,
     }));
 

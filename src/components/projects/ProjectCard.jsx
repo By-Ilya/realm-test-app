@@ -51,13 +51,21 @@ export default function ProjectCard(props) {
     const { summary } = psproject;
 
     const handleOnClickMilestone = async (milestone) => {
-        const schedule = await user.functions.getMilestoneScheduleOnwards(milestone._id);
-        const forecast = await user.functions.getMilestoneForecast(milestone._id);
+        const promise_s = user.functions.getMilestoneScheduleOnwards(milestone._id);
+        const promise_f = user.functions.getMilestoneForecast(milestone._id);
+        const promise_c = user.functions.getRelatedSupportCases({account_id: psproject.account_id});
+
+        const data = await Promise.all([promise_s, promise_f, promise_c])
+
+        const schedule = data[0];
+        const forecast = data[1];
+        const cases = data[2];
 
         setProjectWithCurrentMilestone({
             project: psproject,
             milestone: { ...milestone, schedule },
             forecast,
+            cases
         });
     };
 

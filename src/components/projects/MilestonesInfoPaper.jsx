@@ -23,10 +23,12 @@ export default function MilestonesInfoPaper(props) {
     let project = null;
     let currentMilestone = null;
     let forecast = null;
+    let cases = null;
     if (projectWithCurrentMilestone) {
         project = projectWithCurrentMilestone.project;
         currentMilestone = projectWithCurrentMilestone.milestone;
         forecast = projectWithCurrentMilestone.forecast;
+        cases = projectWithCurrentMilestone.cases;
     }
 
     return (
@@ -42,7 +44,7 @@ export default function MilestonesInfoPaper(props) {
                         ? (
                             <MilestonesInfo
                                 classes={containerClasses}
-                                project={{ ...project, currentMilestone, forecast }}
+                                project={{ ...project, currentMilestone, forecast, cases }}
                             />
                         )
                         : (
