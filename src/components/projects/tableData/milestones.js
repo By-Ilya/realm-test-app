@@ -2,6 +2,7 @@ import React from 'react';
 import {
     projectHasCESurvey,
     projectHasCustSurvey,
+    projectHasEngBrief
 } from 'helpers/project-util';
 
 import {
@@ -47,7 +48,7 @@ function getGapHoursString(ms_summary) {
         : gap_hours;
 }
 
-export default function generateMilestoneTableData(project, onClickPMStageButton) {
+export default function generateMilestoneTableData(project, onClickPMStageButton, onClickEngBriefButton) {
     if (!project) {
         return {
             milestonesTableColumns: [],
@@ -73,14 +74,21 @@ export default function generateMilestoneTableData(project, onClickPMStageButton
             field: 'value',
             editable: 'onUpdate',
             render: (rowData) => {
-                if (rowData.name === 'PM Stage' && !(rowData.value === 'Not Started' || rowData.value === 'Planning') &&
+                if (rowData.name === 'PM Stage') {
+                  if (!(rowData.value === 'Not Started' || rowData.value === 'Planning') &&
                     !rowData.survey_sent) {
                     return [
                         rowData.value,
                         TAB_INDENT,
                         <button onClick={() => onClickPMStageButton(project)}>Send surveys</button>,
                     ];
-                }
+                  } else if (!rowData.eng_brief_generated)
+                    return [
+                        rowData.value,
+                        TAB_INDENT,
+                        <button onClick={() => onClickEngBriefButton(project)}>Engagement Brief</button>,
+                    ];
+                 }
 
                 return rowData.link ? (
                     <a
@@ -104,6 +112,7 @@ export default function generateMilestoneTableData(project, onClickPMStageButton
             value: details.pm_stage,
             editable: true,
             survey_sent: !projectNeedsSurveys(project),
+            eng_brief_generated: projectHasEngBrief(project),
             tableKey: 'value',
             updateKey: 'details.pm_stage',
         },

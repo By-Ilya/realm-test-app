@@ -74,10 +74,19 @@ export default function MilestonesInfo(props) {
         alert('Surveys sent!');
     };
 
+    const onClickEngBriefButton = async (chosenProject) => {
+        await user.callFunction(
+                'requestEngBrief',
+                chosenProject._id,
+            );
+
+        alert('Engagement Brief generated!');
+    };
+
     const {
         milestonesTableColumns,
         milestonesTableRows,
-    } = generateMilestoneTableData(project, onClickPMStageButton);
+    } = generateMilestoneTableData(project, onClickPMStageButton, onClickEngBriefButton);
 
     const {
         scheduleTableColumns,

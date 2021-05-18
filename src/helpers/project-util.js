@@ -17,7 +17,19 @@ function projectHasCustSurvey(project, email) {
     return projectHasSurvey(project, email, 'Mongo Satisfaction Survey');
 }
 
+function projectHasEngBrief(project) {
+    if (!project.documents) return false;
+
+    for (let i = project.documents.length - 1; i >= 0; i--) {
+        const d = project.documents[i];
+        if (d.name === "Engagement Brief") return true;
+    }
+
+    return false;
+}
+
 module.exports = {
     projectHasCESurvey,
     projectHasCustSurvey,
+    projectHasEngBrief,
 };
