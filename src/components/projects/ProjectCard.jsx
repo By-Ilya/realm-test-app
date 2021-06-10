@@ -115,7 +115,7 @@ export default function ProjectCard(props) {
             <LinearProgress
                 variant="buffer"
                 value={calculateProgress(summary.gap_hours, summary.planned_hours)}
-                valueBuffer={calculateProgress(summary.backlog_hours, summary.planned_hours)}
+                valueBuffer={calculateProgress((summary.backlog_hours_fixed >= 0) ? summary.backlog_hours_fixed: summary.backlog_hours, summary.planned_hours)}
             />
             <CardContent>
                 <div className={classes.info}>

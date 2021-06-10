@@ -23,6 +23,7 @@ export const FIND_PROJECTS = gql`
             }
             summary {
                 backlog_hours
+                backlog_hours_fixed
                 gap_hours
                 planned_hours
             }
