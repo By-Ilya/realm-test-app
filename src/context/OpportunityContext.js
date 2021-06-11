@@ -20,7 +20,7 @@ const generateServicesSummaryJSX = (line_items) => {
             return null;
 
         cons_items.forEach(it => {
-            summary_map[it.product.code] = summary_map[it.product.code]?summary_map[it.product.code]:0 + it.qty;
+            summary_map[it.product.code] = ( (summary_map[it.product.code]>0)?summary_map[it.product.code]:0 ) + it.qty;
         })
 
         let it_ordered = Object.keys(summary_map).sort();
