@@ -148,6 +148,19 @@ export default function generateMilestoneTableData(project, onClickPMStageButton
         { name: 'Non-billable hours submitted', value: currentMilestone.summary.non_billable_hours_submitted, editable: false },
     ];
 
+    if ( (project_manager === "PM Parking Lot") &&
+         ((details.pm_stage === 'On Hold') || (details.pm_stage === 'Not Started')) ) 
+    {
+        const action_row = {
+            name: 'Action',
+            value: details.action,
+            editable: true,
+            tableKey: 'value',
+            updateKey: 'details.action',
+        };
+        milestonesTableRows.splice(4, 0, action_row);
+    }
+
     if (details.pm_stage === 'On Hold') {
         const on_hold_reason_row = {
             name: 'On Hold Reason',

@@ -11,6 +11,7 @@ export const FIND_PROJECTS = gql`
             details {
                 pm_stage
                 on_hold_reason
+                action
                 pm_project_status
                 product_end_date
                 project_status_notes
