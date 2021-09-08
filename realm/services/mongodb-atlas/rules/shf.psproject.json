@@ -1,6 +1,7 @@
 {
     "collection": "psproject",
     "database": "shf",
+    "id": "613705bc82a365309f940d5a",
     "roles": [
         {
             "name": "default",
@@ -85,6 +86,9 @@
             "details": {
                 "bsonType": "object",
                 "properties": {
+                    "action": {
+                        "bsonType": "string"
+                    },
                     "active_csm": {
                         "bsonType": "string"
                     },
@@ -280,6 +284,9 @@
                 "bsonType": "object",
                 "properties": {
                     "backlog_hours": {
+                        "bsonType": "double"
+                    },
+                    "backlog_hours_fixed": {
                         "bsonType": "double"
                     },
                     "gap_hours": {

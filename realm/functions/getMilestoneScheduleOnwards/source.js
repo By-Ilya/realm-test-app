@@ -19,6 +19,11 @@ exports = async function(arg){
     d.setHours(0);	d.setMinutes(0); d.setSeconds(0); d.setMilliseconds(0)
     return new Date(d.setDate(diff));
   }
+  
+  function getMonthStart() {
+    var date = new Date();
+    return new Date(date.getUTCFullYear(), date.getUTCMonth(), 1);
+  }
 
   var col = context.services.get("mongodb-atlas").db("shf").collection("schedule");
   var sundate = getSunday(new Date());
@@ -34,6 +39,18 @@ exports = async function(arg){
       revenue:{$sum:"$actual.revenue"}, resources: {$addToSet: "$resource"}}},
     {$sort:{"week":-1}},
     {$limit:3},
+    {$sort:{"week":1}}
+  ]).toArray();
+  
+  var past_unsubmitted = await col.aggregate([
+    {$match:{"milestoneId":arg,"week":{$gte:getMonthStart(),$lt:sundate}}},
+    {$match:{$or:[{"estimated.hours":{$gt:0}},{"estimated.revenue":{$gt:0}}], "actual.hours":0}},
+    {$match:{role:{$ne:"Project Manager"}}},
+    {$sort:{"week":1}},
+    {$group:{_id:"$week","week":{$first:"$week"},hours:{$sum:"$estimated.hours"}, 
+      hours_nonbillable:{$sum:{ $cond: [ "$billable", 0, "$estimated.hours" ] }},
+      revenue:{$sum:"$estimated.revenue"}, resources: {$addToSet: {$concat:["$resource","*"]}},
+    }},
     {$sort:{"week":1}}
   ]).toArray();
   
@@ -54,5 +71,6 @@ exports = async function(arg){
   //get agg actuals (rev + hours) for weeks < sundate , sorted by sundate asc, limit 3
   //get agg estimates (rev + hours) for weeks >= sundate , sorted by sundate asc, limit 7
   //concat results 
-  return past.concat(future);
+  let res = past.concat(past_unsubmitted).concat(future);
+  return res.sort((a, b) => (a.week > b.week) ? 1 : -1)
 };

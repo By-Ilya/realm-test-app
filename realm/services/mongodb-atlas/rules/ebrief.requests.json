@@ -1,0 +1,17 @@
+{
+    "collection": "requests",
+    "database": "ebrief",
+    "id": "613705bc82a365309f940d52",
+    "roles": [
+        {
+            "name": "default",
+            "apply_when": {},
+            "write": true,
+            "insert": true,
+            "delete": true,
+            "search": true,
+            "additional_fields": {}
+        }
+    ],
+    "schema": {}
+}

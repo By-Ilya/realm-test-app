@@ -1,6 +1,7 @@
 {
     "collection": "revforecast",
     "database": "shf",
+    "id": "613705bc82a365309f940d5b",
     "roles": [
         {
             "name": "default",

@@ -1,4 +1,5 @@
 {
+    "id": "613705bc82a365309f940df3",
     "name": "salesforceSync",
     "type": "SCHEDULED",
     "config": {

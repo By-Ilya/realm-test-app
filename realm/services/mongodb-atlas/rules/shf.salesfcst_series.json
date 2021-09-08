@@ -1,6 +1,7 @@
 {
     "collection": "salesfcst_series",
     "database": "shf",
+    "id": "613705bc82a365309f940d5c",
     "roles": [
         {
             "name": "default",

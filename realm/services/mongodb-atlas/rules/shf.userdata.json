@@ -1,6 +1,7 @@
 {
     "collection": "userdata",
     "database": "shf",
+    "id": "613705bc82a365309f940d5f",
     "roles": [
         {
             "name": "default",

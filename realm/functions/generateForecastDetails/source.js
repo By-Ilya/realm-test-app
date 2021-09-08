@@ -267,14 +267,14 @@ exports = async function(arg){
               {
                 'case': {
                   '$lt': [
-                    '$schedule.week', sunday
+                    '$schedule.week', month
                   ]
                 }, 
                 'then': 0
               }, {
                 'case': {
                   '$gte': [
-                    '$schedule.week', sunday
+                    '$schedule.week', month
                   ]
                 }, 
                 'then': {
@@ -370,7 +370,20 @@ exports = async function(arg){
               pid: "$name"
             },
       'opportunity_name': {$first: "$opportunity.name"},
-      "expired":{$sum: {$multiply:["$milestone.summary.unscheduled_hours","$milestone.details.bill_rate"]}},
+      "expired":{$sum: {$multiply:[
+                    {$cond:
+                   	  [ {$and:[ 
+                   	       {$gte:["$milestone.summary.billable_hours_in_financials",0]},
+                   	       {$gte:["$milestone.summary.billable_hours_scheduled_undelivered",0]} 
+                   	    ]},
+                        { $subtract: 
+                           [ "$milestone.summary.planned_hours", {$add:
+                              [ "$milestone.summary.billable_hours_in_financials", "$milestone.summary.billable_hours_scheduled_undelivered" ]} ] 
+                        },
+                   	    "$milestone.summary.unscheduled_hours"
+                   	  ]
+                   	},
+        "$milestone.details.bill_rate"]}},
     }},
   ]).toArray(); //console.log(JSON.stringify(res))
   
