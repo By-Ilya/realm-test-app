@@ -44,6 +44,18 @@ export default function ProjectsList(props) {
             : totalProjectsHeader;
     };
 
+    const getMoreButtonContent = (
+        <>
+            Get more
+            {moreProjectsLoadProcessing && (
+                <CircularProgress
+                    size={24}
+                    className={classes.buttonProgress}
+                />
+            )}
+        </>
+    );
+
     return (
         <List component="nav" className={classes.listRoot} aria-label="contacts" subheader={<li />}>
             <li className={classes.listSection}>
@@ -75,14 +87,8 @@ export default function ProjectsList(props) {
                                     color="primary"
                                     onClick={fetchMoreProjects}
                                 >
-                                    Get more
+                                    {getMoreButtonContent}
                                 </Button>
-                            )}
-                            {moreProjectsLoadProcessing && (
-                                <CircularProgress
-                                    size={24}
-                                    className={classes.buttonProgress}
-                                />
                             )}
                         </ListItem>
                     )}

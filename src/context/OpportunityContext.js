@@ -5,29 +5,36 @@ import { AuthContext } from 'context/AuthContext';
 import {
     generateSFLink,
     valueAsUSD,
-    consCodeToProductAbbv
+    consCodeToProductAbbv,
 } from 'helpers/misc';
 
 const OpportunityContext = React.createContext('opportunities');
 
 require('dotenv').config();
 
-const generateServicesSummaryJSX = (line_items) => {
-    if (line_items != null && line_items.length > 0) {
-        let summary_map = {};
-        const cons_items = line_items.filter(it => ["Consulting","Training"].includes(it.product.family));
-        if (cons_items.length == 0)
-            return null;
+const generateServicesSummaryJSX = (lineItems) => {
+    if (lineItems != null && lineItems.length > 0) {
+        const summaryMap = {};
+        const consItems = lineItems.filter(
+            (it) => ['Consulting', 'Training'].includes(it.product.family),
+        );
+        if (consItems.length === 0) return null;
 
-        cons_items.forEach(it => {
-            summary_map[it.product.code] = ( (summary_map[it.product.code]>0)?summary_map[it.product.code]:0 ) + it.qty;
-        })
+        consItems.forEach((it) => {
+            summaryMap[it.product.code] = ((summaryMap[it.product.code] > 0)
+                ? summaryMap[it.product.code]
+                : 0
+            ) + it.qty;
+        });
 
-        let it_ordered = Object.keys(summary_map).sort();
-        return (it_ordered.map((item, i) => <div>{`${summary_map[item]}x ${consCodeToProductAbbv(item)}`}</div>))
+        const itOrdered = Object.keys(summaryMap).sort();
+        return (itOrdered.map((item) => (
+            // eslint-disable-next-line react/jsx-filename-extension
+            <div>{`${summaryMap[item]}x ${consCodeToProductAbbv(item)}`}</div>
+        )));
     }
     return null;
-}
+};
 
 const HEADER_STYLE = {
     headerStyle: { fontWeight: 'bold' },
@@ -38,17 +45,15 @@ const OPPORTUNITIES_COLUMNS = [
         title: 'Opportunity ID',
         field: 'id',
         editable: 'never',
-        render: (rowData) => {
-                return (
-                    <a
-                        href={generateSFLink(rowData.id)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        {rowData.id}
-                    </a>
-                );
-            },
+        render: (rowData) => (
+            <a
+                href={generateSFLink(rowData.id)}
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                {rowData.id}
+            </a>
+        ),
         ...HEADER_STYLE,
     },
     {
@@ -109,21 +114,21 @@ const OPPORTUNITIES_COLUMNS = [
         title: 'Amount',
         field: 'amount',
         editable: 'never',
-        render: (rowData) => { return valueAsUSD(rowData.amount) },
+        render: (rowData) => valueAsUSD(rowData.amount),
         ...HEADER_STYLE,
     },
     {
         title: 'Services',
         field: 'services',
         editable: 'never',
-        render: (rowData) => { return valueAsUSD(rowData.services) },
+        render: (rowData) => valueAsUSD(rowData.services),
         ...HEADER_STYLE,
     },
     {
         title: 'Services Summary',
         field: 'lineItems',
         editable: 'never',
-        render: (rowData) => { return generateServicesSummaryJSX(rowData.lineItems) },
+        render: (rowData) => generateServicesSummaryJSX(rowData.lineItems),
         ...HEADER_STYLE,
     },
     {
@@ -154,7 +159,7 @@ const OPPORTUNITIES_COLUMNS = [
         title: 'EM Call Amount',
         field: 'emCallAmount',
         editable: 'never',
-        render: (rowData) => { return rowData.emCallAmount ? valueAsUSD(rowData.emCallAmount) : "" },
+        render: (rowData) => (rowData.emCallAmount ? valueAsUSD(rowData.emCallAmount) : ''),
         ...HEADER_STYLE,
     },
 ];
@@ -175,7 +180,7 @@ const DEFAULT_FILTER = {
     engagement_manager: '',
     close_date: 'All',
     active_user_filter: null,
-    inForecast: false
+    inForecast: false,
 };
 
 const SORT_FIELDS = [
@@ -324,12 +329,18 @@ class OpportunityContainer extends React.Component {
             count_only: true,
         });
         if (fetchedData && fetchedData.length) {
-            const { count, amountTotal, servicesTotal, servicesForecastSales } = fetchedData[0];
+            const {
+                count,
+                amountTotal,
+                servicesTotal,
+                servicesForecastSales,
+            } = fetchedData[0];
+
             this.setState({
                 opportunitiesTotalCount: count,
                 amountTotal,
                 servicesTotal,
-                servicesForecastSales
+                servicesForecastSales,
             });
         }
     }

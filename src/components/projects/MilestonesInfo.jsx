@@ -32,7 +32,7 @@ export default function MilestonesInfo(props) {
         user,
         dbCollection,
         fcstCollection,
-        ceMode
+        ceMode,
     } = useContext(AuthContext);
     const {
         setProjectWithCurrentMilestone,
@@ -76,9 +76,9 @@ export default function MilestonesInfo(props) {
 
     const onClickEngBriefButton = async (chosenProject) => {
         await user.callFunction(
-                'requestEngBrief',
-                chosenProject._id,
-            );
+            'requestEngBrief',
+            chosenProject._id,
+        );
 
         alert('Engagement Brief generated!');
     };

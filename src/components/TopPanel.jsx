@@ -6,7 +6,6 @@ import Toolbar from '@material-ui/core/Toolbar';
 
 import { AuthContext } from 'context/AuthContext';
 import { ProjectContext } from 'context/ProjectContext';
-import { OpportunityContext } from 'context/OpportunityContext';
 import HeaderSelect from 'components/topPanel/HeaderSelect';
 import SearchField from 'components/common/SearchField';
 import FilterButton from 'components/common/FilterButton';
@@ -17,14 +16,6 @@ import SyncButton from 'components/common/SyncButton';
 
 import { PAGES } from 'helpers/constants/common';
 import { ENTER_KEY } from 'components/constants/common';
-import {
-    getProjectFilters,
-    getProjectSortValues,
-} from 'components/projects/filters';
-import {
-    getOpportunityFilters,
-    getOpportunitySortValues,
-} from 'components/opportunities/filters';
 
 const useStyles = makeStyles((theme) => ({
     grow: {
@@ -95,8 +86,18 @@ export default function TopPanel(props) {
     const {
         activePage,
         setActivePage,
-        fetchProjects,
-        fetchOpportunities,
+        fetchItems,
+        filter,
+        sort,
+        filtersList,
+        sortFieldsList,
+        getFilters,
+        getSortValues,
+        fetchDefaultFilters,
+        setFilter,
+        setSorting,
+        setLoadProcessing,
+        setDefaultPagination,
     } = props;
 
     const {
@@ -104,142 +105,57 @@ export default function TopPanel(props) {
         getActiveUserFilter,
         logOut,
         ceMode,
-        toggleCEMode
+        toggleCEMode,
     } = useContext(AuthContext);
-    const {
-        filter: projectFilter,
-        setFilter: setProjectFilter,
-        sortFields: projectSortFields,
-        sort: projectSort,
-        setSorting: setProjectSorting,
-        regionsList: projectRegionsList,
-        ownersList: projectOwnersList,
-        projectManagersList,
-        stagesList: projectStagesList,
-        fetchFiltersDefaultValues: fetchProjectDefaultFilters,
-        setLoadProcessing: setProjectLoadProcessing,
-        setDefaultPagination: setProjectDefaultPagination,
-        requestSync,
-    } = useContext(ProjectContext);
-    const {
-        filter: opportunityFilter,
-        setFilter: setOpportunityFilter,
-        sortFields: opportunitySortFields,
-        sort: opportunitySort,
-        setSorting: setOpportunitySorting,
-        ownerRegionsList: opportunityOwnerRegionsList,
-        psRegionsList: opportunityPsRegionsList,
-        emManagersList: opportunityEmManagersList,
-        fetchFiltersDefaultValues: fetchOpportunityDefaultFilters,
-        setLoadProcessing: setOpportunityLoadProcessing,
-        setDefaultPagination: setOpportunitiesDefaultPagination,
-    } = useContext(OpportunityContext);
+    const { requestSync } = useContext(ProjectContext);
 
-    const isProjectsPage = activePage === PAGES.projects;
+    const [localFilter, setLocalFilter] = useState(filter);
+    const [localSort, setLocalSorting] = useState(sort);
 
-    const [localFilter, setLocalFilter] = useState(isProjectsPage
-        ? projectFilter
-        : opportunityFilter);
-    const [localSort, setLocalSorting] = useState(isProjectsPage
-        ? projectSort
-        : opportunitySort);
-
-    const getProjectFiltersObject = () => {
-        const filtersList = {
-            regionsList: projectRegionsList,
-            ownersList: projectOwnersList,
-            projectManagersList,
-            stagesList: projectStagesList,
-        };
-        return getProjectFilters({
-            localFilter,
-            setLocalFilter,
-            filtersList,
-            getActiveUserFilter,
-        });
-    };
-    const getProjectSortObject = () => getProjectSortValues({
-        localSort,
-        setLocalSorting,
-        fieldsList: projectSortFields,
+    const getFiltersObject = () => getFilters({
+        localFilter,
+        setLocalFilter,
+        filtersList,
+        getActiveUserFilter,
     });
 
-    const getOpportunityFiltersObject = () => {
-        const filtersList = {
-            ownerRegionsList: opportunityOwnerRegionsList,
-            psRegionsList: opportunityPsRegionsList,
-            emManagersList: opportunityEmManagersList,
-        };
-
-        return getOpportunityFilters({
-            localFilter,
-            setLocalFilter,
-            filtersList,
-            getActiveUserFilter,
-        });
-    };
-    const getOpportunitySortObject = () => getOpportunitySortValues({
+    const getSortObject = () => getSortValues({
         localSort,
         setLocalSorting,
-        fieldsList: opportunitySortFields,
+        sortFieldsList,
     });
-
-    let filtersObject = isProjectsPage
-        ? getProjectFiltersObject()
-        : getOpportunityFiltersObject();
-
-    let sortObject = isProjectsPage
-        ? getProjectSortObject()
-        : getOpportunitySortObject();
-
-    useEffect(() => {
-        if (isProjectsPage) {
-            fetchProjectDefaultFilters();
-            setLocalFilter(projectFilter);
-            setLocalSorting(projectSort);
-            filtersObject = getProjectFiltersObject();
-            sortObject = getProjectSortObject();
-        } else {
-            fetchOpportunityDefaultFilters();
-            setLocalFilter(opportunityFilter);
-            setLocalSorting(opportunitySort);
-            filtersObject = getOpportunityFiltersObject();
-            sortObject = getOpportunitySortObject();
-        }
-    }, [isProjectsPage]);
 
     const onApplyFilters = (searchQuery = undefined) => {
-        const setFilterFunc = isProjectsPage
-            ? setProjectFilter
-            : setOpportunityFilter;
-        if (searchQuery !== undefined) {
-            setLocalFilter({ ...localFilter, name: searchQuery });
-            setFilterFunc({ ...localFilter, name: searchQuery });
-        } else {
-            setFilterFunc(localFilter);
-        }
-        const setDefaultPaginationFunc = isProjectsPage
-            ? setProjectDefaultPagination
-            : setOpportunitiesDefaultPagination;
-        setDefaultPaginationFunc();
+        const newFilter = searchQuery !== undefined
+            ? { ...localFilter, name: searchQuery }
+            : localFilter;
+
+        setLocalFilter(newFilter);
+        setFilter(newFilter);
+        setDefaultPagination();
+    };
+
+    const onApplyDropdownFilters = (filterName, value) => {
+        const newFilter = { ...localFilter, [filterName]: value };
+        setLocalFilter(newFilter);
+        setFilter(newFilter);
+        setDefaultPagination();
     };
 
     const onApplySorting = () => {
-        const setSortingFunc = isProjectsPage
-            ? setProjectSorting
-            : setOpportunitySorting;
-        setSortingFunc(localSort);
+        setSorting(localSort);
     };
 
     useEffect(() => {
-        setProjectLoadProcessing(true);
-        fetchProjects({ needToClean: true });
-    }, [projectFilter, projectSort]);
+        fetchDefaultFilters();
+    }, [activePage]);
 
     useEffect(() => {
-        setOpportunityLoadProcessing(true);
-        fetchOpportunities({ needToClean: true });
-    }, [opportunityFilter, opportunitySort]);
+        setLoadProcessing(true);
+        setLocalFilter(filter);
+        setLocalSorting(sort);
+        fetchItems({ needToClean: true });
+    }, [filter, sort]);
 
     const handleSearchKeyDown = async (event) => {
         if (event.key === ENTER_KEY) {
@@ -278,48 +194,68 @@ export default function TopPanel(props) {
         handleMenuClose();
     };
 
+    let topPanel = null;
+    switch (activePage) {
+        case PAGES.projects:
+        case PAGES.opportunities:
+            topPanel = (
+                <SearchFilterSortPanel
+                    classes={classes}
+                    searchInputPlaceHolder={
+                        localFilter.name
+                            ? localFilter.name
+                            : `Search ${activePage.toLowerCase()}`
+                    }
+                    onSearchKeyDown={handleSearchKeyDown}
+                    filterDialogTitle={`Filter ${activePage.toLowerCase()}`}
+                    getFiltersObject={getFiltersObject}
+                    onApplyFilters={onApplyFilters}
+                    sortDialogTitle={`Sort ${activePage.toLowerCase()}`}
+                    getSortObject={getSortObject}
+                    onApplySorting={onApplySorting}
+                />
+            );
+            break;
+        case PAGES.forecast:
+            topPanel = (
+                <ModeGeoPsmPanel
+                    classes={{
+                        formContainer: classes.formContainer,
+                        formControl: classes.formControl,
+                    }}
+                    modeCurrentValue={localFilter.level}
+                    modeAllValues={filtersList.levelsList}
+                    onChangeMode={(v) => onApplyDropdownFilters('level', v)}
+                    geoCurrentValue={localFilter.geo}
+                    geoAllValues={filtersList.geoNamesList}
+                    onChangeGeo={(v) => onApplyDropdownFilters('geo', v)}
+                    psmCurrentValue={localFilter.psmName}
+                    psmAllValues={filtersList.psmNamesList}
+                    onChangePsmName={(v) => onApplyDropdownFilters('psmName', v)}
+                />
+            );
+            break;
+        default:
+            break;
+    }
+
     return (
         <div className={classes.grow}>
             <AppBar position="fixed">
                 <Toolbar>
                     <HeaderSelect
+                        classes={{
+                            formContainer: '',
+                            formControl: '',
+                        }}
                         currentValue={activePage}
                         setValue={setActivePage}
                         allValues={Object.values(PAGES)}
                     />
-                    <SearchField
-                        classes={{
-                            searchContainer: classes.search,
-                            searchIcon: classes.searchIcon,
-                            inputBaseRoot: classes.inputRoot,
-                            inputBaseInput: classes.inputInput,
-                        }}
-                        inputPlaceHolder={localFilter.name ? localFilter.name : `Search ${activePage.toLowerCase()}`}
-                        onKeyDown={handleSearchKeyDown}
-                    />
-                    <FilterButton
-                        classes={{
-                            formContainer: classes.formContainer,
-                            formControl: classes.formControl,
-                        }}
-                        filterButtonText="Filters"
-                        filterDialogTitle={`Filter ${activePage.toLowerCase()}`}
-                        filtersObject={filtersObject}
-                        applyButtonText="Apply filters"
-                        onApplyFilters={onApplyFilters}
-                    />
-                    <FilterButton
-                        classes={{
-                            formContainer: classes.formContainer,
-                            formControl: classes.formControl,
-                        }}
-                        filterButtonText="Sort"
-                        filterDialogTitle={`Sort ${activePage.toLowerCase()}`}
-                        filtersObject={sortObject}
-                        applyButtonText="Sort"
-                        onApplyFilters={onApplySorting}
-                    />
+
+                    {topPanel}
                     <div className={classes.grow} />
+
                     <SyncButton
                         classes={{
                             formContainer: classes.formContainer,
@@ -363,8 +299,160 @@ export default function TopPanel(props) {
 }
 
 TopPanel.propTypes = {
-    fetchProjects: PropTypes.func.isRequired,
-    fetchOpportunities: PropTypes.func.isRequired,
     activePage: PropTypes.string.isRequired,
     setActivePage: PropTypes.func.isRequired,
+    fetchItems: PropTypes.func,
+    filter: PropTypes.object,
+    sort: PropTypes.object,
+    filtersList: PropTypes.object,
+    sortFieldsList: PropTypes.array,
+    getFilters: PropTypes.func,
+    getSortValues: PropTypes.func,
+    fetchDefaultFilters: PropTypes.func,
+    setFilter: PropTypes.func,
+    setSorting: PropTypes.func,
+    setLoadProcessing: PropTypes.func,
+    setDefaultPagination: PropTypes.func,
+};
+
+TopPanel.defaultProps = {
+    fetchItems: () => {},
+    filter: {},
+    sort: {},
+    filtersList: {},
+    sortFieldsList: [],
+    getFilters: () => {},
+    getSortValues: () => {},
+    fetchDefaultFilters: () => {},
+    setFilter: () => {},
+    setSorting: () => {},
+    setLoadProcessing: () => {},
+    setDefaultPagination: () => {},
+};
+
+function SearchFilterSortPanel(props) {
+    const {
+        classes,
+        searchInputPlaceHolder,
+        onSearchKeyDown,
+        filterDialogTitle,
+        getFiltersObject,
+        onApplyFilters,
+        sortDialogTitle,
+        getSortObject,
+        onApplySorting,
+    } = props;
+
+    return (
+        <>
+            <SearchField
+                classes={{
+                    searchContainer: classes.search,
+                    searchIcon: classes.searchIcon,
+                    inputBaseRoot: classes.inputRoot,
+                    inputBaseInput: classes.inputInput,
+                }}
+                inputPlaceHolder={searchInputPlaceHolder}
+                onKeyDown={onSearchKeyDown}
+            />
+            <FilterButton
+                classes={{
+                    formContainer: classes.formContainer,
+                    formControl: classes.formControl,
+                }}
+                filterButtonText="Filters"
+                filterDialogTitle={filterDialogTitle}
+                filtersObject={getFiltersObject() ?? []}
+                applyButtonText="Apply filters"
+                onApplyFilters={onApplyFilters}
+            />
+            <FilterButton
+                classes={{
+                    formContainer: classes.formContainer,
+                    formControl: classes.formControl,
+                }}
+                filterButtonText="Sort"
+                filterDialogTitle={sortDialogTitle}
+                filtersObject={getSortObject() ?? []}
+                applyButtonText="Sort"
+                onApplyFilters={onApplySorting}
+            />
+        </>
+    );
+}
+
+SearchFilterSortPanel.propTypes = {
+    classes: PropTypes.object.isRequired,
+    searchInputPlaceHolder: PropTypes.string.isRequired,
+    onSearchKeyDown: PropTypes.func.isRequired,
+    filterDialogTitle: PropTypes.string.isRequired,
+    getFiltersObject: PropTypes.func.isRequired,
+    onApplyFilters: PropTypes.func.isRequired,
+    sortDialogTitle: PropTypes.string.isRequired,
+    getSortObject: PropTypes.func.isRequired,
+    onApplySorting: PropTypes.func.isRequired,
+};
+
+function ModeGeoPsmPanel(props) {
+    const {
+        classes,
+        modeCurrentValue,
+        modeAllValues,
+        onChangeMode,
+        geoCurrentValue,
+        geoAllValues,
+        onChangeGeo,
+        psmCurrentValue,
+        psmAllValues,
+        onChangePsmName,
+    } = props;
+
+    const isPsmNameAvaliable = (modeCurrentValue === 'PSM');
+    const isGeoAvaliable = (modeCurrentValue !== 'VP');
+
+    const modeDropdown = modeCurrentValue ? (
+        <HeaderSelect
+            classes={classes}
+            currentValue={modeCurrentValue}
+            setValue={onChangeMode}
+            allValues={modeAllValues}
+        />
+    ) : null;
+    const geoDropdown = isGeoAvaliable ? (
+        <HeaderSelect
+            classes={classes}
+            currentValue={geoCurrentValue || ''}
+            setValue={onChangeGeo}
+            allValues={geoAllValues}
+        />
+    ) : null;
+    const psmNameDropdown = isPsmNameAvaliable ? (
+        <HeaderSelect
+            classes={classes}
+            currentValue={psmCurrentValue || ''}
+            setValue={onChangePsmName}
+            allValues={psmAllValues}
+        />
+    ) : null;
+
+    return (
+        <>
+            {modeDropdown}
+            {geoDropdown}
+            {psmNameDropdown}
+        </>
+    );
+}
+
+ModeGeoPsmPanel.propTypes = {
+    classes: PropTypes.object.isRequired,
+    modeCurrentValue: PropTypes.string.isRequired,
+    modeAllValues: PropTypes.array.isRequired,
+    onChangeMode: PropTypes.func.isRequired,
+    geoCurrentValue: PropTypes.string.isRequired,
+    geoAllValues: PropTypes.array.isRequired,
+    onChangeGeo: PropTypes.func.isRequired,
+    psmCurrentValue: PropTypes.string.isRequired,
+    psmAllValues: PropTypes.array.isRequired,
+    onChangePsmName: PropTypes.func.isRequired,
 };

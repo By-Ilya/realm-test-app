@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-filename-extension */
 import React from 'react';
 
 export default function generateDocumentsTableData(project) {
@@ -16,19 +17,37 @@ export default function generateDocumentsTableData(project) {
             title: 'Link/Text',
             field: 'url',
             editable: 'always',
-            render: (rowData) => (rowData.url && (rowData.type !== "note") ? (
-                <a
-                    href={rowData.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    {rowData.url_name ? rowData.url_name : 
-                        (rowData.url.length < 50 ? rowData.url : rowData.url.slice(0,47) + "...")
-                    }
-                </a>
-            ) : (rowData.url && (rowData.type === "note") ? rowData.url
-             : rowData.body ? rowData.body.split('\n').map((item, i) => <p key={i}>{item}</p>) : "")
-            ),
+            render: (rowData) => {
+                let aValue = '';
+                switch (true) {
+                    case rowData.url && (rowData.type !== 'note'):
+                        if (rowData.url_name) {
+                            aValue = rowData.url_name;
+                        } else {
+                            aValue = rowData.url.length < 50
+                                ? rowData.url
+                                : `${rowData.url.slice(0, 47)}...`;
+                        }
+                        return (
+                            <a
+                                href={rowData.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                {aValue}
+                            </a>
+                        );
+                    case rowData.url && (rowData.type === 'note'):
+                        return rowData.url;
+                    case rowData.body:
+                        return rowData.body.split('\n').map(
+                            // eslint-disable-next-line react/no-array-index-key
+                            (item, i) => <p key={i}>{item}</p>,
+                        );
+                    default:
+                        return '';
+                }
+            },
         },
     ];
 
