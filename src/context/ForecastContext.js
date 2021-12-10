@@ -121,20 +121,19 @@ class ForecastContainer extends React.Component {
                 geoNames,
             } = await getForecastDropdownValues();
 
-            const newFilter = this.setDefaultFilterIfNecessary(psmNames);
+            const newFilter = this.getDefaultFilterIfNecessary(psmNames);
+
+            const afterChangingDefaultValuesCb = () => this.setFilter(newFilter);
 
             this.setState({
                 allPsmList: psmNames ? psmNames.sort() : [],
-                psmNamesList: this.changeActivePsmNamesList(newFilter.geo),
                 levelsList: levels ? levels.sort() : [],
                 geoNamesList: geoNames ? geoNames.sort() : [],
-                filter: newFilter,
-                forecastDetailsColumns: this.updateForecatDetailsColumns(newFilter.level),
-            });
+            }, afterChangingDefaultValuesCb);
         }
     }
 
-    setDefaultFilterIfNecessary = (psmNames) => {
+    getDefaultFilterIfNecessary = (psmNames) => {
         const { filter } = this.state;
         const isEmptyPsmNames = !psmNames || !psmNames.length;
         const isFilterFilled = filter.level && filter.geo && filter.psmName;
