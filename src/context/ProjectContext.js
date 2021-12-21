@@ -315,6 +315,7 @@ class ProjectContainer extends React.Component {
         }
 
         projects.push(insertedDocument);
+        this.setProjects(projects);
     }
 
     watcher = async () => {
