@@ -65,6 +65,7 @@ export default function generateMilestoneTableData(project, onClickPMStageButton
         account_id,
         opportunity, details,
         currentMilestone,
+        notes,
     } = project;
 
     const milestonesTableColumns = [
@@ -146,6 +147,7 @@ export default function generateMilestoneTableData(project, onClickPMStageButton
         { name: 'Gap Hours', value: getGapHoursString(currentMilestone.summary), editable: false },
         { name: 'Unscheduled Hours', value: getUnscheduledHoursString(currentMilestone.summary), editable: false },
         { name: 'Non-billable hours submitted', value: currentMilestone.summary.non_billable_hours_submitted, editable: false },
+        { name: 'Notes', value: notes, editable: false },
     ];
 
     if ( (project_manager === "PM Parking Lot") &&

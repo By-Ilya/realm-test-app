@@ -21,6 +21,7 @@ export const FIND_PROJECTS = gql`
                 owner
                 engagement_manager
                 _id
+                ps_notes
             }
             summary {
                 backlog_hours
@@ -74,6 +75,7 @@ export const FIND_PROJECTS = gql`
             region
             stage
             survey_sent
+            notes
             contacts {
                 customer {
                     name
