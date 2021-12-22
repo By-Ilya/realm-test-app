@@ -163,6 +163,21 @@ class ProjectContainer extends React.Component {
         }
     }
 
+    fetchProjectsCheckId = async (id) => {
+        const { authValue } = this.props;
+        const { user } = authValue;
+        const { filter } = this.state;
+
+        const { findProjects } = user.functions;
+        const fetchedData = await findProjects({
+            filter,
+            id_check: id,
+        });
+        if (fetchedData && fetchedData.length) 
+            return true;
+        return false;
+    }
+
     sortNameToField = (name) => {
         switch (name) {
             case 'Name': return 'name';
@@ -303,6 +318,10 @@ class ProjectContainer extends React.Component {
             hasMoreProjects,
             pagination,
         } = this.state;
+
+        const is_doc_relevant = await this.fetchProjectsCheckId(insertedDocument._id);
+        if (!is_doc_relevant)
+            return;
 
         await this.fetchProjectsTotalCount();
         if (hasMoreProjects) return;
