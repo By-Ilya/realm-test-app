@@ -28,12 +28,12 @@ function projectNeedsSurveys(project) {
 function getUnscheduledHoursString(ms_summary) {
     const {
         billable_hours_scheduled_undelivered,
-        billable_hours_in_financials,
+        billable_hours_submitted,
         planned_hours,
         unscheduled_hours,
     } = ms_summary;
-    return (billable_hours_scheduled_undelivered != null && billable_hours_in_financials != null)
-        ? `${planned_hours - billable_hours_in_financials - billable_hours_scheduled_undelivered} (${unscheduled_hours} in FF)`
+    return (billable_hours_scheduled_undelivered != null && billable_hours_submitted != null)
+        ? `${planned_hours - billable_hours_submitted - billable_hours_scheduled_undelivered} (${unscheduled_hours} in FF)`
         : unscheduled_hours;
 }
 
