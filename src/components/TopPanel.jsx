@@ -120,6 +120,7 @@ export default function TopPanel(props) {
         setLoadProcessing: setProjectLoadProcessing,
         setDefaultPagination: setProjectDefaultPagination,
         requestSync,
+        isSyncActive
     } = useContext(ProjectContext);
     const {
         filter: opportunityFilter,
@@ -326,6 +327,7 @@ export default function TopPanel(props) {
                             formControl: classes.formControl,
                         }}
                         onTriggerSync={onTriggerSync}
+                        isSyncActive={isSyncActive}
                     />
                     <Profile
                         classes={{

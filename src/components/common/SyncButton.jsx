@@ -8,6 +8,7 @@ export default function SyncButton(props) {
     const {
         classes,
         onTriggerSync,
+        isSyncActive
     } = props;
 
     const { formContainer } = classes;
@@ -19,7 +20,9 @@ export default function SyncButton(props) {
     return (
         <div className={formContainer}>
             <IconButton onClick={handleClickTriggerSync} aria-label="sync" variant="contained">
-                <AutorenewIcon />
+                { isSyncActive 
+                   ? <AutorenewIcon style={{ color: "yellow" }} /> 
+                   : <AutorenewIcon /> }
             </IconButton>
         </div>
     );
@@ -28,4 +31,5 @@ export default function SyncButton(props) {
 SyncButton.propTypes = {
     classes: PropTypes.object.isRequired,
     onTriggerSync: PropTypes.func.isRequired,
+    isSyncActive: PropTypes.func.isRequired,
 };

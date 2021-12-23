@@ -75,6 +75,7 @@ class ProjectContainer extends React.Component {
             hasMoreProjects: true,
             projectWithCurrentMilestone: null,
             isEditing: false,
+            isSyncActive: false,
         };
         this.funcs = {
             fetchFiltersDefaultValues: this.fetchFiltersDefaultValues,
@@ -95,6 +96,7 @@ class ProjectContainer extends React.Component {
 
         this.lastUpdateTime = null;
         this.watcherTimerId = null;
+        this.syncStatusUpdateWatcherTimerId = null;
     }
 
     async componentDidMount() {
@@ -249,7 +251,36 @@ class ProjectContainer extends React.Component {
         const { authValue } = this.props;
         const { user, app } = authValue;
         if (!user || !app.currentUser) return;
-        await user.callFunction('requestSync', { origin: 'user' });
+
+        let res = await user.callFunction('requestSync', { origin: 'user' });
+        if (res && res.request_id) {
+            this.setState({ isSyncActive : true });
+            await this.updateSyncProgress(res.request_id);
+        }
+    }
+
+    updateSyncProgress = async (request_id) => {
+        const { authValue } = this.props;
+        const { user, app } = authValue;
+
+        if (this.syncStatusUpdateWatcherTimerId) clearTimeout(this.syncStatusUpdateWatcherTimerId);
+        try {
+            let res = await user.callFunction('getSyncStatus', request_id);
+            //console.log(`Sync status: ${res}`)
+            let syncActive = false;
+            if (res && (res === "New" || res === "In Progress"))
+                syncActive = true;
+            this.setState({ isSyncActive : syncActive });
+        } catch (err) {
+            console.log('Watcher exception in updateSyncProgress:', err);
+        }
+
+        if (this.state.isSyncActive)
+            this.syncStatusUpdateWatcherTimerId = setTimeout(
+                this.updateSyncProgress,
+                WATCHER_TIMEOUT,
+                request_id
+            );
     }
 
     watchForUpdates = async () => {
