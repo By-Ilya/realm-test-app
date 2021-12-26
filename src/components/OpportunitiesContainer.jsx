@@ -149,7 +149,7 @@ export default function OpportunitiesContainer(props) {
                             onRowClick={handleClickOpportunity}
                             options={{
                                 search: false,
-                                sorting: false,
+                                sorting: true,
                                 paging: false,
                                 padding: 'dense',
                             }}
