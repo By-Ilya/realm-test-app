@@ -43,22 +43,27 @@ export default function MilestonesInfo(props) {
         const { contacts } = chosenProject;
         const custName = (contacts && contacts.customer) ? contacts.customer.name : null;
         const custEmail = (contacts && contacts.customer) ? contacts.customer.email : null;
+        // const custEmail = 'errol.kutan@mongodb.com';
         const projectId = chosenProject.name;
         const ceName = (contacts && contacts.ce) ? contacts.ce.name : null;
         const ceEmail = (contacts && contacts.ce) ? contacts.ce.email : null;
 
-        if (!custName || !custEmail || !ceName || !ceEmail) {
+        // If we are missing contact information, short-circuit
+        if (!custName || !custEmail ){
             alert('Contact information isn\'t complete!');
             return;
         }
-        // console.log(custMailParams(origEmail,custName,custEmail,projectId))
-        // console.log(ceMailParams(origEmail,ceName,ceEmail,projectId))
+
+        // If we haven't already sent the customer survey, send it now
         if (!projectHasCustSurvey(project, custEmail)) {
+            const params = await custMailParams(origEmail, custName, custEmail, projectId);
             await user.callFunction(
                 'sendMail',
-                custMailParams(origEmail, custName, custEmail, projectId),
+                params,
             );
         }
+
+        // If we haven't already sent the CE survey, send it now
         if (!projectHasCESurvey(project, ceEmail)) {
             await user.callFunction(
                 'sendMail',

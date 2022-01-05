@@ -31,10 +31,21 @@ import { custMessageHTMLBody, ceMessageHTMLBody } from 'helpers/survey/MessageTe
   return message
 } */
 
-export function custMailParams(origEmail, custName, custEmail, projectId) {
+/***
+ * Customer Mail Params
+ *
+ * Creates a set of parameters that defines the email sent to the customer
+ *
+ * @param origEmail     A String representing the "from" email address
+ * @param custName      A String representing the customer name to which the email will be sent
+ * @param custEmail     A String representing the customer email address to which the email will be sent
+ * @param projectId     A String representing the PS Project ID
+ * @returns {Promise<{subject: string, origEmail, html: string, toEmail}>}
+ */
+export async function custMailParams(origEmail, custName, custEmail, projectId) {
     const toEmail = custEmail;
     const subject = 'Thank you';
-    const html = custMessageHTMLBody(custName, custEmail, projectId);
+    const html = await custMessageHTMLBody(custName, custEmail, projectId);
     return {
         origEmail, toEmail, subject, html,
     };
