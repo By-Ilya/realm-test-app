@@ -149,7 +149,7 @@ function convertForecastIntoRows(forecast) {
     });
 
     row.push({
-        name: 'Upside ML $',
+        name: 'Increment ML $',
         0: forecast.upside_ml['0'],
         1: forecast.upside_ml['1'],
         2: forecast.upside_ml['2'],
