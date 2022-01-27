@@ -8,6 +8,12 @@ const SURVEY_LINKS = Object.freeze({
     ce: 'https://mongodb.co1.qualtrics.com/jfe/form/SV_aUX8tfdgGcbd4j3?',
 });
 
+const CUST_SURVEY_PARAMS = Object.freeze({
+    id: 'SV_50ALGYLh5RhSvtk',
+    embedded_question: '53',
+    api_token: 'XUhIIVqlfmeeC1rapsmMIiEK58XuT4wb5PcVdj8O',
+});
+
 function generateSpecificUrlParams(name, email, projectId) {
     return `Name=${encodeURIComponent(name)}&` +
 		`Email=${encodeURIComponent(email)}&` +
@@ -41,7 +47,7 @@ function generateCeSurveyLink(ceName, ceEmail, projectId) {
  * @returns {string}                A String representing the pre-encoded qualtrics piped text for that question and value
  */
 export function getQuestionResponseValue(questionID, questionResponseValue) {
-    return `{${questionID}:${questionResponseValue}}`;
+    return `{"${questionID}":"${questionResponseValue}"}`;
 }
 
 /***
@@ -59,23 +65,26 @@ function generateQuestionTableHTML(surveyData) {
     const surveyResponseLink = `${mongodbQualtricsBaseUrl}/jfe/form/${surveyId}`;
 
     // Other embedded data: customer email, customer name, project id
-    const questionIDNum = '16';
+    const questionIDNum = CUST_SURVEY_PARAMS.embedded_question;
     const questionID = `QID${questionIDNum}`;
     const questionText = surveyData.result.Questions[questionID].QuestionText;
-    const question1Response5Link = `${surveyResponseLink}?Q_CHL=email&Q_PopulateResponse=${encodeURIComponent(getQuestionResponseValue(questionID, 5))}&Q_PopulateValidate=1`;
-    const question1Response5ChoiceDescription = surveyData.result.Questions[questionID].Choices['5'].Display;
 
-    const question1Response4Link = `${surveyResponseLink}?Q_CHL=email&Q_PopulateResponse=${encodeURIComponent(getQuestionResponseValue(questionID, 4))}&Q_PopulateValidate=1`;
-    const question1Response4ChoiceDescription = surveyData.result.Questions[questionID].Choices['4'].Display;
+    //console.log(`Got response ${JSON.stringify(surveyData.result.Questions[questionID])}`);
 
-    const question1Response3Link = `${surveyResponseLink}?Q_CHL=email&Q_PopulateResponse=${encodeURIComponent(getQuestionResponseValue(questionID, 3))}&Q_PopulateValidate=1`;
-    const question1Response3ChoiceDescription = surveyData.result.Questions[questionID].Choices['3'].Display;
+    const question1Response5Link = `${surveyResponseLink}?Q_CHL=email&Q_PopulateResponse=${encodeURIComponent(getQuestionResponseValue(questionID, 2))}&Q_PopulateValidate=1`;
+    const question1Response5ChoiceDescription = surveyData.result.Questions[questionID].Choices['2'].Display;
 
-    const question1Response2Link = `${surveyResponseLink}?Q_CHL=email&Q_PopulateResponse=${encodeURIComponent(getQuestionResponseValue(questionID, 2))}&Q_PopulateValidate=1`;
-    const question1Response2ChoiceDescription = surveyData.result.Questions[questionID].Choices['2'].Display;
+    const question1Response4Link = `${surveyResponseLink}?Q_CHL=email&Q_PopulateResponse=${encodeURIComponent(getQuestionResponseValue(questionID, 3))}&Q_PopulateValidate=1`;
+    const question1Response4ChoiceDescription = surveyData.result.Questions[questionID].Choices['3'].Display;
 
-    const question1Response1Link = `${surveyResponseLink}?Q_CHL=email&Q_PopulateResponse=${encodeURIComponent(getQuestionResponseValue(questionID, 1))}&Q_PopulateValidate=1`;
-    const question1Response1ChoiceDescription = surveyData.result.Questions[questionID].Choices['1'].Display;
+    const question1Response3Link = `${surveyResponseLink}?Q_CHL=email&Q_PopulateResponse=${encodeURIComponent(getQuestionResponseValue(questionID, 4))}&Q_PopulateValidate=1`;
+    const question1Response3ChoiceDescription = surveyData.result.Questions[questionID].Choices['4'].Display;
+
+    const question1Response2Link = `${surveyResponseLink}?Q_CHL=email&Q_PopulateResponse=${encodeURIComponent(getQuestionResponseValue(questionID, 5))}&Q_PopulateValidate=1`;
+    const question1Response2ChoiceDescription = surveyData.result.Questions[questionID].Choices['5'].Display;
+
+    const question1Response1Link = `${surveyResponseLink}?Q_CHL=email&Q_PopulateResponse=${encodeURIComponent(getQuestionResponseValue(questionID, 6))}&Q_PopulateValidate=1`;
+    const question1Response1ChoiceDescription = surveyData.result.Questions[questionID].Choices['6'].Display;
 
     return `
       <br /> &nbsp;
@@ -113,37 +122,6 @@ function generateQuestionTableHTML(surveyData) {
     `;
 }
 
-/***
- * Generate Footer
- *
- * Generates a HTML string for the footer of the survey email
- *
- * @param surveyData        An valid HTTP response from Qualtrics which contains information about the survey to use as
- *                          the initial question in the survey email.
- * @returns {string}        A String representing the HTML table
- */
-function generateFooter(surveyData) {
-    // TODO get this from qualtrics API
-    const mongodbQualtricsBaseUrl = surveyData.result.BrandBaseURL;
-
-    // const fullSurveyLink = 'https://mongodb.co1.qualtrics.com/jfe/form/SV_0jh2UxgPYLeijUW?Q_CHL=email';
-    const fullSurveyLink = `${mongodbQualtricsBaseUrl}/jfe/form/${surveyData.result.ProjectInfo.ProjectInfo}`;
-
-    // const optOutSurveyLink = 'https://mongodb.co1.qualtrics.com/CP/Register.php?OptOut=true&amp;RID=CGC_7OIfm1i30ZSj0gf&amp;LID=UR_etIB7DmCzr9c0Hs&amp;DID=EMD_iurwKgaX6FOOXcw&amp;BT=bW9uZ29kYg&amp;_=1';
-    const optOutSurveyLink = 'https://mongodb.co1.qualtrics.com/CP/Register.php?OptOut=true&amp;RID=CGC_7OIfm1i30ZSj0gf&amp;LID=UR_etIB7DmCzr9c0Hs&amp;DID=EMD_iurwKgaX6FOOXcw&amp;BT=bW9uZ29kYg&amp;_=1';
-
-    // const imageSrc = 'https://mongodb.co1.qualtrics.com/WRQualtricsContacts/Watermark.php?UID=UR_etIB7DmCzr9c0Hs&amp;EMD=EMD_iurwKgaX6FOOXcw&amp;CGC=CGC_7OIfm1i30ZSj0gf&amp;SV=SV_0jh2UxgPYLeijUW';
-    const imageSrc = 'https://mongodb.co1.qualtrics.com/WRQualtricsContacts/Watermark.php?UID=UR_etIB7DmCzr9c0Hs&amp;EMD=EMD_iurwKgaX6FOOXcw&amp;CGC=CGC_7OIfm1i30ZSj0gf&amp;SV=SV_0jh2UxgPYLeijUW';
-    return `
-        <br>
-        <strong>Follow this link to the Survey</strong>:<br>
-        <a href=${fullSurveyLink}>Take the Survey</a><br>
-        <br>
-        Follow the link to opt out of future emails:<br>
-        <a href=${optOutSurveyLink}>Click here to unsubscribe</a>
-        <img width="1" height="1" alt="" src=${imageSrc}>
-    `;
-}
 
 /***
  * Customer Message HTML Body
@@ -156,11 +134,11 @@ function generateFooter(surveyData) {
  * @returns {Promise<string>}
  */
 export async function custMessageHTMLBody(custName) {
-    const surveyId = 'SV_0jh2UxgPYLeijUW';
+    const surveyId = CUST_SURVEY_PARAMS.id;
     const uri = `https://iad1.qualtrics.com/API/v3/survey-definitions/${surveyId}`;
     const headers = {
         'Content-Type': 'application/json',
-        'X-API-TOKEN': 'cpAQPJMGpF5RqGcGXtVFssZ2339nNJL4GA8wAcP1',
+        'X-API-TOKEN': CUST_SURVEY_PARAMS.api_token,
     };
     const response = await fetch(uri, { headers })
         // eslint-disable-next-line no-unused-vars,consistent-return
@@ -200,9 +178,8 @@ function generateHtmlBodyFromResponse(custName, responseData) {
           <br/>
           We look forward to your feedback!
           <br/>
-          MongoDB Professional Service
+          MongoDB Professional Services
           <br/>
-          ${generateFooter(responseData)}
       </div>
     `;
     return html;
