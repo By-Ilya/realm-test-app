@@ -28,7 +28,6 @@ function generateCustSurveyLink(custName, custEmail, projectId) {
     )}`;
 }
 
-
 function generateCeSurveyLink(ceName, ceEmail, projectId) {
     return `${SURVEY_LINKS.ce}${generateSpecificUrlParams(
         ceName,
@@ -59,7 +58,7 @@ export function getQuestionResponseValue(questionID, questionResponseValue) {
  *                          the initial question in the survey email.
  * @returns {string}        A String representing the HTML table
  */
-function generateQuestionTableHTML(surveyData) {
+function generateQuestionTableHTML(custName, custEmail, projectId, surveyData) {
     const surveyId = surveyData.result.ProjectInfo.SurveyID;
     const mongodbQualtricsBaseUrl = surveyData.result.BrandBaseURL;
     const surveyResponseLink = `${mongodbQualtricsBaseUrl}/jfe/form/${surveyId}`;
@@ -71,19 +70,19 @@ function generateQuestionTableHTML(surveyData) {
 
     //console.log(`Got response ${JSON.stringify(surveyData.result.Questions[questionID])}`);
 
-    const question1Response5Link = `${surveyResponseLink}?Q_CHL=email&Q_PopulateResponse=${encodeURIComponent(getQuestionResponseValue(questionID, 2))}&Q_PopulateValidate=1`;
+    const question1Response5Link = `${surveyResponseLink}?Q_CHL=email&Q_PopulateResponse=${encodeURIComponent(getQuestionResponseValue(questionID, 2))}&Q_PopulateValidate=1&${generateSpecificUrlParams(custName,custEmail,projectId)}`;
     const question1Response5ChoiceDescription = surveyData.result.Questions[questionID].Choices['2'].Display;
 
-    const question1Response4Link = `${surveyResponseLink}?Q_CHL=email&Q_PopulateResponse=${encodeURIComponent(getQuestionResponseValue(questionID, 3))}&Q_PopulateValidate=1`;
+    const question1Response4Link = `${surveyResponseLink}?Q_CHL=email&Q_PopulateResponse=${encodeURIComponent(getQuestionResponseValue(questionID, 3))}&Q_PopulateValidate=1&${generateSpecificUrlParams(custName,custEmail,projectId)}`;
     const question1Response4ChoiceDescription = surveyData.result.Questions[questionID].Choices['3'].Display;
 
-    const question1Response3Link = `${surveyResponseLink}?Q_CHL=email&Q_PopulateResponse=${encodeURIComponent(getQuestionResponseValue(questionID, 4))}&Q_PopulateValidate=1`;
+    const question1Response3Link = `${surveyResponseLink}?Q_CHL=email&Q_PopulateResponse=${encodeURIComponent(getQuestionResponseValue(questionID, 4))}&Q_PopulateValidate=1&${generateSpecificUrlParams(custName,custEmail,projectId)}`;
     const question1Response3ChoiceDescription = surveyData.result.Questions[questionID].Choices['4'].Display;
 
-    const question1Response2Link = `${surveyResponseLink}?Q_CHL=email&Q_PopulateResponse=${encodeURIComponent(getQuestionResponseValue(questionID, 5))}&Q_PopulateValidate=1`;
+    const question1Response2Link = `${surveyResponseLink}?Q_CHL=email&Q_PopulateResponse=${encodeURIComponent(getQuestionResponseValue(questionID, 5))}&Q_PopulateValidate=1&${generateSpecificUrlParams(custName,custEmail,projectId)}`;
     const question1Response2ChoiceDescription = surveyData.result.Questions[questionID].Choices['5'].Display;
 
-    const question1Response1Link = `${surveyResponseLink}?Q_CHL=email&Q_PopulateResponse=${encodeURIComponent(getQuestionResponseValue(questionID, 6))}&Q_PopulateValidate=1`;
+    const question1Response1Link = `${surveyResponseLink}?Q_CHL=email&Q_PopulateResponse=${encodeURIComponent(getQuestionResponseValue(questionID, 6))}&Q_PopulateValidate=1&${generateSpecificUrlParams(custName,custEmail,projectId)}`;
     const question1Response1ChoiceDescription = surveyData.result.Questions[questionID].Choices['6'].Display;
 
     return `
@@ -133,7 +132,7 @@ function generateQuestionTableHTML(surveyData) {
  * @param custName              A String
  * @returns {Promise<string>}
  */
-export async function custMessageHTMLBody(custName) {
+export async function custMessageHTMLBody(custName, custEmail, projectId) {
     const surveyId = CUST_SURVEY_PARAMS.id;
     const uri = `https://iad1.qualtrics.com/API/v3/survey-definitions/${surveyId}`;
     const headers = {
@@ -147,7 +146,7 @@ export async function custMessageHTMLBody(custName) {
                 return response.json();
             }
         })
-        .then(response => generateHtmlBodyFromResponse(custName, response))
+        .then(response => generateHtmlBodyFromResponse(custName, custEmail, projectId, response))
         .catch((error) => {
             console.error('Encountered an error: ', error);
         });
@@ -164,7 +163,7 @@ export async function custMessageHTMLBody(custName) {
  *                          the initial question in the survey email.
  * @returns {string}        A String containing the HTML for the email body
  */
-function generateHtmlBodyFromResponse(custName, responseData) {
+function generateHtmlBodyFromResponse(custName, custEmail, projectId, responseData) {
     //console.log(`Got response ${JSON.stringify(responseData)}`);
     const html = `
       <div>
@@ -174,7 +173,7 @@ function generateHtmlBodyFromResponse(custName, responseData) {
           <br/>
           It's been our pleasure to work with you. We want to know what you think. Please take 2 minutes to complete our survey questions below:
           <br/> 
-          ${generateQuestionTableHTML(responseData)}
+          ${generateQuestionTableHTML(custName, custEmail, projectId, responseData)}
           <br/>
           We look forward to your feedback!
           <br/>
