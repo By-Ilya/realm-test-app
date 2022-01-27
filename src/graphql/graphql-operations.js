@@ -76,15 +76,15 @@ export const FIND_PROJECTS = gql`
             stage
             survey_sent
             notes
-            contacts {
-                customer {
-                    name
-                    email
-                }
-                ce {
-                    name
-                    email
-                }
+            contacts_list {
+                _id
+                type
+                name
+                email
+            }
+            primary_customer_contact {
+                name
+                email
             }
             future_assignments_dates {
                 s

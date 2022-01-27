@@ -5,11 +5,14 @@ import MaterialTable from 'material-table';
 import generateTableIcons from 'components/common/helpers/TableIcons';
 import { ProjectContext } from 'context/ProjectContext';
 
+const BSON = require('bson');
+
 export default function ContactsTable(props) {
     const {
+        project,
         projectId, tableName,
         currentColumns, currentData,
-        onUpdate,
+        onUpdate, onAdd, onDelete
     } = props;
 
     const { isEditing, setIsEditing } = useContext(ProjectContext);
@@ -41,10 +44,12 @@ export default function ContactsTable(props) {
             }}
             editable={{
                 isEditable: (rowData) => rowData.editable,
+                isDeletable: (rowData) => rowData.editable && rowData._id,
                 onRowUpdate: async (newData, oldData) => {
                     try {
-                        const { name, email, updateKey } = newData;
-                        await onUpdate({ updateKey, value: { name, email } });
+                        const isVirtual = !newData._id;
+                        if (isVirtual) newData._id = new BSON.ObjectID().toString();
+                        await onUpdate({ doc: newData, isVirtual });
                         const dataUpdate = [...data];
                         const index = oldData.tableData.id;
                         dataUpdate[index] = newData;
@@ -56,6 +61,36 @@ export default function ContactsTable(props) {
                     }
                 },
                 onRowUpdateCancelled: () => setIsEditing(false),
+                onRowAdd: async (newData) => {
+                    try {
+                        newData._id = new BSON.ObjectID().toString();
+                        newData.type = "Customer";
+                        await onAdd({ doc: newData });
+                        newData.editable = true;
+                        setData([...data, newData]);
+                    } catch (e) {
+                        console.error(e);
+                    }
+                },
+                onRowDelete: async (oldData) => {
+                    try {
+                        await onDelete({ doc: oldData });
+                        const dataDelete = [...data];
+                        const index = oldData.tableData.id;
+                        dataDelete.splice(index, 1);
+                        if (oldData.type === 'Customer (Primary)' && project.primary_customer_contact) {
+                            dataDelete.unshift({
+                                type: 'Customer (Primary)',
+                                name: project.primary_customer_contact.name,
+                                email: project.primary_customer_contact.email,
+                                editable: true
+                            })
+                        }
+                        setData([...dataDelete]);
+                    } catch (e) {
+                        console.error(e);
+                    }
+                },
             }}
         />
     );
@@ -67,6 +102,8 @@ ContactsTable.propTypes = {
     currentColumns: PropTypes.array.isRequired,
     currentData: PropTypes.array.isRequired,
     onUpdate: PropTypes.func,
+    onAdd: PropTypes.func,
+    onDelete: PropTypes.func,
 };
 
 ContactsTable.defaultProps = {
