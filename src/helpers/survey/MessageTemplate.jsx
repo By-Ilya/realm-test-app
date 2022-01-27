@@ -171,7 +171,7 @@ export async function custMessageHTMLBody(custName) {
         })
         .then(response => generateHtmlBodyFromResponse(custName, response))
         .catch((error) => {
-            console.error('Encountred an error: ', error);
+            console.error('Encountered an error: ', error);
         });
     return response;
 }
@@ -187,7 +187,7 @@ export async function custMessageHTMLBody(custName) {
  * @returns {string}        A String containing the HTML for the email body
  */
 function generateHtmlBodyFromResponse(custName, responseData) {
-    console.log(`Got response ${JSON.stringify(responseData)}`);
+    //console.log(`Got response ${JSON.stringify(responseData)}`);
     const html = `
       <div>
           Hi ${custName},

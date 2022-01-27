@@ -43,7 +43,6 @@ export default function MilestonesInfo(props) {
         const { contacts } = chosenProject;
         const custName = (contacts && contacts.customer) ? contacts.customer.name : null;
         const custEmail = (contacts && contacts.customer) ? contacts.customer.email : null;
-        // const custEmail = 'errol.kutan@mongodb.com';
         const projectId = chosenProject.name;
         const ceName = (contacts && contacts.ce) ? contacts.ce.name : null;
         const ceEmail = (contacts && contacts.ce) ? contacts.ce.email : null;
@@ -64,12 +63,12 @@ export default function MilestonesInfo(props) {
         }
 
         // If we haven't already sent the CE survey, send it now
-        if (!projectHasCESurvey(project, ceEmail)) {
-            await user.callFunction(
-                'sendMail',
-                ceMailParams(origEmail, ceName, ceEmail, projectId),
-            );
-        }
+        // if (!projectHasCESurvey(project, ceEmail)) {
+        //     await user.callFunction(
+        //         'sendMail',
+        //         ceMailParams(origEmail, ceName, ceEmail, projectId),
+        //     );
+        // }
 
         await dbCollection.updateOne(
             { _id: project._id },

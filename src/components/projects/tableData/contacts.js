@@ -21,13 +21,13 @@ export default function generateContactsTableData(project) {
             editable: true,
             updateKey: 'contacts.customer',
         },
-        {
-            type: 'Consulting Engineer',
-            name: (contacts && contacts.ce) ? contacts.ce.name : '',
-            email: (contacts && contacts.ce) ? contacts.ce.email : '',
-            editable: true,
-            updateKey: 'contacts.ce',
-        },
+        // {
+        //     type: 'Consulting Engineer',
+        //     name: (contacts && contacts.ce) ? contacts.ce.name : '',
+        //     email: (contacts && contacts.ce) ? contacts.ce.email : '',
+        //     editable: true,
+        //     updateKey: 'contacts.ce',
+        // },
     ];
 
     return { contactsTableColumns, contactsTableRows };
