@@ -40,35 +40,27 @@ export default function MilestonesInfo(props) {
 
     const onClickPMStageButton = async (chosenProject) => {
         const origEmail = user.profile.email;
-        const { contacts } = chosenProject;
-        const custName = (contacts && contacts.customer) ? contacts.customer.name : null;
-        const custEmail = (contacts && contacts.customer) ? contacts.customer.email : null;
         const projectId = chosenProject.name;
-        const ceName = (contacts && contacts.ce) ? contacts.ce.name : null;
-        const ceEmail = (contacts && contacts.ce) ? contacts.ce.email : null;
 
         // If we are missing contact information, short-circuit
-        if (!custName || !custEmail ){
-            alert('Contact information isn\'t complete!');
+        if (contactsTableRows.length === 0) {
+            alert('No contacts to send surveys');
             return;
         }
 
         // If we haven't already sent the customer survey, send it now
-        if (!projectHasCustSurvey(project, custEmail)) {
-            const params = await custMailParams(origEmail, custName, custEmail, projectId);
-            await user.callFunction(
-                'sendMail',
-                params,
-            );
+        for (const c of contactsTableRows) {
+            let custName = c.name;
+            let custEmail = c.email;
+            if (!projectHasCustSurvey(project, custEmail)) {
+                const params = await custMailParams(origEmail, custName, custEmail, projectId);
+                await user.callFunction(
+                    'sendMail',
+                    params,
+                );
+            } else
+                console.log(`Not sending a new survey to ${custEmail} since they already responded`)
         }
-
-        // If we haven't already sent the CE survey, send it now
-        // if (!projectHasCESurvey(project, ceEmail)) {
-        //     await user.callFunction(
-        //         'sendMail',
-        //         ceMailParams(origEmail, ceName, ceEmail, projectId),
-        //     );
-        // }
 
         await dbCollection.updateOne(
             { _id: project._id },
