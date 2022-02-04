@@ -1,28 +1,32 @@
+import { makeJudgementData } from 'components/forecast/tableData/makeCustomRowData';
 import { isArray } from 'components/helpers/isArray';
 
-export function calculateJudgementFromSum(sumData) {
-    const judgementRow = {
-        valueToRender: 0,
-        changeFilterArgs: undefined,
-        isEditable: true,
-        editableInputLabel: '',
-    };
+export function calculateJudgementFromSum({
+    judgementValue = 0,
+    sumRow = {},
+    levelWithThreshold = undefined,
+}) {
+    const { data: multiSumData } = sumRow;
 
-    if (!isArray(sumData)) return [judgementRow];
+    const judgementData = makeJudgementData({
+        value: 0,
+        thresholdValue: 0,
+    });
 
-    sumData.forEach((dataRow) => {
-        let numberValue = 0;
-        if (typeof dataRow === 'object') {
-            numberValue = dataRow.numberValue;
-        } else {
-            const numberPart = dataRow.replace(/\w+: /g, '');
-            numberValue = numberPart === '–' ? 0 : parseInt(numberPart, 10);
-        }
+    if (!isArray(multiSumData)) {
+        return judgementData;
+    }
 
-        if (judgementRow.valueToRender === 0 || numberValue !== 0) {
-            judgementRow.valueToRender = numberValue;
+    judgementData.data.value = judgementValue;
+    multiSumData.forEach((sumData) => {
+        const { levelName, value } = sumData;
+        if (levelName !== undefined && levelName === levelWithThreshold) {
+            judgementData.data.thresholdValue = value;
+            if (!judgementValue) {
+                judgementData.data.valueToRender = value;
+            }
         }
     });
 
-    return [judgementRow];
+    return judgementData;
 }

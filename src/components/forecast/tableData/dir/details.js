@@ -1,14 +1,27 @@
+import {
+    makeSingleRowData,
+    makeMultiRowData,
+} from 'components/forecast/tableData/makeCustomRowData';
 import { makeMultiRow } from 'components/forecast/tableData/dir/helpers';
 
 export default function generateDetailRows(forecastDetails) {
     return forecastDetails.map((row) => ({
-        psm: [{
-            valueToRender: row.psm_name,
-            numberValue: 0,
+        psm: makeSingleRowData({
+            value: row.psm_name,
+            levelName: undefined,
             changeFilterArgs: { level: 'PSM', psmName: row.psm_name },
-            isEditable: false,
-        }],
-        regions: row.regions,
+        }),
+        regions: (row.regions && row.regions.length)
+            ? makeMultiRowData(row.regions.map((region) => ({
+                value: region,
+                levelName: undefined,
+                changeFilterArgs: undefined,
+            })))
+            : makeSingleRowData({
+                value: row.regions ?? '',
+                levelName: undefined,
+                changeFilterArgs: undefined,
+            }),
         quarterlyCall: makeMultiRow({ row, complexFieldName: 'quarterly_call' }),
         deliveredCall: makeMultiRow({ row, complexFieldName: 'delivered_call' }),
         deliveredFromExpiring: makeMultiRow({ row, complexFieldName: 'delivered_from_expiring' }),

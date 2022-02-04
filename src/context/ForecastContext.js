@@ -1,6 +1,16 @@
 import React from 'react';
 
 import { AuthContext } from 'context/AuthContext';
+import {
+    generateRawColumns,
+    generateDetailRowsPSM,
+    generateSumAndJudgementRowsPSM,
+    generateDetailRowsDIR,
+    generateSumAndJudgementRowsDIR,
+    generateDetailRowsVP,
+    generateSumAndJudgementRowsVP,
+} from 'components/forecast/tableData';
+import { ascSorting, descSorting } from 'helpers/sorting';
 
 const ForecastContext = React.createContext('forecast');
 
@@ -77,6 +87,14 @@ const DEFAULT_FILTER = {
     psmName: '',
 };
 
+const DEFAULT_SORT = {
+    columnToSort: undefined,
+    sortDirection: undefined,
+};
+const DEFAULT_SORT_COLUMN = 'name';
+
+export const EMPTY_ACCOUNT_NAME = 'EmptyAccountName';
+
 class ForecastContainer extends React.Component {
     constructor(props) {
         super(props);
@@ -97,9 +115,15 @@ class ForecastContainer extends React.Component {
             geoNamesList: [],
             loadProcessing: false,
             forecastDetails: [],
+            grouppedForecastDetails: {},
             sumData: {},
             judgementData: {},
             notes: '',
+            sort: DEFAULT_SORT,
+            tableData: {
+                columns: { details: [], sumAndJudgement: [] },
+                rows: { details: [], sumAndJudgement: [] },
+            },
         };
         this.funcs = {
             fetchFiltersDefaultValues: this.fetchFiltersDefaultValues,
@@ -107,6 +131,10 @@ class ForecastContainer extends React.Component {
             fetchForecast: this.fetchForecast,
             cleanLocalForecast: this.cleanLocalForecast,
             findPsmGeoByPsmName: this.findPsmGeoByPsmName,
+            updateNotes: this.updateNotes,
+            groupTableRowsByAccount: this.groupTableRowsByAccount,
+            ungroupTableRowsByAccount: this.ungroupTableRowsByAccount,
+            sortTableRows: this.sortTableRows,
         };
     }
 
@@ -194,10 +222,26 @@ class ForecastContainer extends React.Component {
         if (!foundActivePsmName) {
             filter = { ...filter, psmName: newPsmNamesList[0] ?? '' };
         }
+
+        const updatedDetailsColumns = this.updateForecatDetailsColumns(filter.level);
+        const { sumAndJudgementColumns } = this.state;
+
         this.setState({
             filter,
             psmNamesList: newPsmNamesList,
-            forecastDetailsColumns: this.updateForecatDetailsColumns(filter.level),
+            forecastDetailsColumns: updatedDetailsColumns,
+            grouppedForecastDetails: {},
+            sort: DEFAULT_SORT,
+            tableData: {
+                columns: {
+                    details: generateRawColumns(updatedDetailsColumns),
+                    sumAndJudgement: generateRawColumns(sumAndJudgementColumns),
+                },
+                rows: {
+                    details: [],
+                    sumAndJudgement: [],
+                },
+            },
         });
     }
 
@@ -226,6 +270,8 @@ class ForecastContainer extends React.Component {
             sumData: {},
             judgementData: {},
             notes: '',
+            grouppedForecastDetails: {},
+            sort: DEFAULT_SORT,
         });
     }
 
@@ -241,11 +287,19 @@ class ForecastContainer extends React.Component {
             notes,
             judgement,
         } = await generatePSMForecastData(psmFiltersData);
+
         this.setState({
             forecastDetails: details,
             sumData: sum,
             judgementData: judgement,
             notes,
+            sort: DEFAULT_SORT,
+            tableData: this.updateTableRows(
+                'PSM',
+                details,
+                sum,
+                judgement,
+            ),
         });
     }
 
@@ -261,11 +315,19 @@ class ForecastContainer extends React.Component {
             notes,
             judgement,
         } = await generateDIRForecastData(dirFiltersData);
+
         this.setState({
             forecastDetails: details,
             sumData: sum,
             judgementData: judgement,
             notes,
+            sort: DEFAULT_SORT,
+            tableData: this.updateTableRows(
+                'DIR',
+                details,
+                sum,
+                judgement,
+            ),
         });
     }
 
@@ -279,12 +341,59 @@ class ForecastContainer extends React.Component {
             notes,
             judgement,
         } = await generateVPForecastData(vpFiltersData);
+
         this.setState({
             forecastDetails: details,
             sumData: sum,
             judgementData: judgement,
             notes,
+            sort: DEFAULT_SORT,
+            tableData: this.updateTableRows(
+                'VP',
+                details,
+                sum,
+                judgement,
+            ),
         });
+    }
+
+    updateTableRows = (level, details, sum, judgement) => {
+        let generateDetailRowsFunc = () => {};
+        let generateSumAndJudgementFunc = () => {};
+
+        const { tableData, sort } = this.state;
+
+        switch (level) {
+            case 'PSM':
+                generateDetailRowsFunc = generateDetailRowsPSM;
+                generateSumAndJudgementFunc = generateSumAndJudgementRowsPSM;
+                break;
+            case 'DIR':
+                generateDetailRowsFunc = generateDetailRowsDIR;
+                generateSumAndJudgementFunc = generateSumAndJudgementRowsDIR;
+                break;
+            case 'VP':
+                generateDetailRowsFunc = generateDetailRowsVP;
+                generateSumAndJudgementFunc = generateSumAndJudgementRowsVP;
+                break;
+            default:
+                break;
+        }
+
+        return {
+            ...tableData,
+            rows: {
+                details: this.sortTableRowsAction(
+                    generateDetailRowsFunc(details),
+                    sort,
+                    sort,
+                ),
+                sumAndJudgement: generateSumAndJudgementFunc(
+                    sum,
+                    judgement,
+                ),
+            },
+        };
     }
 
     changeActivePsmNamesList = (geo) => {
@@ -304,6 +413,287 @@ class ForecastContainer extends React.Component {
         if (!foundPsm) return '';
 
         return foundPsm.geo;
+    }
+
+    updateNotes = (newNotes) => {
+        this.setState({ notes: newNotes });
+    }
+
+    groupTableRowsByAccount = (rowId) => {
+        if (
+            rowId === undefined ||
+            rowId === null ||
+            typeof rowId !== 'number' ||
+            Number.isNaN(rowId)
+        ) {
+            return;
+        }
+
+        const {
+            forecastDetails,
+            grouppedForecastDetails,
+            tableData,
+            sort,
+        } = this.state;
+        const rowToGroup = forecastDetails[rowId];
+
+        if (!rowToGroup) {
+            return;
+        }
+
+        const { account_name: accountName } = rowToGroup;
+        const accountDetailsRows = [];
+        const otherGrouppedRows = [];
+        const otherRows = [];
+
+        forecastDetails.forEach((row) => {
+            if ((row?.account_name ?? null) === accountName) {
+                accountDetailsRows.push(row);
+                return;
+            }
+
+            if (row.isGroupped && row.name !== accountName) {
+                otherGrouppedRows.push(row);
+                return;
+            }
+
+            otherRows.push(row);
+        });
+
+        if (!accountDetailsRows.length) {
+            return;
+        }
+
+        const accountAggregatedDetails = { ...accountDetailsRows[0] };
+        accountDetailsRows.forEach((record, index) => {
+            if (index === 0) {
+                return;
+            }
+
+            Object.entries(record).forEach(([key, value]) => {
+                if (
+                    value === null ||
+                    value === undefined ||
+                    typeof value === 'string'
+                ) {
+                    return;
+                }
+
+                if (typeof value === 'object') {
+                    Object.entries(value).forEach(([subKey, subValue]) => {
+                        accountAggregatedDetails[key][subKey] = subValue;
+                    });
+                    return;
+                }
+                accountAggregatedDetails[key] += value;
+            });
+        });
+
+        const accountNameStr = accountName ?? EMPTY_ACCOUNT_NAME;
+
+        accountAggregatedDetails.name = accountNameStr;
+        accountAggregatedDetails.opportunity_name = '–';
+        accountAggregatedDetails.isGroupped = true;
+
+        const combinedForecastDetails = [
+            accountAggregatedDetails,
+            ...otherGrouppedRows,
+            ...otherRows,
+        ];
+
+        const grouppedRowsTableDataDetails = this.sortTableRowsAction(
+            generateDetailRowsPSM([accountAggregatedDetails, ...otherGrouppedRows]),
+            sort,
+            sort,
+        );
+        const otherRowsTableDataDetails = this.sortTableRowsAction(
+            generateDetailRowsPSM(otherRows),
+            sort,
+            sort,
+        );
+        const newTableData = {
+            ...tableData,
+            rows: {
+                ...tableData.rows,
+                details: [
+                    ...grouppedRowsTableDataDetails,
+                    ...otherRowsTableDataDetails,
+                ],
+            },
+        };
+
+        this.setState({
+            forecastDetails: combinedForecastDetails,
+            grouppedForecastDetails: {
+                ...grouppedForecastDetails,
+                [accountNameStr]: accountDetailsRows,
+            },
+            tableData: newTableData,
+        });
+    };
+
+    ungroupTableRowsByAccount = (accountName) => {
+        if (!accountName) {
+            return;
+        }
+
+        const {
+            forecastDetails,
+            grouppedForecastDetails,
+            tableData,
+            sort,
+        } = this.state;
+
+        const copyGrouppedForecastDetails = { ...grouppedForecastDetails };
+        const ungrouppedRecords = copyGrouppedForecastDetails[accountName];
+        if (!ungrouppedRecords) {
+            return;
+        }
+
+        const otherGrouppedRows = [];
+        const otherRows = [];
+
+        forecastDetails.forEach((record) => {
+            if (record.isGroupped && record.name === accountName) {
+                return;
+            }
+            if (record.isGroupped && record.name !== accountName) {
+                otherGrouppedRows.push(record);
+                return;
+            }
+            otherRows.push(record);
+        });
+
+        const combinedForecastDetails = [
+            ...otherGrouppedRows,
+            ...ungrouppedRecords,
+            ...otherRows,
+        ];
+
+        const grouppedRowsTableDataDetails = this.sortTableRowsAction(
+            generateDetailRowsPSM(otherGrouppedRows),
+            sort,
+            sort,
+        );
+        const otherRowsTableDataDetails = this.sortTableRowsAction(
+            generateDetailRowsPSM([...ungrouppedRecords, ...otherRows]),
+            sort,
+            sort,
+        );
+        const newTableData = {
+            ...tableData,
+            rows: {
+                ...tableData.rows,
+                details: [
+                    ...grouppedRowsTableDataDetails,
+                    ...otherRowsTableDataDetails,
+                ],
+            },
+        };
+
+        delete copyGrouppedForecastDetails[accountName];
+
+        this.setState({
+            forecastDetails: combinedForecastDetails,
+            grouppedForecastDetails: copyGrouppedForecastDetails,
+            tableData: newTableData,
+        });
+    }
+
+    sortTableRows = (columnName) => {
+        const { sort, forecastDetails, tableData } = this.state;
+        const { columnToSort, sortDirection } = sort;
+
+        const newSort = { ...sort };
+
+        if (columnToSort === columnName) {
+            switch (sortDirection) {
+                case undefined:
+                    newSort.sortDirection = 'ASC';
+                    break;
+                case 'ASC':
+                    newSort.sortDirection = 'DESC';
+                    break;
+                case 'DESC':
+                    newSort.sortDirection = undefined;
+                    break;
+                default:
+                    break;
+            }
+        } else {
+            newSort.columnToSort = columnName;
+            newSort.sortDirection = 'ASC';
+        }
+
+        const grouppedRows = [];
+        const otherRows = [];
+
+        forecastDetails.forEach((record) => {
+            if (record.isGroupped) {
+                grouppedRows.push(record);
+                return;
+            }
+            otherRows.push(record);
+        });
+
+        const grouppedDetailsTableData = this.sortTableRowsAction(
+            generateDetailRowsPSM(grouppedRows),
+            newSort,
+            sort,
+        );
+        const otherDetailsTableData = this.sortTableRowsAction(
+            generateDetailRowsPSM(otherRows),
+            newSort,
+            sort,
+        );
+        const newTableData = {
+            ...tableData,
+            rows: {
+                ...tableData.rows,
+                details: [
+                    ...grouppedDetailsTableData,
+                    ...otherDetailsTableData,
+                ],
+            },
+        };
+
+        this.setState({
+            sort: newSort,
+            tableData: newTableData,
+        });
+    }
+
+    sortTableRowsAction = (details, sort, prevSortState) => {
+        const { columnToSort, sortDirection } = sort;
+
+        const newDetails = [...details];
+        try {
+            newDetails.sort((aObj, bObj) => {
+                const { data: aData } = aObj[columnToSort];
+                const { data: bData } = bObj[columnToSort];
+
+                if (!aData || !bData) {
+                    throw new Error('Unable to sort! No specified data');
+                }
+
+                if (sortDirection === 'ASC') {
+                    return ascSorting(aData.value, bData.value);
+                }
+                if (sortDirection === 'DESC') {
+                    return descSorting(aData.value, bData.value);
+                }
+
+                return ascSorting(
+                    aObj[DEFAULT_SORT_COLUMN].data.value,
+                    bObj[DEFAULT_SORT_COLUMN].data.value,
+                );
+            });
+
+            return newDetails;
+        } catch (err) {
+            this.setState({ sort: prevSortState });
+            return details;
+        }
     }
 
     render() {

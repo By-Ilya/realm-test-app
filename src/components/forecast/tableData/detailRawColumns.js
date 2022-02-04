@@ -1,6 +1,11 @@
 /* eslint-disable react/jsx-filename-extension */
 import React from 'react';
-import MultiRowRenderer from './MultiRowRenderer';
+import CustomRowRenderer from './CustomRowRenderer';
+
+const CELL_STYLE = {
+    width: 150,
+    maxWidth: 150,
+};
 
 export default function generateRawColumns(forecastColumns) {
     const rawColumns = [];
@@ -26,11 +31,16 @@ export default function generateRawColumns(forecastColumns) {
                     title: fullTitle,
                     field: fullField,
                     editable: 'never',
-                    render: (rowData) => (
-                        <MultiRowRenderer
-                            multiRow={rowData[`${fullField}`]}
-                        />
-                    ),
+                    cellStyle: CELL_STYLE,
+                    render: (rowData) => {
+                        const { rowType, data } = rowData[`${fullField}`];
+                        return (
+                            <CustomRowRenderer
+                                rowType={rowType}
+                                data={data}
+                            />
+                        );
+                    },
                 });
             });
 
@@ -41,11 +51,16 @@ export default function generateRawColumns(forecastColumns) {
             title,
             field,
             editable: 'never',
-            render: (rowData) => (
-                <MultiRowRenderer
-                    multiRow={rowData[`${field}`]}
-                />
-            ),
+            cellStyle: CELL_STYLE,
+            render: (rowData) => {
+                const { rowType, data } = rowData[`${field}`];
+                return (
+                    <CustomRowRenderer
+                        rowType={rowType}
+                        data={data}
+                    />
+                );
+            },
         });
     });
 

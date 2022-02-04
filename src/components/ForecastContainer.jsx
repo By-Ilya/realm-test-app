@@ -1,4 +1,9 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, {
+    useContext,
+    useState,
+    useEffect,
+    useMemo,
+} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import Grid from '@material-ui/core/Grid';
@@ -9,18 +14,14 @@ import TableRow from '@material-ui/core/TableRow';
 import Divider from '@material-ui/core/Divider';
 import MaterialTable from 'material-table';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
 
-import { ForecastContext } from 'context/ForecastContext';
-import {
-    generateRawColumns,
-    generateDetailRowsPSM,
-    generateSumAndJudgementRowsPSM,
-    generateDetailRowsDIR,
-    generateSumAndJudgementRowsDIR,
-    generateDetailRowsVP,
-    generateSumAndJudgementRowsVP,
-} from 'components/forecast/tableData';
-import ForecastNotes from 'components/forecast/detailedInfo/ForecastNotes';
+import { ForecastContext, EMPTY_ACCOUNT_NAME } from 'context/ForecastContext';
+import generateTableIcons from 'components/common/helpers/TableIcons';
+import NoSortingIcon from 'components/common/sorting/NoSortingIcon';
+import AscSortingIcon from 'components/common/sorting/AscSortingIcon';
+import DescSortingIcon from 'components/common/sorting/DescSortingIcon';
 
 const useStyles = makeStyles((theme) => ({
     container: {
@@ -44,6 +45,15 @@ const useStyles = makeStyles((theme) => ({
         width: 150,
         minWidth: 150,
     },
+    actionsHeaderStyle: {
+        fontWeight: 'bold',
+        width: 30,
+        minWidth: 30,
+    },
+    headerContent: {
+        display: 'flex',
+        flexDirection: 'column',
+    },
     divider: {
         margin: '20px',
     },
@@ -51,51 +61,132 @@ const useStyles = makeStyles((theme) => ({
         display: 'flex',
         justifyContent: 'flex-start',
         alignItems: 'center',
-        padding: theme.spacing(1),
+        position: 'relative',
     },
-    buttonProgress: {
+    textFieldContainer: {
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
+        alignItems: 'flex-start',
+    },
+    textField: {
+        width: '30%',
+    },
+    saveButton: {
+        marginTop: '10px',
+    },
+    saveButtonProgress: {
         position: 'absolute',
-        marginLeft: '2.5rem',
+        top: '15px',
+        left: '20px',
     },
 }));
 
 function ForecastTableHeader(props) {
     const classes = useStyles();
-    const { forecastDetailsColumns } = props;
+    const { forecastDetailsColumns, activateActionsColumn } = props;
 
-    const firstRowHeader = [];
-    const secondRowHeader = [];
+    const { sort, sortTableRows } = useContext(ForecastContext);
 
-    forecastDetailsColumns.forEach((column) => {
-        const { title, subColumns } = column;
-        if (subColumns && subColumns.length) {
-            firstRowHeader.push((
-                <TableCell
-                    colSpan={subColumns.length}
-                    align="center"
-                    className={classes.headerStyle}
-                >
-                    {title}
-                </TableCell>
-            ));
+    const [firstRowHeader, setFirstRowHeader] = useState([]);
+    const [secondRowHeader, setSecondRowHeader] = useState([]);
 
-            subColumns.forEach((subColumn) => {
-                secondRowHeader.push((
-                    <TableCell align="center" className={classes.headerStyle}>
-                        {subColumn.title}
-                    </TableCell>
-                ));
-            });
+    const clickableStyle = activateActionsColumn ? { cursor: 'pointer' } : {};
 
+    const handleOnClickSortColumn = (fullColumnName) => {
+        if (!activateActionsColumn) {
             return;
         }
 
-        firstRowHeader.push((
-            <TableCell rowSpan={2} className={classes.headerStyle}>
-                {title}
-            </TableCell>
-        ));
-    });
+        sortTableRows(fullColumnName);
+    };
+
+    const chooseSortIcon = (fullColumnName) => {
+        if (sort.columnToSort === fullColumnName) {
+            switch (sort.sortDirection) {
+                case 'ASC':
+                    return (<AscSortingIcon />);
+                case 'DESC':
+                    return (<DescSortingIcon />);
+                case undefined:
+                default:
+                    return (<NoSortingIcon />);
+            }
+        }
+
+        return (<NoSortingIcon />);
+    };
+
+    useEffect(() => {
+        if (!forecastDetailsColumns || !forecastDetailsColumns.length) {
+            return;
+        }
+
+        const localFirstRowHeader = [];
+        const localSecondRowHeader = [];
+
+        if (activateActionsColumn) {
+            localFirstRowHeader.push((
+                <TableCell
+                    rowSpan={2}
+                    align="left"
+                    className={classes.actionsHeaderStyle}
+                >
+                    Group
+                </TableCell>
+            ));
+        }
+
+        forecastDetailsColumns.forEach((column) => {
+            const { title, subColumns, field } = column;
+            if (subColumns && subColumns.length) {
+                localFirstRowHeader.push((
+                    <TableCell
+                        colSpan={subColumns.length}
+                        align="center"
+                        className={classes.headerStyle}
+                    >
+                        {title}
+                    </TableCell>
+                ));
+
+                subColumns.forEach((subColumn) => {
+                    localSecondRowHeader.push((
+                        <TableCell
+                            align="left"
+                            className={classes.headerStyle}
+                            style={clickableStyle}
+                            onClick={() => handleOnClickSortColumn(`${field}${subColumn.field}`)}
+                        >
+                            <div className={classes.headerContent}>
+                                {subColumn.title}
+                                {activateActionsColumn && chooseSortIcon(`${field}${subColumn.field}`)}
+                            </div>
+                        </TableCell>
+                    ));
+                });
+
+                return;
+            }
+
+            localFirstRowHeader.push((
+                <TableCell
+                    rowSpan={2}
+                    className={classes.headerStyle}
+                    style={clickableStyle}
+                    onClick={() => handleOnClickSortColumn(field)}
+                >
+                    <div className={classes.headerContent}>
+                        {title}
+                        {activateActionsColumn && chooseSortIcon(field)}
+                    </div>
+                </TableCell>
+            ));
+        });
+
+        setFirstRowHeader(localFirstRowHeader);
+        setSecondRowHeader(localSecondRowHeader);
+    }, [forecastDetailsColumns]);
 
     return (
         <TableHead>
@@ -112,114 +203,137 @@ function ForecastTableHeader(props) {
 
 ForecastTableHeader.propTypes = {
     forecastDetailsColumns: PropTypes.array.isRequired,
+    activateActionsColumn: PropTypes.bool,
+};
+
+ForecastTableHeader.defaultProps = {
+    activateActionsColumn: false,
 };
 
 export default function ForecastContainer(props) {
     const classes = useStyles();
     const { fetchForecast } = props;
+
     const {
         filter,
         forecastDetailsColumns,
         sumAndJudgementColumns,
-        forecastDetails,
-        sumData,
-        judgementData,
+        tableData,
         notes,
+        sort,
         loadProcessing,
+        grouppedForecastDetails,
+        groupTableRowsByAccount,
+        ungroupTableRowsByAccount,
     } = useContext(ForecastContext);
+    const { columns, rows } = tableData;
 
-    let generateDetailRowsFunc = () => {};
-    let generateSumAndJudgementRowsFunc = () => {};
+    const textFieldRef = React.createRef(null);
 
-    switch (filter.level) {
-        case 'PSM':
-            generateDetailRowsFunc = generateDetailRowsPSM;
-            generateSumAndJudgementRowsFunc = generateSumAndJudgementRowsPSM;
-            break;
-        case 'DIR':
-            generateDetailRowsFunc = generateDetailRowsDIR;
-            generateSumAndJudgementRowsFunc = generateSumAndJudgementRowsDIR;
-            break;
-        case 'VP':
-            generateDetailRowsFunc = generateDetailRowsVP;
-            generateSumAndJudgementRowsFunc = generateSumAndJudgementRowsVP;
-            break;
-        default:
-            break;
-    }
+    const isActionsColumnAvailable = useMemo(() => (
+        filter.level === 'PSM'
+    ), [filter.level]);
 
-    const detailsRawColumns = generateRawColumns(forecastDetailsColumns);
-    const sumAndJudgementRawColumns = generateRawColumns(sumAndJudgementColumns);
+    const grouppedAccountNames = useMemo(() => (
+        Object.keys(grouppedForecastDetails) ?? []
+    ), [grouppedForecastDetails]);
 
-    const [tableData, setTableData] = useState({
-        forecastDetailsTableColumns: detailsRawColumns,
-        sumAndJudgementTableColumns: sumAndJudgementRawColumns,
-        forecastDetailsTableRows: generateDetailRowsFunc(forecastDetails),
-        sumAndJudgementTableRows: generateSumAndJudgementRowsFunc(sumData, judgementData),
-    });
+    const tableIcons = useMemo(() => (
+        generateTableIcons(() => {})
+    ), []);
 
-    useEffect(() => {
-        setTableData({
-            forecastDetailsTableColumns: detailsRawColumns,
-            sumAndJudgementTableColumns: sumAndJudgementRawColumns,
-            forecastDetailsTableRows: generateDetailRowsFunc(forecastDetails),
-            sumAndJudgementTableRows: generateSumAndJudgementRowsFunc(sumData, judgementData),
-        });
-    }, [forecastDetails, sumData, judgementData]);
+    const handleOnGroupRows = (event, rowData) => {
+        groupTableRowsByAccount(rowData.tableData.id);
+    };
+
+    const handleOnUngroupRows = (accountName) => {
+        ungroupTableRowsByAccount(accountName);
+    };
+
+    const renderRowAction = (row) => {
+        const nameField = row?.name?.data?.value ?? EMPTY_ACCOUNT_NAME;
+        if (grouppedAccountNames.includes(nameField)) {
+            return {
+                icon: tableIcons.Group,
+                tooltip: `Ungroup "${nameField}"`,
+                onClick: () => handleOnUngroupRows(nameField),
+            };
+        }
+
+        return {
+            icon: tableIcons.GroupAdd,
+            tooltip: 'Group by Account',
+            onClick: handleOnGroupRows,
+        };
+    };
+
+    const tableActions = useMemo(() => (
+        isActionsColumnAvailable
+            ? [renderRowAction]
+            : []
+    ), [isActionsColumnAvailable, grouppedAccountNames]);
+
+    const detailsTableHeader = useMemo(() => () => (
+        <ForecastTableHeader
+            forecastDetailsColumns={forecastDetailsColumns}
+            activateActionsColumn={isActionsColumnAvailable}
+        />
+    ), [columns.details, sort]);
+    const sumAndJudgementTableHeader = useMemo(() => () => (
+        <ForecastTableHeader forecastDetailsColumns={sumAndJudgementColumns} />
+    ), [columns.sumAndJudgement]);
+
+    const handleClickOnSaveButton = () => {
+        console.log('new notes:', textFieldRef.current.value ?? ''); // TODO: log
+    };
 
     return (
         <Grid container className={classes.container}>
             <Grid item xs="12">
                 <Paper className={classes.paper}>
-                    {loadProcessing && (
-                        <CircularProgress />
-                    )}
-                    {!loadProcessing && (
-                        <>
-                            <MaterialTable
-                                title="Details"
-                                columns={tableData.forecastDetailsTableColumns}
-                                data={tableData.forecastDetailsTableRows}
-                                components={{
-                                    Header: () => (
-                                        <ForecastTableHeader
-                                            forecastDetailsColumns={forecastDetailsColumns}
-                                        />
-                                    ),
-                                }}
-                                options={{
-                                    search: false,
-                                    sorting: false,
-                                    paging: false,
-                                    padding: 'dense',
-                                }}
-                            />
-                            <Divider className={classes.divider} />
-                            <MaterialTable
-                                title="Sum & Judgement"
-                                columns={tableData.sumAndJudgementTableColumns}
-                                data={tableData.sumAndJudgementTableRows}
-                                components={{
-                                    Header: () => (
-                                        <ForecastTableHeader
-                                            forecastDetailsColumns={sumAndJudgementColumns}
-                                        />
-                                    ),
-                                }}
-                                options={{
-                                    search: false,
-                                    sorting: false,
-                                    paging: false,
-                                    padding: 'dense',
-                                }}
-                            />
-                            <Divider className={classes.divider} />
-                            <ForecastNotes
-                                countRows={10}
-                                textValue={notes}
-                            />
-                        </>
-                    )}
+                    {loadProcessing
+                        ? (<CircularProgress />)
+                        : (
+                            <>
+                                <MaterialTable
+                                    title="Details"
+                                    columns={columns.details}
+                                    data={rows.details}
+                                    components={{ Header: detailsTableHeader }}
+                                    options={{
+                                        search: false,
+                                        sorting: true,
+                                        paging: false,
+                                        padding: 'dense',
+                                        grouping: false,
+                                    }}
+                                    actions={tableActions}
+                                />
+                                <Divider className={classes.divider} />
+                                <MaterialTable
+                                    title="Sum & Judgement"
+                                    columns={columns.sumAndJudgement}
+                                    data={rows.sumAndJudgement}
+                                    components={{ Header: sumAndJudgementTableHeader }}
+                                    options={{
+                                        search: false,
+                                        sorting: false,
+                                        paging: false,
+                                        padding: 'dense',
+                                    }}
+                                />
+                                <Divider className={classes.divider} />
+                                <ForecastNotes
+                                    ref={textFieldRef}
+                                    countRows={10}
+                                    textValue={notes}
+                                />
+                                <SaveButton
+                                    updateProcessing={false}
+                                    onClick={handleClickOnSaveButton}
+                                />
+                            </>
+                        )}
                 </Paper>
             </Grid>
         </Grid>
@@ -228,4 +342,67 @@ export default function ForecastContainer(props) {
 
 ForecastContainer.propTypes = {
     fetchForecast: PropTypes.func.isRequired,
+};
+
+const ForecastNotes = React.forwardRef((props, ref) => {
+    const classes = useStyles();
+
+    const { countRows, textValue } = props;
+
+    return (
+        <div className={classes.textFieldContainer}>
+            <TextField
+                label="Notes"
+                multiline
+                inputRef={ref}
+                rows={countRows}
+                value={textValue}
+                variant="filled"
+                className={classes.textField}
+            />
+        </div>
+    );
+});
+
+ForecastNotes.propTypes = {
+    countRows: PropTypes.number,
+    textValue: PropTypes.string,
+};
+
+ForecastNotes.defaultProps = {
+    countRows: 10,
+    textValue: '',
+};
+
+function SaveButton(props) {
+    const classes = useStyles();
+    const {
+        updateProcessing,
+        onClick,
+    } = props;
+
+    return (
+        <div className={classes.leftButton}>
+            <Button
+                className={classes.saveButton}
+                disabled={updateProcessing}
+                variant="contained"
+                color="primary"
+                onClick={onClick}
+            >
+                Save
+            </Button>
+            {updateProcessing && (
+                <CircularProgress
+                    size={24}
+                    className={classes.saveButtonProgress}
+                />
+            )}
+        </div>
+    );
+}
+
+SaveButton.propTypes = {
+    updateProcessing: PropTypes.bool.isRequired,
+    onClick: PropTypes.func.isRequired,
 };

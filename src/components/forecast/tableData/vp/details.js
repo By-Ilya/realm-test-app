@@ -1,14 +1,18 @@
+import { makeSingleRowData } from 'components/forecast/tableData/makeCustomRowData';
 import { makeMultiRow } from 'components/forecast/tableData/vp/helpers';
 
 export default function generateDetailRows(forecastDetails) {
     return forecastDetails.map((row) => ({
-        geo: row.geo,
-        director: [{
-            valueToRender: row.dir_name,
-            numberValue: 0,
+        geo: makeSingleRowData({
+            value: row.geo,
+            levelName: undefined,
+            changeFilterArgs: undefined,
+        }),
+        director: makeSingleRowData({
+            value: row.dir_name,
+            levelName: undefined,
             changeFilterArgs: { level: 'DIR', geo: row.geo },
-            isEditable: false,
-        }],
+        }),
         quarterlyCall: makeMultiRow({ row, complexFieldName: 'quarterly_call' }),
         deliveredCall: makeMultiRow({ row, complexFieldName: 'delivered_call' }),
         deliveredFromExpiring: makeMultiRow({ row, complexFieldName: 'delivered_from_expiring' }),
