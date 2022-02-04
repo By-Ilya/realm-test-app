@@ -125,6 +125,7 @@ function convertForecastIntoRows(forecast) {
     });
     row.push({
         name: 'Most Likely $',
+        tooltip: 'Your call (automatically calculated based on what has been scheduled and the manual adjustment)',
         0: most_likely['0'],
         1: most_likely['1'],
         2: most_likely['2'],
@@ -133,6 +134,7 @@ function convertForecastIntoRows(forecast) {
     });
     row.push({
         name: 'Risk $',
+        tooltip: 'How much of your call can go away because of cancellations etc. - decremental',
         0: risk['0'],
         1: risk['1'],
         2: risk['2'],
@@ -141,6 +143,7 @@ function convertForecastIntoRows(forecast) {
     });
     row.push({
         name: 'Upside $',
+        tooltip: 'How much more we can get in addition to your call contingent on resources, customer availability, etc. - incremental',
         0: upside['0'],
         1: upside['1'],
         2: upside['2'],
@@ -150,6 +153,7 @@ function convertForecastIntoRows(forecast) {
 
     row.push({
         name: 'Increment ML $',
+        tooltip: 'Manual adjustment to your call',
         0: forecast.upside_ml['0'],
         1: forecast.upside_ml['1'],
         2: forecast.upside_ml['2'],
