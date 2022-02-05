@@ -84,24 +84,18 @@ const useStyles = makeStyles((theme) => ({
 
 function ForecastTableHeader(props) {
     const classes = useStyles();
-    const { forecastDetailsColumns, activateActionsColumn } = props;
+    const { forecastDetailsColumns, isActivateAdditionActions } = props;
 
     const { sort, sortTableRows } = useContext(ForecastContext);
 
     const [firstRowHeader, setFirstRowHeader] = useState([]);
     const [secondRowHeader, setSecondRowHeader] = useState([]);
 
-    const clickableStyle = activateActionsColumn ? { cursor: 'pointer' } : {};
-
-    const handleOnClickSortColumn = (fullColumnName) => {
-        if (!activateActionsColumn) {
-            return;
+    const chooseSortIcon = (fullColumnName) => {
+        if (!isActivateAdditionActions) {
+            return null;
         }
 
-        sortTableRows(fullColumnName);
-    };
-
-    const chooseSortIcon = (fullColumnName) => {
         if (sort.columnToSort === fullColumnName) {
             switch (sort.sortDirection) {
                 case 'ASC':
@@ -117,6 +111,32 @@ function ForecastTableHeader(props) {
         return (<NoSortingIcon />);
     };
 
+    const additionActionsProps = isActivateAdditionActions
+        ? {
+            clickableStyle: { cursor: 'pointer' },
+            onColumnClick: (columnName) => sortTableRows(columnName),
+            chooseSortIconFn: (columnName) => chooseSortIcon(columnName),
+        }
+        : {
+            clickableStyle: {},
+            onColumnClick: () => {},
+            chooseSortIconFn: () => {},
+        };
+
+    const handleOnClickSortColumn = (fullColumnName) => {
+        additionActionsProps.onColumnClick(fullColumnName);
+    };
+
+    const groupColumnComponent = (
+        <TableCell
+            rowSpan={2}
+            align="left"
+            className={classes.actionsHeaderStyle}
+        >
+            Group
+        </TableCell>
+    );
+
     useEffect(() => {
         if (!forecastDetailsColumns || !forecastDetailsColumns.length) {
             return;
@@ -125,16 +145,8 @@ function ForecastTableHeader(props) {
         const localFirstRowHeader = [];
         const localSecondRowHeader = [];
 
-        if (activateActionsColumn) {
-            localFirstRowHeader.push((
-                <TableCell
-                    rowSpan={2}
-                    align="left"
-                    className={classes.actionsHeaderStyle}
-                >
-                    Group
-                </TableCell>
-            ));
+        if (isActivateAdditionActions) {
+            localFirstRowHeader.push(groupColumnComponent);
         }
 
         forecastDetailsColumns.forEach((column) => {
@@ -151,16 +163,17 @@ function ForecastTableHeader(props) {
                 ));
 
                 subColumns.forEach((subColumn) => {
+                    const fullColumnName = `${field}${subColumn.field}`;
                     localSecondRowHeader.push((
                         <TableCell
                             align="left"
                             className={classes.headerStyle}
-                            style={clickableStyle}
-                            onClick={() => handleOnClickSortColumn(`${field}${subColumn.field}`)}
+                            style={additionActionsProps.clickableStyle}
+                            onClick={() => handleOnClickSortColumn(fullColumnName)}
                         >
                             <div className={classes.headerContent}>
                                 {subColumn.title}
-                                {activateActionsColumn && chooseSortIcon(`${field}${subColumn.field}`)}
+                                {additionActionsProps.chooseSortIconFn(fullColumnName)}
                             </div>
                         </TableCell>
                     ));
@@ -173,12 +186,12 @@ function ForecastTableHeader(props) {
                 <TableCell
                     rowSpan={2}
                     className={classes.headerStyle}
-                    style={clickableStyle}
+                    style={additionActionsProps.clickableStyle}
                     onClick={() => handleOnClickSortColumn(field)}
                 >
                     <div className={classes.headerContent}>
                         {title}
-                        {activateActionsColumn && chooseSortIcon(field)}
+                        {additionActionsProps.chooseSortIconFn(field)}
                     </div>
                 </TableCell>
             ));
@@ -203,11 +216,11 @@ function ForecastTableHeader(props) {
 
 ForecastTableHeader.propTypes = {
     forecastDetailsColumns: PropTypes.array.isRequired,
-    activateActionsColumn: PropTypes.bool,
+    isActivateAdditionActions: PropTypes.bool,
 };
 
 ForecastTableHeader.defaultProps = {
-    activateActionsColumn: false,
+    isActivateAdditionActions: false,
 };
 
 export default function ForecastContainer(props) {
@@ -230,7 +243,7 @@ export default function ForecastContainer(props) {
 
     const textFieldRef = React.createRef(null);
 
-    const isActionsColumnAvailable = useMemo(() => (
+    const isActivateAdditionActions = useMemo(() => (
         filter.level === 'PSM'
     ), [filter.level]);
 
@@ -268,15 +281,15 @@ export default function ForecastContainer(props) {
     };
 
     const tableActions = useMemo(() => (
-        isActionsColumnAvailable
+        isActivateAdditionActions
             ? [renderRowAction]
             : []
-    ), [isActionsColumnAvailable, grouppedAccountNames]);
+    ), [isActivateAdditionActions, grouppedAccountNames]);
 
     const detailsTableHeader = useMemo(() => () => (
         <ForecastTableHeader
             forecastDetailsColumns={forecastDetailsColumns}
-            activateActionsColumn={isActionsColumnAvailable}
+            isActivateAdditionActions={isActivateAdditionActions}
         />
     ), [columns.details, sort]);
     const sumAndJudgementTableHeader = useMemo(() => () => (
