@@ -107,63 +107,16 @@ export default function TopPanel(props) {
         ceMode,
         toggleCEMode,
     } = useContext(AuthContext);
-    const {
-        filter: projectFilter,
-        setFilter: setProjectFilter,
-        sortFields: projectSortFields,
-        sort: projectSort,
-        setSorting: setProjectSorting,
-        regionsList: projectRegionsList,
-        ownersList: projectOwnersList,
-        projectManagersList,
-        stagesList: projectStagesList,
-        fetchFiltersDefaultValues: fetchProjectDefaultFilters,
-        setLoadProcessing: setProjectLoadProcessing,
-        setDefaultPagination: setProjectDefaultPagination,
-        requestSync,
-        isSyncActive
-    } = useContext(ProjectContext);
-    const {
-        filter: opportunityFilter,
-        setFilter: setOpportunityFilter,
-        sortFields: opportunitySortFields,
-        sort: opportunitySort,
-        setSorting: setOpportunitySorting,
-        ownerRegionsList: opportunityOwnerRegionsList,
-        psRegionsList: opportunityPsRegionsList,
-        emManagersList: opportunityEmManagersList,
-        fetchFiltersDefaultValues: fetchOpportunityDefaultFilters,
-        setLoadProcessing: setOpportunityLoadProcessing,
-        setDefaultPagination: setOpportunitiesDefaultPagination,
-    } = useContext(OpportunityContext);
+    const { requestSync } = useContext(ProjectContext);
 
-    const isProjectsPage = activePage === PAGES.projects;
+    const [localFilter, setLocalFilter] = useState(filter);
+    const [localSort, setLocalSorting] = useState(sort);
 
-    const [localFilter, setLocalFilter] = useState(isProjectsPage
-        ? projectFilter
-        : opportunityFilter);
-    const [localSort, setLocalSorting] = useState(isProjectsPage
-        ? projectSort
-        : opportunitySort);
-
-    const getProjectFiltersObject = () => {
-        const filtersList = {
-            regionsList: projectRegionsList,
-            ownersList: projectOwnersList,
-            projectManagersList,
-            stagesList: projectStagesList,
-        };
-        return getProjectFilters({
-            localFilter,
-            setLocalFilter,
-            filtersList,
-            getActiveUserFilter,
-        });
-    };
-    const getProjectSortObject = () => getProjectSortValues({
-        localSort,
-        setLocalSorting,
-        fieldsList: projectSortFields,
+    const getFiltersObject = () => getFilters({
+        localFilter,
+        setLocalFilter,
+        filtersList,
+        getActiveUserFilter,
     });
 
     const getSortObject = () => getSortValues({
@@ -309,7 +262,6 @@ export default function TopPanel(props) {
                             formControl: classes.formControl,
                         }}
                         onTriggerSync={onTriggerSync}
-                        isSyncActive={isSyncActive}
                     />
                     <Profile
                         classes={{
