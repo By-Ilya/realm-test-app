@@ -1,6 +1,7 @@
 {
     "collection": "opportunity",
     "database": "shf",
+    "id": "613705bc82a365309f940d58",
     "roles": [
         {
             "name": "default",
@@ -24,6 +25,9 @@
                 "bsonType": "object",
                 "properties": {
                     "_id": {
+                        "bsonType": "string"
+                    },
+                    "geo_region": {
                         "bsonType": "string"
                     },
                     "name": {
@@ -68,6 +72,46 @@
             },
             "has_services": {
                 "bsonType": "bool"
+            },
+            "line_items": {
+                "bsonType": "array",
+                "items": {
+                    "bsonType": "object",
+                    "properties": {
+                        "discount_pct": {
+                            "bsonType": "double"
+                        },
+                        "list_price": {
+                            "bsonType": "double"
+                        },
+                        "name": {
+                            "bsonType": "string"
+                        },
+                        "product": {
+                            "bsonType": "object",
+                            "properties": {
+                                "code": {
+                                    "bsonType": "string"
+                                },
+                                "family": {
+                                    "bsonType": "string"
+                                },
+                                "name": {
+                                    "bsonType": "string"
+                                },
+                                "tag": {
+                                    "bsonType": "string"
+                                }
+                            }
+                        },
+                        "qty": {
+                            "bsonType": "double"
+                        },
+                        "total": {
+                            "bsonType": "double"
+                        }
+                    }
+                }
             },
             "name": {
                 "bsonType": "string"

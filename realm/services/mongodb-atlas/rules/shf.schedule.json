@@ -1,6 +1,7 @@
 {
     "collection": "schedule",
     "database": "shf",
+    "id": "613705bc82a365309f940d5d",
     "roles": [
         {
             "name": "default",

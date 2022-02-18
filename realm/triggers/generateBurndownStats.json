@@ -1,4 +1,5 @@
 {
+    "id": "613705bc82a365309f940df0",
     "name": "generateBurndownStats",
     "type": "SCHEDULED",
     "config": {

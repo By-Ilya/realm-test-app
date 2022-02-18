@@ -45,8 +45,8 @@
   
 //   return;
 // };
-exports = function({origEmail, toEmail, subject, html}){
-  var col_msg = context.services.get("mongodb-atlas").db("mailer").collection("messages");
-  col_msg.insertOne({processed:false,msg:{origEmail, toEmail, subject, html},ts:new Date()})
+exports = function(project_id){
+  var col_requests = context.services.get("mongodb-atlas").db("ebrief").collection("requests");
+  col_requests.insertOne({status:"New",project_id:project_id,ts:{created:new Date()}})
   return {queued:true};
 }

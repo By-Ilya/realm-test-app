@@ -1,4 +1,6 @@
 import { convertForecastIntoRows } from 'helpers/forecast-util';
+import Tooltip from '@material-ui/core/Tooltip';
+import React from 'react';
 
 export default function generateForecastTableData(project) {
     if (!project) {
@@ -11,10 +13,14 @@ export default function generateForecastTableData(project) {
     const { forecast } = project;
 
     const forecastTableColumns = [
-        { title: 'N3M', field: 'name' },
-        { title: 'Month + 0', field: '0' },
-        { title: 'Month + 1', field: '1' },
-        { title: 'Month + 2', field: '2' },
+        { title: 'N3M', field: 'name', 
+            render: (rowData) => (rowData.tooltip) 
+                                    ?(<Tooltip title={rowData.tooltip}><span>{rowData.name}</span></Tooltip>)
+                                    : (rowData.name)
+        },
+        { title: 'Month + 0', field: '0', tooltip: "Current month" },
+        { title: 'Month + 1', field: '1', tooltip: "Next month" },
+        { title: 'Month + 2', field: '2', tooltip: "The month after the next" },
         { title: 'Current Quarter', field: 'cq_field' },
         { title: 'Quarter Call', field: 'cq_call' },
     ];

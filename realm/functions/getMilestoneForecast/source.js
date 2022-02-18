@@ -86,7 +86,7 @@ exports = async function(arg){
   
   //scheduled
   res = await col_schedule.aggregate([
-    {$match:{"milestoneId":arg,"week":{$gte:sunday,$lt:mplus_3}}},
+    {$match:{"milestoneId":arg,"week":{$gte:month,$lt:mplus_3}}},
     {$addFields: {
       "m_group": {
                $switch: {
@@ -130,7 +130,20 @@ exports = async function(arg){
     }},
     {$unwind:"$milestone"},
     {$project:{
-      "expired":{$multiply:["$milestone.summary.unscheduled_hours","$milestone.details.bill_rate"]},
+      "expired":{$multiply:[
+                   	{$cond:
+                   	  [ {$and:[ 
+                   	       {$gte:["$milestone.summary.billable_hours_in_financials",0]},
+                   	       {$gte:["$milestone.summary.billable_hours_scheduled_undelivered",0]} 
+                   	    ]},
+                        { $subtract: 
+                           [ "$milestone.summary.planned_hours", {$add:
+                              [ "$milestone.summary.billable_hours_in_financials", "$milestone.summary.billable_hours_scheduled_undelivered" ]} ] 
+                        },
+                   	    "$milestone.summary.unscheduled_hours"
+                   	  ]
+                   	},
+        "$milestone.details.bill_rate"]},
       "exp_group":"$exp_group"
     }},
   ]).toArray(); //console.log(JSON.stringify(res))

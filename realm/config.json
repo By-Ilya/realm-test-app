@@ -1,20 +1,19 @@
 {
+    "app_id": "shadowforce-dev-bypcm",
     "config_version": 20200603,
-    "name": "ShadowForce",
-    "location": "US-VA",
+    "name": "shadowforce-dev",
+    "location": "US-OR",
     "deployment_model": "GLOBAL",
     "security": {},
     "hosting": {
-        "enabled": true
+        "enabled": true,
+        "app_default_domain": "shadowforce-dev-bypcm.mongodbstitch.com"
     },
     "custom_user_data_config": {
-        "enabled": false,
-        "mongo_service_name": "mongodb-atlas",
-        "database_name": "shf",
-        "collection_name": "userdata",
-        "user_id_field": "userId"
+        "enabled": false
     },
     "sync": {
         "development_mode_enabled": false
-    }
+    },
+    "environment": "development"
 }

@@ -1,6 +1,7 @@
 {
     "field_name": "opportunitiesData",
     "function_name": "findOpportunities",
+    "id": "613705bc82a365309f940dfa",
     "input_type": {
         "bsonType": "object",
         "properties": {
@@ -30,6 +31,9 @@
                     },
                     "engagement_manager": {
                         "bsonType": "string"
+                    },
+                    "inForecast": {
+                        "bsonType": "bool"
                     },
                     "limit": {
                         "bsonType": "int"

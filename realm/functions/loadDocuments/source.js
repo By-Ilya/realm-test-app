@@ -15,6 +15,25 @@ exports = async function(col_name, arr){
   var isPlainObject = function (obj) {
   	return Object.prototype.toString.call(obj) === '[object Object]';
   };
+  
+  function prepValue(obj) {
+    if (obj == null)
+      return null;
+    
+    if (typeof obj === "number")
+      return parseFloat(obj);
+		
+		if (isPlainObject(obj)) {
+		  Object.keys(obj).forEach(key => {
+			        obj[key] = prepValue(obj[key]);
+		    })
+		} else if (Array.isArray(obj)) {
+		  for (let i in obj)
+		    obj[i] = prepValue(obj[i]);
+		}
+		  
+		return obj;
+  }
 
   function getSetters(doc) {
     var setters = {}
@@ -29,7 +48,7 @@ exports = async function(col_name, arr){
 		          iterate(obj[key],new_path)
 			    } else {
 			        if (obj[key] != null)
-			          setters[ new_path ] = ((typeof obj[key] === "number") ? parseFloat(obj[key]) : obj[key]);
+			          setters[ new_path ] = prepValue(obj[key]);//((typeof obj[key] === "number") ? parseFloat(obj[key]) : obj[key]);
 			          //setters[ new_path ] = obj[key];
 			        else
 			          unsetters[ new_path ] = 1

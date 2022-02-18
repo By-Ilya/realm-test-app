@@ -40,30 +40,26 @@ export default function MilestonesInfo(props) {
 
     const onClickPMStageButton = async (chosenProject) => {
         const origEmail = user.profile.email;
-        const { contacts } = chosenProject;
-        const custName = (contacts && contacts.customer) ? contacts.customer.name : null;
-        const custEmail = (contacts && contacts.customer) ? contacts.customer.email : null;
         const projectId = chosenProject.name;
-        const ceName = (contacts && contacts.ce) ? contacts.ce.name : null;
-        const ceEmail = (contacts && contacts.ce) ? contacts.ce.email : null;
 
-        if (!custName || !custEmail || !ceName || !ceEmail) {
-            alert('Contact information isn\'t complete!');
+        // If we are missing contact information, short-circuit
+        if (contactsTableRows.length === 0) {
+            alert('No contacts to send surveys');
             return;
         }
-        // console.log(custMailParams(origEmail,custName,custEmail,projectId))
-        // console.log(ceMailParams(origEmail,ceName,ceEmail,projectId))
-        if (!projectHasCustSurvey(project, custEmail)) {
-            await user.callFunction(
-                'sendMail',
-                custMailParams(origEmail, custName, custEmail, projectId),
-            );
-        }
-        if (!projectHasCESurvey(project, ceEmail)) {
-            await user.callFunction(
-                'sendMail',
-                ceMailParams(origEmail, ceName, ceEmail, projectId),
-            );
+
+        // If we haven't already sent the customer survey, send it now
+        for (const c of contactsTableRows) {
+            let custName = c.name;
+            let custEmail = c.email;
+            if (!projectHasCustSurvey(project, custEmail)) {
+                const params = await custMailParams(origEmail, custName, custEmail, projectId);
+                await user.callFunction(
+                    'sendMail',
+                    params,
+                );
+            } else
+                console.log(`Not sending a new survey to ${custEmail} since they already responded`)
         }
 
         await dbCollection.updateOne(
@@ -156,6 +152,36 @@ export default function MilestonesInfo(props) {
         await dbCollection.updateOne(query, update, options);
     };
 
+    const handleAddContactsRow = async ({ doc }) => {
+        const query = { _id: project._id };
+        const update = { $push: { contacts_list: { name: doc.name, email: doc.email, _id: doc._id, type: doc.type} } };
+        const options = { upsert: false };
+        await dbCollection.updateOne(query, update, options);
+    };
+
+    const handleUpdateContactsRow = async ({ doc, isVirtual }) => {
+        if (isVirtual) { // we updated a virtual row
+            await handleAddContactsRow({ doc });
+            return;
+        }
+
+        const query = { _id: project._id, 'contacts_list._id': doc._id };
+
+        const update =
+            {
+                $set: { 'contacts_list.$.name': doc.name, 'contacts_list.$.email': doc.email, 'contacts_list.$.type': doc.type},
+            };
+        const options = { upsert: false };
+        await dbCollection.updateOne(query, update, options);
+    };
+
+    const handleDeleteContactsRow = async ({ doc }) => {
+        const query = { _id: project._id };
+        const update = { $pull: { contacts_list: { _id: doc._id } } };
+        const options = { upsert: false };
+        await dbCollection.updateOne(query, update, options);
+    };
+
     const handleUpdateForecast = async ({ month, updateKey, value }) => {
         const query = { milestoneId: project.currentMilestone._id, month };
         const update = { $set: { [updateKey]: value } };
@@ -205,11 +231,14 @@ export default function MilestonesInfo(props) {
             )}
             <div className={classes.tableContainer}>
                 <ContactsTable
+                    project={project}
                     projectId={project._id}
                     tableName="Contact Information"
                     currentColumns={contactsTableColumns}
                     currentData={contactsTableRows}
-                    onUpdate={handleUpdateRow}
+                    onUpdate={handleUpdateContactsRow}
+                    onAdd={handleAddContactsRow}
+                    onDelete={handleDeleteContactsRow}
                 />
             </div>
             {surveyTableRows.length !== 0 && (

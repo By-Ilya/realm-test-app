@@ -57,5 +57,12 @@ export default function generateDocumentsTableData(project) {
         });
     }
 
+    //fake document for opportunity ps notes
+    if (project.opportunity && project.opportunity.ps_notes)
+        documentsTableRows.push({
+            body: project.opportunity.ps_notes, name: "Opportunity PS Notes",
+            editable: false,
+        });
+
     return { documentsTableColumns, documentsTableRows };
 }

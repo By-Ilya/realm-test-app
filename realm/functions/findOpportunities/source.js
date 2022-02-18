@@ -49,6 +49,7 @@ exports = async function findOpportunities({filter, sort, count_only}) {
     close_date,
     engagement_manager,
     name,
+    inForecast,
     active_user_filter,
     limit
   } = filter;
@@ -65,7 +66,7 @@ exports = async function findOpportunities({filter, sort, count_only}) {
       const thisQEndMonth = getCurrentQuartalMonth(month);
       const thisQStartMonth = getPreviousQuartalMonth(thisQEndMonth);
       
-      const thisQStartDate = new Date(year, (thisQStartMonth + 1), 1);
+      const thisQStartDate = new Date(year, thisQStartMonth, 1);
       const thisQEndDate = new Date(year, thisQEndMonth, 1);
       
       matchData = {
@@ -80,7 +81,7 @@ exports = async function findOpportunities({filter, sort, count_only}) {
       const nextQStartMonth = getCurrentQuartalMonth(month);
       const nextQEndMonth = getNextQuartalMonth(nextQStartMonth);
       
-      const nextQStartDate = new Date(year, (nextQStartMonth + 1), 1);
+      const nextQStartDate = new Date(year, nextQStartMonth, 1);
       const nextQEndDate = new Date(year, nextQEndMonth, 1);
       
       matchData = {
@@ -131,12 +132,33 @@ exports = async function findOpportunities({filter, sort, count_only}) {
   
   agg_pipeline.push({$match: matchData});
   
+  if (inForecast) {
+    agg_pipeline.push({$match: {
+      $or : [
+        {stage:"Closed Won"},
+        {"sales_forecast.AE":true},
+        {"sales_forecast.RD":true},
+//        {"sales_forecast.amount_services_RD":{$gt:0}},
+      ]
+    }})
+  }
+  
   if (count_only) {
     agg_pipeline.push({
       $group: {
         _id: "name",
         amountTotal: {$sum: "$amount"},
         servicesTotal: {$sum: "$services_post_carve"},
+        servicesForecastSales: {$sum: {$cond: [{$eq:["$stage", "Closed Won"]}, "$services_post_carve" ,
+          {$cond: [
+            {$or:[
+              //{$in:["$forecast_category",["Best Case","Most Likely","Closed"]]}, 
+              {$eq:["$sales_forecast.AE",true]},
+              {$eq:["$sales_forecast.RD",true]},
+//              {$gt:["$sales_forecast.amount_services_RD",0]},
+              ]},
+            "$sales_forecast.amount_services_RD" ,0]}
+          ]}},
         count: {$sum: 1}
       }
     });

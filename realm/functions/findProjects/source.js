@@ -44,6 +44,7 @@ exports = async function findProjects({filter, sort, count_only}) {
                                   {owner : {$in : names}},
                                   {project_manager: {$in : names}},
                                   {ps_ops_resource: {$in : names}},
+                                  {'opportunity.engagement_manager': {$in : names}},
                                   {'future_assignments_dates.resource_email': active_user_filter.email}
                                 ]};
   }
@@ -57,15 +58,46 @@ exports = async function findProjects({filter, sort, count_only}) {
   if (name)
     agg_pipeline.push(
       {$search: 
+        // {
+        //   "text": {
+        //     "query": name,
+        //     "path": ["name","custom_name"]
+        //   }
+        // }
         {
-          "text": {
-            "query": name,
-            "path": ["name","custom_name"]
-          }
+          "compound": 
+        	{
+        		"should":[{
+        			"autocomplete": {
+        			  "path": "name",
+        			  "query": name,
+        			}
+        		},
+        		{
+        			"autocomplete": {
+        			  "path": "custom_name",
+        			  "query": name,
+        			}
+        		},
+        		{
+        			"autocomplete": {
+        			  "path": "account",
+        			  "query": name,
+        			}
+        		},
+        		{
+        			"autocomplete":{
+        			  "path": "opportunity.name",
+        			  "query": name
+        			}
+        		}]
+        	}
         }
       }
     );
-    
+  //we can have malformed projects with no details (ghost milestone upserts) or no milestones (old projects getting updated)
+  agg_pipeline.push({$match:{details:{$ne:null},milestones:{$ne:null}}});
+  
   agg_pipeline.push(
     {$match: matchData}
   );
@@ -80,7 +112,7 @@ exports = async function findProjects({filter, sort, count_only}) {
     agg_pipeline.push(
       {$limit: biasedLimit || 51}
     );
-    
+
   } else
     agg_pipeline.push(
       {$count: "name"}

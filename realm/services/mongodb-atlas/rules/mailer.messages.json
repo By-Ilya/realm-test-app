@@ -1,6 +1,7 @@
 {
     "collection": "messages",
     "database": "mailer",
+    "id": "613705bc82a365309f940d53",
     "roles": [
         {
             "name": "default",

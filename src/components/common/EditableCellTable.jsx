@@ -9,6 +9,7 @@ import { ProjectContext } from 'context/ProjectContext';
 import generateTableIcons from 'components/common/helpers/TableIcons';
 import { getThisMonth, getNextMonth } from 'helpers/date-util';
 import { getCallFromThree } from 'helpers/forecast-util';
+import Tooltip from '@material-ui/core/Tooltip';
 
 export default function EditableCellTable(props) {
     const {
@@ -135,7 +136,9 @@ function TableTitle(props) {
             >
                 {tableName}
             </Typography>
-            <Checkbox checked={checkboxValue} onChange={onCheckboxUpdate} />
+            <Tooltip title="Check me to mark your forecast as completed for this month">
+                <Checkbox checked={checkboxValue} onChange={onCheckboxUpdate} />
+            </Tooltip>
         </Box>
     );
 }
