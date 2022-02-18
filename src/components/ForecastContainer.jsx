@@ -23,6 +23,8 @@ import NoSortingIcon from 'components/common/sorting/NoSortingIcon';
 import AscSortingIcon from 'components/common/sorting/AscSortingIcon';
 import DescSortingIcon from 'components/common/sorting/DescSortingIcon';
 
+const NUMBER_REGEXP = /\d+/gi;
+
 const useStyles = makeStyles((theme) => ({
     container: {
         marginTop: 70,
@@ -81,6 +83,30 @@ const useStyles = makeStyles((theme) => ({
         left: '20px',
     },
 }));
+
+function parseMonthFieldToObject(field, fieldValue) {
+    const monthNumber = field.match(NUMBER_REGEXP)[0];
+    const fieldPartsAroundMonthNumber = field.split(monthNumber);
+    const monthPrefix = fieldPartsAroundMonthNumber[0].toLowerCase();
+    const monthField = fieldPartsAroundMonthNumber[1].toLowerCase();
+
+    let formattedMonthField = monthField;
+    switch (monthField) {
+        case 'likely':
+            formattedMonthField = 'most_likely';
+            break;
+        case 'best':
+            formattedMonthField = 'best_case';
+            break;
+        default:
+            break;
+    }
+
+    return {
+        month: `${monthPrefix}_${monthNumber}`,
+        monthObj: { [formattedMonthField]: fieldValue },
+    };
+}
 
 function ForecastTableHeader(props) {
     const classes = useStyles();
@@ -238,10 +264,14 @@ export default function ForecastContainer(props) {
         grouppedForecastDetails,
         groupTableRowsByAccount,
         ungroupTableRowsByAccount,
+        judgementRefs,
+        saveJudgementObject,
     } = useContext(ForecastContext);
     const { columns, rows } = tableData;
 
     const textFieldRef = React.createRef(null);
+
+    const [onSaveLoadProcessing, setOnSaveLoadProcessing] = useState(false);
 
     const isActivateAdditionActions = useMemo(() => (
         filter.level === 'PSM'
@@ -265,19 +295,19 @@ export default function ForecastContainer(props) {
 
     const renderRowAction = (row) => {
         const nameField = row?.name?.data?.value ?? EMPTY_ACCOUNT_NAME;
-        if (grouppedAccountNames.includes(nameField)) {
-            return {
+        const rowActions = grouppedAccountNames.includes(nameField)
+            ? {
                 icon: tableIcons.Group,
                 tooltip: `Ungroup "${nameField}"`,
                 onClick: () => handleOnUngroupRows(nameField),
+            }
+            : {
+                icon: tableIcons.GroupAdd,
+                tooltip: 'Group by Account',
+                onClick: handleOnGroupRows,
             };
-        }
 
-        return {
-            icon: tableIcons.GroupAdd,
-            tooltip: 'Group by Account',
-            onClick: handleOnGroupRows,
-        };
+        return rowActions;
     };
 
     const tableActions = useMemo(() => (
@@ -296,8 +326,26 @@ export default function ForecastContainer(props) {
         <ForecastTableHeader forecastDetailsColumns={sumAndJudgementColumns} />
     ), [columns.sumAndJudgement]);
 
-    const handleClickOnSaveButton = () => {
-        console.log('new notes:', textFieldRef.current.value ?? ''); // TODO: log
+    const handleClickOnSaveButton = async () => {
+        setOnSaveLoadProcessing(true);
+
+        const fieldsToSave = {};
+        judgementRefs.forEach((inputRef, fieldName) => {
+            if (fieldName === 'name') return;
+            if (fieldName.startsWith('month')) {
+                const fieldValue = parseFloat(inputRef?.current?.value) ?? 0;
+                const { month, monthObj } = parseMonthFieldToObject(fieldName, fieldValue);
+                fieldsToSave[month] = { ...(fieldsToSave[month] ?? {}), ...monthObj };
+                return;
+            }
+            fieldsToSave[fieldName] = parseFloat(inputRef?.current?.value) ?? 0;
+        });
+        const notesToSave = textFieldRef.current.value ?? '';
+
+        await saveJudgementObject(fieldsToSave, notesToSave);
+
+        await fetchForecast({ needToClean: false });
+        setOnSaveLoadProcessing(false);
     };
 
     return (
@@ -342,7 +390,7 @@ export default function ForecastContainer(props) {
                                     textValue={notes}
                                 />
                                 <SaveButton
-                                    updateProcessing={false}
+                                    updateProcessing={onSaveLoadProcessing}
                                     onClick={handleClickOnSaveButton}
                                 />
                             </>
@@ -369,7 +417,7 @@ const ForecastNotes = React.forwardRef((props, ref) => {
                 multiline
                 inputRef={ref}
                 rows={countRows}
-                value={textValue}
+                defaultValue={textValue}
                 variant="filled"
                 className={classes.textField}
             />

@@ -149,7 +149,7 @@ export default function MainPage() {
 
     const fetchForecastByTrigger = async ({ needToClean }) => {
         if (needToClean) await cleanLocalForecast();
-        fetchForecast();
+        await fetchForecast(!needToClean);
     };
 
     useEffect(() => {

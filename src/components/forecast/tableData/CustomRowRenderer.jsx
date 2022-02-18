@@ -54,7 +54,7 @@ const formUpdateFilterFunc = ({
     }
 };
 
-export default function CustomRowRenderer(props) {
+const CustomRowRenderer = React.forwardRef((props, ref) => {
     const { rowType, data } = props;
 
     let row = null;
@@ -66,14 +66,14 @@ export default function CustomRowRenderer(props) {
             row = (<MultiRow multiRowData={data} />);
             break;
         case RowType.JUDGEMENT_DATA:
-            row = (<JudgementRow judgementData={data} />);
+            row = <JudgementRow ref={ref} judgementData={data} />;
             break;
         default:
             break;
     }
 
     return row;
-}
+});
 
 CustomRowRenderer.propTypes = {
     rowType: PropTypes.number.isRequired,
@@ -140,7 +140,7 @@ MultiRow.propTypes = {
     multiRowData: PropTypes.array.isRequired,
 };
 
-function JudgementRow(props) {
+const JudgementRow = React.forwardRef((props, ref) => {
     const classes = useStyles();
 
     const { judgementData } = props;
@@ -165,12 +165,13 @@ function JudgementRow(props) {
             size="small"
             variant="outlined"
             label=""
+            inputRef={ref}
             value={textFieldValue}
             onChange={handleOnChangeTextField}
             className={textFieldClassNames}
         />
     );
-}
+});
 
 JudgementRow.propTypes = {
     judgementData: PropTypes.object.isRequired,
@@ -224,3 +225,5 @@ DataWithTooltipWrapper.propTypes = {
     tooltipText: PropTypes.string.isRequired,
     dataElem: PropTypes.object.isRequired,
 };
+
+export default CustomRowRenderer;

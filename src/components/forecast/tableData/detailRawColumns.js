@@ -7,7 +7,7 @@ const CELL_STYLE = {
     maxWidth: 150,
 };
 
-export default function generateRawColumns(forecastColumns) {
+export default function generateRawColumns(forecastColumns, refs = undefined) {
     const rawColumns = [];
     forecastColumns.forEach((column) => {
         const {
@@ -38,6 +38,7 @@ export default function generateRawColumns(forecastColumns) {
                             <CustomRowRenderer
                                 rowType={rowType}
                                 data={data}
+                                ref={refs ? refs.get(fullField) : undefined}
                             />
                         );
                     },
@@ -58,6 +59,7 @@ export default function generateRawColumns(forecastColumns) {
                     <CustomRowRenderer
                         rowType={rowType}
                         data={data}
+                        ref={refs ? refs.get(field) : undefined}
                     />
                 );
             },

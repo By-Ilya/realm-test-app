@@ -18,6 +18,7 @@ export function calculateJudgementFromSum({
     }
 
     judgementData.data.value = judgementValue;
+    judgementData.data.valueToRender = judgementValue;
     multiSumData.forEach((sumData) => {
         const { levelName, value } = sumData;
         if (levelName !== undefined && levelName === levelWithThreshold) {

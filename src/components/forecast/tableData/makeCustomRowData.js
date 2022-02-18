@@ -54,7 +54,7 @@ export function makeJudgementData({ value, thresholdValue }) {
     return {
         rowType: RowType.JUDGEMENT_DATA,
         data: {
-            valueToRender: makeValueToRender(undefined, value),
+            valueToRender: value,
             thresholdValue,
         },
     };

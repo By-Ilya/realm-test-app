@@ -118,6 +118,7 @@ class ForecastContainer extends React.Component {
             grouppedForecastDetails: {},
             sumData: {},
             judgementData: {},
+            judgementRefs: new Map(),
             notes: '',
             sort: DEFAULT_SORT,
             tableData: {
@@ -135,6 +136,7 @@ class ForecastContainer extends React.Component {
             groupTableRowsByAccount: this.groupTableRowsByAccount,
             ungroupTableRowsByAccount: this.ungroupTableRowsByAccount,
             sortTableRows: this.sortTableRows,
+            saveJudgementObject: this.saveJudgementObject,
         };
     }
 
@@ -226,16 +228,22 @@ class ForecastContainer extends React.Component {
         const updatedDetailsColumns = this.updateForecatDetailsColumns(filter.level);
         const { sumAndJudgementColumns } = this.state;
 
+        const judgementRefs = this.createJudgementRefs(sumAndJudgementColumns);
+
         this.setState({
             filter,
             psmNamesList: newPsmNamesList,
             forecastDetailsColumns: updatedDetailsColumns,
             grouppedForecastDetails: {},
             sort: DEFAULT_SORT,
+            judgementRefs,
             tableData: {
                 columns: {
                     details: generateRawColumns(updatedDetailsColumns),
-                    sumAndJudgement: generateRawColumns(sumAndJudgementColumns),
+                    sumAndJudgement: generateRawColumns(
+                        sumAndJudgementColumns,
+                        judgementRefs,
+                    ),
                 },
                 rows: {
                     details: [],
@@ -245,9 +253,32 @@ class ForecastContainer extends React.Component {
         });
     }
 
-    fetchForecast = async () => {
+    createJudgementRefs = (sumAndJudgementColumns) => {
+        const judgementRefs = new Map();
+
+        sumAndJudgementColumns.forEach((column) => {
+            const { subColumns, field } = column;
+
+            if (!subColumns || !subColumns.length) {
+                judgementRefs.set(field, React.createRef(null));
+                return;
+            }
+
+            subColumns.forEach((subColumn) => {
+                const { field: subColumnField } = subColumn;
+                const fullFieldName = `${field}${subColumnField}`;
+                judgementRefs.set(fullFieldName, React.createRef(null));
+            });
+        });
+
+        return judgementRefs;
+    }
+
+    fetchForecast = async (fetchOnSave = false) => {
         const { filter } = this.state;
-        this.setState({ loadProcessing: true });
+        if (!fetchOnSave) {
+            this.setState({ loadProcessing: true });
+        }
         switch (filter.level) {
             case 'PSM':
                 await this.fetchPsmForecastData(filter.psmName);
@@ -694,6 +725,61 @@ class ForecastContainer extends React.Component {
             this.setState({ sort: prevSortState });
             return details;
         }
+    }
+
+    saveJudgementObject = async (newFields, newNotes) => {
+        const { filter, sumData } = this.state;
+        const { authValue } = this.props;
+        // eslint-disable-next-line camelcase
+        const { fcst_saveJudgementObject } = authValue.user.functions;
+
+        const month = new Date();
+
+        /* eslint-disable no-case-declarations */
+        switch (filter.level) {
+            case 'PSM':
+                const typePsm = { geo: filter.geo, name: filter.psmName };
+                const fObjectPsm = { pmo: sumData, fields: newFields };
+                await fcst_saveJudgementObject(
+                    typePsm,
+                    month,
+                    fObjectPsm,
+                    newNotes,
+                );
+                break;
+            case 'DIR':
+                const typeDir = { geo: filter.geo };
+                const fObjectDir = {
+                    pmo: sumData.pmo,
+                    psm_overrides: sumData.psm_overrides,
+                    fields: newFields,
+                };
+                await fcst_saveJudgementObject(
+                    typeDir,
+                    month,
+                    fObjectDir,
+                    newNotes,
+                );
+                break;
+            case 'VP':
+                const typeVp = { vp: true };
+                const fObjectVp = {
+                    pmo: sumData.pmo,
+                    psm_overrides: sumData.psm_overrides,
+                    dir_overrides: sumData.dir_overrides,
+                    fields: newFields,
+                };
+                await fcst_saveJudgementObject(
+                    typeVp,
+                    month,
+                    fObjectVp,
+                    newNotes,
+                );
+                break;
+            default:
+                break;
+        }
+        /* eslint-enable no-case-declarations */
     }
 
     render() {

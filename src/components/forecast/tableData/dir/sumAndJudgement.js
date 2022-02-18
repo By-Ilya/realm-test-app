@@ -28,57 +28,57 @@ export default function generateSumAndJudgementRows(sumData, judgementData) {
     const judgementRow = {
         name: makeSingleRowData({ value: 'Judgement', levelName: undefined, changeFilterArgs: undefined }),
         quarterlyCall: calculateJudgementFromSum({
-            judgementValue: judgementData.quarterly_call ?? 0,
+            judgementValue: judgementData.quarterlyCall ?? 0,
             sumRow: sumRow.quarterlyCall,
             levelWithThreshold,
         }),
         deliveredCall: calculateJudgementFromSum({
-            judgementValue: judgementData.delivered_call ?? 0,
+            judgementValue: judgementData.deliveredCall ?? 0,
             sumRow: sumRow.deliveredCall,
             levelWithThreshold,
         }),
         deliveredFromExpiring: calculateJudgementFromSum({
-            judgementValue: judgementData.delivered_from_expiring ?? 0,
+            judgementValue: judgementData.deliveredFromExpiring ?? 0,
             sumRow: sumRow.deliveredFromExpiring,
             levelWithThreshold,
         }),
         deliveredConsulting: calculateJudgementFromSum({
-            judgementValue: judgementData.delivered_consulting ?? 0,
+            judgementValue: judgementData.deliveredConsulting ?? 0,
             sumRow: sumRow.deliveredConsulting,
             levelWithThreshold,
         }),
         deliveredTraining: calculateJudgementFromSum({
-            judgementValue: judgementData.delivered_training ?? 0,
+            judgementValue: judgementData.deliveredTraining ?? 0,
             sumRow: sumRow.deliveredTraining,
             levelWithThreshold,
         }),
         expiringCall: calculateJudgementFromSum({
-            judgementValue: judgementData.expiring_call ?? 0,
+            judgementValue: judgementData.expiringCall ?? 0,
             sumRow: sumRow.expiringCall,
             levelWithThreshold,
         }),
         qtdDelivered: calculateJudgementFromSum({
-            judgementValue: judgementData.qtd_delivered ?? 0,
+            judgementValue: judgementData.qtdDelivered ?? 0,
             sumRow: sumRow.qtdDelivered,
             levelWithThreshold,
         }),
         qtdExpired: calculateJudgementFromSum({
-            judgementValue: judgementData.qtd_expired ?? 0,
+            judgementValue: judgementData.qtdExpired ?? 0,
             sumRow: sumRow.qtdExpired,
             levelWithThreshold,
         }),
         totalQtdRevenue: calculateJudgementFromSum({
-            judgementValue: judgementData.total_qtd_revenue ?? 0,
+            judgementValue: judgementData.totalQtdRevenue ?? 0,
             sumRow: sumRow.totalQtdRevenue,
             levelWithThreshold,
         }),
         roqRisk: calculateJudgementFromSum({
-            judgementValue: judgementData.roq_risk ?? 0,
+            judgementValue: judgementData.roqRisk ?? 0,
             sumRow: sumRow.roqRisk,
             levelWithThreshold,
         }),
         roqUpside: calculateJudgementFromSum({
-            judgementValue: judgementData.roq_upside ?? 0,
+            judgementValue: judgementData.roqUpside ?? 0,
             sumRow: sumRow.roqUpside,
             levelWithThreshold,
         }),
