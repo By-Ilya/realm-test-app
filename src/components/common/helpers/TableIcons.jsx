@@ -14,6 +14,8 @@ import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
+import GroupAdd from '@material-ui/icons/GroupAddOutlined';
+import Group from '@material-ui/icons/Group';
 
 export default function generateTableIcons(props) {
     const { onClickEditButton } = props;
@@ -42,5 +44,7 @@ export default function generateTableIcons(props) {
         SortArrow: forwardRef((props, ref) => <ArrowDownward {...props} ref={ref} />),
         ThirdStateCheck: forwardRef((props, ref) => <Remove {...props} ref={ref} />),
         ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />),
+        GroupAdd: forwardRef((props, ref) => <GroupAdd {...props} ref={ref} />),
+        Group: forwardRef((props, ref) => <Group {...props} ref={ref} />),
     };
 }

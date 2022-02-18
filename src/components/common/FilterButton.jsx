@@ -54,7 +54,7 @@ export default function FilterButton(props) {
                                 classes={{ formControl: classes.formControl }}
                                 label={obj.label}
                                 currentValue={obj.currentValue}
-                                values={obj.values}
+                                values={obj.values ?? []}
                                 setValue={obj.setValue}
                                 showEmptyValue={obj.showEmptyValue}
                             />
@@ -94,6 +94,7 @@ function FilterOption(props) {
                 onChange={setValue}
                 input={<Input id="demo-dialog-native" />}
             >
+                {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
                 {showEmptyValue && <option value="" />}
                 {values.map((v) => <option value={v}>{v}</option>)}
             </Select>

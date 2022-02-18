@@ -4,9 +4,11 @@ import { useLazyQuery } from '@apollo/client';
 import { AuthContext } from 'context/AuthContext';
 import { ProjectContext } from 'context/ProjectContext';
 import { OpportunityContext } from 'context/OpportunityContext';
-import TopPanel from 'components/TopPanel';
+import { ForecastContext } from 'context/ForecastContext';
+import TopPanelRenderer from 'components/TopPanelRenderer';
 import ProjectsContainer from 'components/ProjectsContainer';
 import OpportunitiesContainer from 'components/OpportunitiesContainer';
+import ForecastContainer from 'components/ForecastContainer';
 import {
     FIND_PROJECTS,
     FIND_OPPORTUNITIES,
@@ -33,6 +35,7 @@ export default function MainPage() {
         pagination: opportunityPagination,
         fetchOpportunitiesTotalInfo,
     } = useContext(OpportunityContext);
+    const { fetchForecast, cleanLocalForecast } = useContext(ForecastContext);
 
     const isApplyActiveUserFilter = (localKey, filterObj) => {
         if (localStorage.getItem(localKey)) {
@@ -144,6 +147,11 @@ export default function MainPage() {
         fetchOpportunities();
     };
 
+    const fetchForecastByTrigger = async ({ needToClean }) => {
+        if (needToClean) await cleanLocalForecast();
+        await fetchForecast(!needToClean);
+    };
+
     useEffect(() => {
         switch (activePage) {
             case PAGES.projects:
@@ -154,17 +162,21 @@ export default function MainPage() {
                 setOpportunitiesLoadProcessing(true);
                 fetchOpportunitiesByTrigger({ needToClean: true });
                 break;
+            case PAGES.forecast:
+                fetchForecastByTrigger({ needToClean: true });
+                break;
             default: console.error('Unknown page');
         }
     }, [activePage]);
 
     return (
         <>
-            <TopPanel
+            <TopPanelRenderer
                 activePage={activePage}
                 setActivePage={setActivePage}
                 fetchProjects={fetchProjectsByTrigger}
                 fetchOpportunities={fetchOpportunitiesByTrigger}
+                fetchForecast={fetchForecastByTrigger}
             />
             {activePage === PAGES.projects && (
                 <ProjectsContainer
@@ -174,6 +186,11 @@ export default function MainPage() {
             {activePage === PAGES.opportunities && (
                 <OpportunitiesContainer
                     fetchOpportunities={fetchOpportunitiesByTrigger}
+                />
+            )}
+            {activePage === PAGES.forecast && (
+                <ForecastContainer
+                    fetchForecast={fetchForecastByTrigger}
                 />
             )}
         </>

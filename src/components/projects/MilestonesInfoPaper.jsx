@@ -44,7 +44,12 @@ export default function MilestonesInfoPaper(props) {
                         ? (
                             <MilestonesInfo
                                 classes={containerClasses}
-                                project={{ ...project, currentMilestone, forecast, cases }}
+                                project={{
+                                    ...project,
+                                    currentMilestone,
+                                    forecast,
+                                    cases,
+                                }}
                             />
                         )
                         : (

@@ -34,7 +34,6 @@ const useStyles = makeStyles((theme) => ({
     },
     buttonProgress: {
         position: 'absolute',
-        marginLeft: '2.5rem',
     },
     paper: {
         padding: theme.spacing(1),

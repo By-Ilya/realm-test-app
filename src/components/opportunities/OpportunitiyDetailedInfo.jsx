@@ -9,7 +9,7 @@ import {
     OpportunityCard,
     EMTable,
     PSNotes,
-    OppInfoTable
+    OppInfoTable,
 } from 'components/opportunities/detailedInfo';
 import { AuthContext } from 'context/AuthContext';
 import { OpportunityContext } from 'context/OpportunityContext';

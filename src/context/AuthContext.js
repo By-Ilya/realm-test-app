@@ -48,7 +48,7 @@ export default class ContextContainer extends React.Component {
             opportunityCollection: null,
             fcstCollection: null,
             activePage: localActivePage || PAGES.projects,
-            ceMode: (localCeMode === 'true') ? true : false,
+            ceMode: (localCeMode === 'true'),
             localStorageKeys: DEFAULT_LOCAL_STORAGE_KEYS,
         };
         this.funcs = {
@@ -61,7 +61,7 @@ export default class ContextContainer extends React.Component {
             setActivePage: this.setActivePage,
             getActiveUserFilter: this.getActiveUserFilter,
             logOut: this.logOut,
-            toggleCEMode: this.toggleCEMode
+            toggleCEMode: this.toggleCEMode,
         };
     }
 
@@ -97,8 +97,9 @@ export default class ContextContainer extends React.Component {
 
     googleSignIn = async () => {
         const credentials = Realm.Credentials.google(GOOGLE_REDIRECT_URI);
+        const { app } = this.state;
         try {
-            const user = await this.state.app.logIn(credentials);
+            const user = await app.logIn(credentials);
             this.setUser(user);
         } catch (err) {
             console.error(err);
@@ -107,8 +108,9 @@ export default class ContextContainer extends React.Component {
     };
 
     getUserAccessToken = async () => {
-        await this.state.app.currentUser.refreshCustomData();
-        return this.state.app.currentUser.accessToken;
+        const { app } = this.state;
+        await app.currentUser.refreshCustomData();
+        return app.currentUser.accessToken;
     };
 
     setErrorInfo = (errorInfo) => {
@@ -142,15 +144,15 @@ export default class ContextContainer extends React.Component {
     }
 
     logOut = async () => {
-        const { currentUser } = this.state.app;
-        await currentUser.logOut();
-        this.setUser(currentUser);
+        const { app } = this.state;
+        await app.currentUser.logOut();
+        this.setUser(app.currentUser);
         this.removeLocalData();
     }
 
     toggleCEMode = () => {
         const { ceMode } = this.state;
-        this.setState({ ceMode: !ceMode});
+        this.setState({ ceMode: !ceMode });
         this.setLocalStorageValue(DEFAULT_LOCAL_STORAGE_KEYS.ceMode, !ceMode);
     }
 
@@ -165,6 +167,7 @@ export default class ContextContainer extends React.Component {
 
     render() {
         return (
+            // eslint-disable-next-line react/jsx-filename-extension
             <AuthContext.Provider value={{ ...this.state, ...this.funcs }}>
                 {this.props.children}
             </AuthContext.Provider>

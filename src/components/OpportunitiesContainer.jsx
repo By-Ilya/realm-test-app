@@ -39,7 +39,6 @@ const useStyles = makeStyles((theme) => ({
     },
     buttonProgress: {
         position: 'absolute',
-        marginLeft: '2.5rem',
     },
 }));
 
@@ -124,6 +123,18 @@ export default function OpportunitiesContainer(props) {
         setActiveOpportunity(null);
     };
 
+    const getMoreButtonContent = (
+        <>
+            Get more
+            {moreOpportunitiesLoadProcessing && (
+                <CircularProgress
+                    size={24}
+                    className={classes.buttonProgress}
+                />
+            )}
+        </>
+    );
+
     return (
         <Grid container className={classes.container}>
             <Grid item xs={activeOpportunity ? 9 : 12}>
@@ -166,14 +177,8 @@ export default function OpportunitiesContainer(props) {
                                 color="primary"
                                 onClick={fetchMoreOpportunities}
                             >
-                                Get more
+                                {getMoreButtonContent}
                             </Button>
-                            {moreOpportunitiesLoadProcessing && (
-                                <CircularProgress
-                                    size={24}
-                                    className={classes.buttonProgress}
-                                />
-                            )}
                         </div>
                     )}
                 </Paper>

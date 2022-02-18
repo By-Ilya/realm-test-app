@@ -397,6 +397,7 @@ class ProjectContainer extends React.Component {
 
     render() {
         return (
+            // eslint-disable-next-line react/jsx-filename-extension
             <ProjectContext.Provider value={{ ...this.state, ...this.funcs }}>
                 {this.props.children}
             </ProjectContext.Provider>
