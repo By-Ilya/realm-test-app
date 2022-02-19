@@ -73,7 +73,7 @@ const COMMON_FORECAST_DETAILS_COLUMNS = [
     {
         title: 'Current month +2',
         subTitle: 'Current month',
-        field: 'month1',
+        field: 'month2',
         subColumns: [
             { title: 'Most Likely $', field: 'Likely' },
             { title: 'Best Case $', field: 'Best' },
