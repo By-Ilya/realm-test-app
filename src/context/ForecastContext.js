@@ -738,7 +738,7 @@ class ForecastContainer extends React.Component {
         /* eslint-disable no-case-declarations */
         switch (filter.level) {
             case 'PSM':
-                const typePsm = { geo: filter.geo, name: filter.psmName };
+                const typePsm = { geo: filter.geo, psm: filter.psmName };
                 const fObjectPsm = { pmo: sumData, fields: newFields };
                 await fcst_saveJudgementObject(
                     typePsm,
