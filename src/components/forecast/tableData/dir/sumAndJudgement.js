@@ -5,17 +5,17 @@ import { calculateJudgementFromSum } from 'components/forecast/tableData/judgeme
 export default function generateSumAndJudgementRows(sumData, judgementData) {
     const sumRow = {
         name: makeSingleRowData({ value: 'Sum', levelName: undefined, changeFilterArgs: undefined }),
-        quarterlyCall: makeMultiRow({ row: sumData, complexFieldName: 'quarterly_call' }),
-        deliveredCall: makeMultiRow({ row: sumData, complexFieldName: 'delivered_call' }),
-        deliveredFromExpiring: makeMultiRow({ row: sumData, complexFieldName: 'delivered_from_expiring' }),
-        deliveredConsulting: makeMultiRow({ row: sumData, complexFieldName: 'delivered_consulting' }),
-        deliveredTraining: makeMultiRow({ row: sumData, complexFieldName: 'delivered_training' }),
-        expiringCall: makeMultiRow({ row: sumData, complexFieldName: 'expiring_call' }),
-        qtdDelivered: makeMultiRow({ row: sumData, complexFieldName: 'qtd_delivered' }),
-        qtdExpired: makeMultiRow({ row: sumData, complexFieldName: 'qtd_expired' }),
-        totalQtdRevenue: makeMultiRow({ row: sumData, complexFieldName: 'total_qtd_revenue' }),
-        roqRisk: makeMultiRow({ row: sumData, complexFieldName: 'roq_risk' }),
-        roqUpside: makeMultiRow({ row: sumData, complexFieldName: 'roq_upside' }),
+        quarterly_call: makeMultiRow({ row: sumData, complexFieldName: 'quarterly_call' }),
+        delivered_call: makeMultiRow({ row: sumData, complexFieldName: 'delivered_call' }),
+        delivered_from_expiring: makeMultiRow({ row: sumData, complexFieldName: 'delivered_from_expiring' }),
+        delivered_consulting: makeMultiRow({ row: sumData, complexFieldName: 'delivered_consulting' }),
+        delivered_training: makeMultiRow({ row: sumData, complexFieldName: 'delivered_training' }),
+        expiring_call: makeMultiRow({ row: sumData, complexFieldName: 'expiring_call' }),
+        qtd_delivered: makeMultiRow({ row: sumData, complexFieldName: 'qtd_delivered' }),
+        qtd_expired: makeMultiRow({ row: sumData, complexFieldName: 'qtd_expired' }),
+        total_qtd_revenue: makeMultiRow({ row: sumData, complexFieldName: 'total_qtd_revenue' }),
+        roq_risk: makeMultiRow({ row: sumData, complexFieldName: 'roq_risk' }),
+        roq_upside: makeMultiRow({ row: sumData, complexFieldName: 'roq_upside' }),
         month0Likely: makeMultiRow({ row: sumData, complexFieldName: 'month_0.most_likely' }),
         month0Best: makeMultiRow({ row: sumData, complexFieldName: 'month_0.best_case' }),
         month1Likely: makeMultiRow({ row: sumData, complexFieldName: 'month_1.most_likely' }),
@@ -27,59 +27,59 @@ export default function generateSumAndJudgementRows(sumData, judgementData) {
     const levelWithThreshold = 'PSM';
     const judgementRow = {
         name: makeSingleRowData({ value: 'Judgement', levelName: undefined, changeFilterArgs: undefined }),
-        quarterlyCall: calculateJudgementFromSum({
+        quarterly_call: calculateJudgementFromSum({
             judgementValue: judgementData.quarterly_call ?? 0,
-            sumRow: sumRow.quarterlyCall,
+            sumRow: sumRow.quarterly_call,
             levelWithThreshold,
         }),
-        deliveredCall: calculateJudgementFromSum({
+        delivered_call: calculateJudgementFromSum({
             judgementValue: judgementData.delivered_call ?? 0,
-            sumRow: sumRow.deliveredCall,
+            sumRow: sumRow.delivered_call,
             levelWithThreshold,
         }),
-        deliveredFromExpiring: calculateJudgementFromSum({
+        delivered_from_expiring: calculateJudgementFromSum({
             judgementValue: judgementData.delivered_from_expiring ?? 0,
-            sumRow: sumRow.deliveredFromExpiring,
+            sumRow: sumRow.delivered_from_expiring,
             levelWithThreshold,
         }),
-        deliveredConsulting: calculateJudgementFromSum({
+        delivered_consulting: calculateJudgementFromSum({
             judgementValue: judgementData.delivered_consulting ?? 0,
-            sumRow: sumRow.deliveredConsulting,
+            sumRow: sumRow.delivered_consulting,
             levelWithThreshold,
         }),
-        deliveredTraining: calculateJudgementFromSum({
+        delivered_training: calculateJudgementFromSum({
             judgementValue: judgementData.delivered_training ?? 0,
-            sumRow: sumRow.deliveredTraining,
+            sumRow: sumRow.delivered_training,
             levelWithThreshold,
         }),
-        expiringCall: calculateJudgementFromSum({
+        expiring_call: calculateJudgementFromSum({
             judgementValue: judgementData.expiring_call ?? 0,
-            sumRow: sumRow.expiringCall,
+            sumRow: sumRow.expiring_call,
             levelWithThreshold,
         }),
-        qtdDelivered: calculateJudgementFromSum({
+        qtd_delivered: calculateJudgementFromSum({
             judgementValue: judgementData.qtd_delivered ?? 0,
-            sumRow: sumRow.qtdDelivered,
+            sumRow: sumRow.qtd_delivered,
             levelWithThreshold,
         }),
-        qtdExpired: calculateJudgementFromSum({
+        qtd_expired: calculateJudgementFromSum({
             judgementValue: judgementData.qtd_expired ?? 0,
-            sumRow: sumRow.qtdExpired,
+            sumRow: sumRow.qtd_expired,
             levelWithThreshold,
         }),
-        totalQtdRevenue: calculateJudgementFromSum({
+        total_qtd_revenue: calculateJudgementFromSum({
             judgementValue: judgementData.total_qtd_revenue ?? 0,
-            sumRow: sumRow.totalQtdRevenue,
+            sumRow: sumRow.total_qtd_revenue,
             levelWithThreshold,
         }),
-        roqRisk: calculateJudgementFromSum({
+        roq_risk: calculateJudgementFromSum({
             judgementValue: judgementData.roq_risk ?? 0,
-            sumRow: sumRow.roqRisk,
+            sumRow: sumRow.roq_risk,
             levelWithThreshold,
         }),
-        roqUpside: calculateJudgementFromSum({
+        roq_upside: calculateJudgementFromSum({
             judgementValue: judgementData.roq_upside ?? 0,
-            sumRow: sumRow.roqUpside,
+            sumRow: sumRow.roq_upside,
             levelWithThreshold,
         }),
         month0Likely: calculateJudgementFromSum({

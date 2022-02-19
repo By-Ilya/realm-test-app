@@ -34,24 +34,24 @@ const SUM_AND_JUDGEMENT_COLUMNS = [
 ];
 
 const COMMON_FORECAST_DETAILS_COLUMNS = [
-    { title: 'Quarterly Call', field: 'quarterlyCall' },
+    { title: 'Quarterly Call', field: 'quarterly_call' },
     {
         title: 'How is your quarterly call broken down?',
         subTitle: '',
         field: '',
         subColumns: [
-            { title: 'Delivered Revenue Call', field: 'deliveredCall' },
-            { title: 'Delivered Revenue from Expiring', field: 'deliveredFromExpiring' },
-            { title: 'Delivered Revenue from Consulting', field: 'deliveredConsulting' },
-            { title: 'Delivered Revenue from Training', field: 'deliveredTraining' },
-            { title: 'Expiring Revenue', field: 'expiringCall' },
+            { title: 'Delivered Revenue Call', field: 'delivered_call' },
+            { title: 'Delivered Revenue from Expiring', field: 'delivered_from_expiring' },
+            { title: 'Delivered Revenue from Consulting', field: 'delivered_consulting' },
+            { title: 'Delivered Revenue from Training', field: 'delivered_training' },
+            { title: 'Expiring Revenue', field: 'expiring_call' },
         ],
     },
-    { title: 'QTD Delivered Revenue', field: 'qtdDelivered' },
-    { title: 'QTD Expired Revenue', field: 'qtdExpired' },
-    { title: 'Total QTD Revenue', field: 'totalQtdRevenue' },
-    { title: 'Rest of Quarter Risk $', field: 'roqRisk' },
-    { title: 'Rest of Quarter Upside $', field: 'roqUpside' },
+    { title: 'QTD Delivered Revenue', field: 'qtd_delivered' },
+    { title: 'QTD Expired Revenue', field: 'qtd_expired' },
+    { title: 'Total QTD Revenue', field: 'total_qtd_revenue' },
+    { title: 'Rest of Quarter Risk $', field: 'roq_risk' },
+    { title: 'Rest of Quarter Upside $', field: 'roq_upside' },
     {
         title: 'Current month',
         subTitle: 'Current month',

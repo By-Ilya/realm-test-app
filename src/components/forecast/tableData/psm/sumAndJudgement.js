@@ -5,17 +5,17 @@ export default function generateSumAndJudgementRows(sumData, judgementData) {
 
     const sumRow = {
         name: makeSingleRowData({ value: 'Sum', ...singleRowDataArgs }),
-        quarterlyCall: makeSingleRowData({ value: sumData.quarterly_call ?? 0, ...singleRowDataArgs }),
-        deliveredCall: makeSingleRowData({ value: sumData.delivered_call ?? 0, ...singleRowDataArgs }),
-        deliveredFromExpiring: makeSingleRowData({ value: sumData.delivered_from_expiring ?? 0, ...singleRowDataArgs }),
-        deliveredConsulting: makeSingleRowData({ value: sumData.delivered_consulting ?? 0, ...singleRowDataArgs }),
-        deliveredTraining: makeSingleRowData({ value: sumData.delivered_training ?? 0, ...singleRowDataArgs }),
-        expiringCall: makeSingleRowData({ value: sumData.expiring_call ?? 0, ...singleRowDataArgs }),
-        qtdDelivered: makeSingleRowData({ value: sumData.qtd_delivered ?? 0, ...singleRowDataArgs }),
-        qtdExpired: makeSingleRowData({ value: sumData.qtd_expired ?? 0, ...singleRowDataArgs }),
-        totalQtdRevenue: makeSingleRowData({ value: sumData.total_qtd_revenue ?? 0, ...singleRowDataArgs }),
-        roqRisk: makeSingleRowData({ value: sumData.roq_risk ?? 0, ...singleRowDataArgs }),
-        roqUpside: makeSingleRowData({ value: sumData.roq_upside ?? 0, ...singleRowDataArgs }),
+        quarterly_call: makeSingleRowData({ value: sumData.quarterly_call ?? 0, ...singleRowDataArgs }),
+        delivered_call: makeSingleRowData({ value: sumData.delivered_call ?? 0, ...singleRowDataArgs }),
+        delivered_from_expiring: makeSingleRowData({ value: sumData.delivered_from_expiring ?? 0, ...singleRowDataArgs }),
+        delivered_consulting: makeSingleRowData({ value: sumData.delivered_consulting ?? 0, ...singleRowDataArgs }),
+        delivered_training: makeSingleRowData({ value: sumData.delivered_training ?? 0, ...singleRowDataArgs }),
+        expiring_call: makeSingleRowData({ value: sumData.expiring_call ?? 0, ...singleRowDataArgs }),
+        qtd_delivered: makeSingleRowData({ value: sumData.qtd_delivered ?? 0, ...singleRowDataArgs }),
+        qtd_expired: makeSingleRowData({ value: sumData.qtd_expired ?? 0, ...singleRowDataArgs }),
+        total_qtd_revenue: makeSingleRowData({ value: sumData.total_qtd_revenue ?? 0, ...singleRowDataArgs }),
+        roq_risk: makeSingleRowData({ value: sumData.roq_risk ?? 0, ...singleRowDataArgs }),
+        roq_upside: makeSingleRowData({ value: sumData.roq_upside ?? 0, ...singleRowDataArgs }),
         month0Likely: makeSingleRowData({ value: sumData.month_0?.most_likely ?? 0, ...singleRowDataArgs }),
         month0Best: makeSingleRowData({ value: sumData.month_0?.best_case ?? 0, ...singleRowDataArgs }),
         month1Likely: makeSingleRowData({ value: sumData.month_1?.most_likely ?? 0, ...singleRowDataArgs }),
@@ -26,49 +26,49 @@ export default function generateSumAndJudgementRows(sumData, judgementData) {
 
     const judgementRow = {
         name: makeSingleRowData({ value: 'Judgement', ...singleRowDataArgs }),
-        quarterlyCall: makeJudgementData({
-            value: judgementData.quarterly_call ?? sumRow.quarterlyCall.data.value,
-            thresholdValue: sumRow.quarterlyCall.data.value,
+        quarterly_call: makeJudgementData({
+            value: judgementData.quarterly_call ?? sumRow.quarterly_call.data.value,
+            thresholdValue: sumRow.quarterly_call.data.value,
         }),
-        deliveredCall: makeJudgementData({
-            value: judgementData.delivered_call ?? sumRow.deliveredCall.data.value,
-            thresholdValue: sumRow.deliveredCall.data.value,
+        delivered_call: makeJudgementData({
+            value: judgementData.delivered_call ?? sumRow.delivered_call.data.value,
+            thresholdValue: sumRow.delivered_call.data.value,
         }),
-        deliveredFromExpiring: makeJudgementData({
-            value: judgementData.delivered_from_expiring ?? sumRow.deliveredFromExpiring.data.value,
-            thresholdValue: sumRow.deliveredFromExpiring.data.value,
+        delivered_from_expiring: makeJudgementData({
+            value: judgementData.delivered_from_expiring ?? sumRow.delivered_from_expiring.data.value,
+            thresholdValue: sumRow.delivered_from_expiring.data.value,
         }),
-        deliveredConsulting: makeJudgementData({
-            value: judgementData.delivered_consulting ?? sumRow.deliveredConsulting.data.value,
-            thresholdValue: sumRow.deliveredConsulting.data.value,
+        delivered_consulting: makeJudgementData({
+            value: judgementData.delivered_consulting ?? sumRow.delivered_consulting.data.value,
+            thresholdValue: sumRow.delivered_consulting.data.value,
         }),
-        deliveredTraining: makeJudgementData({
-            value: judgementData.delivered_training ?? sumRow.deliveredTraining.data.value,
-            thresholdValue: sumRow.deliveredTraining.data.value,
+        delivered_training: makeJudgementData({
+            value: judgementData.delivered_training ?? sumRow.delivered_training.data.value,
+            thresholdValue: sumRow.delivered_training.data.value,
         }),
-        expiringCall: makeJudgementData({
-            value: judgementData.expiring_call ?? sumRow.expiringCall.data.value,
-            thresholdValue: sumRow.expiringCall.data.value,
+        expiring_call: makeJudgementData({
+            value: judgementData.expiring_call ?? sumRow.expiring_call.data.value,
+            thresholdValue: sumRow.expiring_call.data.value,
         }),
-        qtdDelivered: makeJudgementData({
-            value: judgementData.qtd_delivered ?? sumRow.qtdDelivered.data.value,
-            thresholdValue: sumRow.qtdDelivered.data.value,
+        qtd_delivered: makeJudgementData({
+            value: judgementData.qtd_delivered ?? sumRow.qtd_delivered.data.value,
+            thresholdValue: sumRow.qtd_delivered.data.value,
         }),
-        qtdExpired: makeJudgementData({
-            value: judgementData.qtd_expired ?? sumRow.qtdExpired.data.value,
-            thresholdValue: sumRow.qtdExpired.data.value,
+        qtd_expired: makeJudgementData({
+            value: judgementData.qtd_expired ?? sumRow.qtd_expired.data.value,
+            thresholdValue: sumRow.qtd_expired.data.value,
         }),
-        totalQtdRevenue: makeJudgementData({
-            value: judgementData.total_qtd_revenue ?? sumRow.totalQtdRevenue.data.value,
-            thresholdValue: sumRow.totalQtdRevenue.data.value,
+        total_qtd_revenue: makeJudgementData({
+            value: judgementData.total_qtd_revenue ?? sumRow.total_qtd_revenue.data.value,
+            thresholdValue: sumRow.total_qtd_revenue.data.value,
         }),
-        roqRisk: makeJudgementData({
-            value: judgementData.roq_risk ?? sumRow.roqRisk.data.value,
-            thresholdValue: sumRow.roqRisk.data.value,
+        roq_risk: makeJudgementData({
+            value: judgementData.roq_risk ?? sumRow.roq_risk.data.value,
+            thresholdValue: sumRow.roq_risk.data.value,
         }),
-        roqUpside: makeJudgementData({
-            value: judgementData.roq_upside ?? sumRow.roqUpside.data.value,
-            thresholdValue: sumRow.roqUpside.data.value,
+        roq_upside: makeJudgementData({
+            value: judgementData.roq_upside ?? sumRow.roq_upside.data.value,
+            thresholdValue: sumRow.roq_upside.data.value,
         }),
         month0Likely: makeJudgementData({
             value: judgementData.month_0?.most_likely ?? sumRow.month0Likely.data.value,
