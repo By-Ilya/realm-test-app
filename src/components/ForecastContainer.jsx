@@ -330,6 +330,7 @@ export default function ForecastContainer(props) {
         setOnSaveLoadProcessing(true);
 
         const fieldsToSave = {};
+
         judgementRefs.forEach((inputRef, fieldName) => {
             if (fieldName === 'name') return;
             if (fieldName.startsWith('month')) {
