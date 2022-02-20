@@ -1,4 +1,5 @@
 import React from 'react';
+import uuid from 'react-uuid';
 import { makeStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import FormControl from '@material-ui/core/FormControl';
@@ -52,7 +53,14 @@ export default function HeaderSelect(props) {
                         },
                     }}
                 >
-                    {allValues.map((value) => <MenuItem value={value}>{value}</MenuItem>)}
+                    {allValues.map((value) => (
+                        <MenuItem
+                            key={uuid()}
+                            value={value}
+                        >
+                            {value}
+                        </MenuItem>
+                    ))}
                 </Select>
             </FormControl>
         </div>

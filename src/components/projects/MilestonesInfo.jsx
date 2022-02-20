@@ -15,14 +15,8 @@ import {
     generateSurveyTableData,
     generateCasesTableData,
 } from 'components/projects/tableData';
-import {
-    custMailParams,
-    ceMailParams,
-} from 'helpers/survey/survey';
-import {
-    projectHasCESurvey,
-    projectHasCustSurvey,
-} from 'helpers/project-util';
+import { custMailParams } from 'helpers/survey/survey';
+import { projectHasCustSurvey } from 'helpers/project-util';
 import { AuthContext } from 'context/AuthContext';
 import { ProjectContext } from 'context/ProjectContext';
 
@@ -49,17 +43,16 @@ export default function MilestonesInfo(props) {
         }
 
         // If we haven't already sent the customer survey, send it now
+        // eslint-disable-next-line no-restricted-syntax
         for (const c of contactsTableRows) {
-            let custName = c.name;
-            let custEmail = c.email;
+            const custName = c.name;
+            const custEmail = c.email;
             if (!projectHasCustSurvey(project, custEmail)) {
                 const params = await custMailParams(origEmail, custName, custEmail, projectId);
-                await user.callFunction(
-                    'sendMail',
-                    params,
-                );
-            } else
-                console.log(`Not sending a new survey to ${custEmail} since they already responded`)
+                await user.callFunction('sendMail', params);
+            } else {
+                console.log(`Not sending a new survey to ${custEmail} since they already responded`);
+            }
         }
 
         await dbCollection.updateOne(

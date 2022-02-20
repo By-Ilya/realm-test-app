@@ -55,7 +55,7 @@ export default function PSNotes(props) {
                     label="PS Notes"
                     multiline
                     rows={countRows}
-                    value={currentText}
+                    value={currentText ?? ''}
                     variant="filled"
                     className={classes.textField}
                     onChange={onChangeText}

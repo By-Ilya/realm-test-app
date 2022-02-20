@@ -446,13 +446,19 @@ function ModeGeoPsmPanel(props) {
 
 ModeGeoPsmPanel.propTypes = {
     classes: PropTypes.object.isRequired,
-    modeCurrentValue: PropTypes.string.isRequired,
+    modeCurrentValue: PropTypes.string,
     modeAllValues: PropTypes.array.isRequired,
     onChangeMode: PropTypes.func.isRequired,
-    geoCurrentValue: PropTypes.string.isRequired,
+    geoCurrentValue: PropTypes.string,
     geoAllValues: PropTypes.array.isRequired,
     onChangeGeo: PropTypes.func.isRequired,
-    psmCurrentValue: PropTypes.string.isRequired,
+    psmCurrentValue: PropTypes.string,
     psmAllValues: PropTypes.array.isRequired,
     onChangePsmName: PropTypes.func.isRequired,
+};
+
+ModeGeoPsmPanel.defaultProps = {
+    modeCurrentValue: undefined,
+    geoCurrentValue: undefined,
+    psmCurrentValue: undefined,
 };

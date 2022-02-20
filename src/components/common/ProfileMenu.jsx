@@ -27,11 +27,15 @@ export default function ProfileMenu(props) {
 }
 
 ProfileMenu.propTypes = {
-    anchorEl: PropTypes.object.isRequired,
+    anchorEl: PropTypes.object,
     menuId: PropTypes.string.isRequired,
     isMenuOpen: PropTypes.bool.isRequired,
     onMenuClose: PropTypes.func.isRequired,
     onLogout: PropTypes.func.isRequired,
     toggleCEMode: PropTypes.func.isRequired,
     ceMode: PropTypes.bool.isRequired,
+};
+
+ProfileMenu.defaultProps = {
+    anchorEl: null,
 };

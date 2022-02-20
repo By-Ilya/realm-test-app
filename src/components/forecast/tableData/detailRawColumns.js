@@ -1,5 +1,6 @@
 /* eslint-disable react/jsx-filename-extension */
 import React from 'react';
+import uuid from 'react-uuid';
 import CustomRowRenderer from './CustomRowRenderer';
 
 const CELL_STYLE = {
@@ -36,6 +37,7 @@ export default function generateRawColumns(forecastColumns, refs = undefined) {
                         const { rowType, data } = rowData[`${fullField}`];
                         return (
                             <CustomRowRenderer
+                                key={uuid()}
                                 rowType={rowType}
                                 data={data}
                                 ref={refs ? refs.get(fullField) : undefined}

@@ -261,26 +261,24 @@ class ProjectContainer extends React.Component {
 
     updateSyncProgress = async (request_id) => {
         const { authValue } = this.props;
-        const { user, app } = authValue;
+        const { user } = authValue;
 
         if (this.syncStatusUpdateWatcherTimerId) clearTimeout(this.syncStatusUpdateWatcherTimerId);
         try {
-            let res = await user.callFunction('getSyncStatus', request_id);
-            //console.log(`Sync status: ${res}`)
-            let syncActive = false;
-            if (res && (res === "New" || res === "In Progress"))
-                syncActive = true;
-            this.setState({ isSyncActive : syncActive });
+            const res = await user.callFunction('getSyncStatus', request_id);
+            this.setState({ isSyncActive: Boolean(res && (res === 'New' || res === 'In Progress')) });
         } catch (err) {
             console.log('Watcher exception in updateSyncProgress:', err);
         }
 
-        if (this.state.isSyncActive)
+        const { isSyncActive } = this.state;
+        if (isSyncActive) {
             this.syncStatusUpdateWatcherTimerId = setTimeout(
                 this.updateSyncProgress,
                 WATCHER_TIMEOUT,
-                request_id
+                request_id,
             );
+        }
     }
 
     watchForUpdates = async () => {

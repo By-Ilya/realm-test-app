@@ -48,13 +48,18 @@ export default function ButtonsPanel(props) {
 }
 
 ButtonsPanel.propTypes = {
-    rowId: PropTypes.string.isRequired,
-    isRowEditable: PropTypes.bool.isRequired,
+    rowId: PropTypes.string,
+    isRowEditable: PropTypes.bool,
     isEditMode: PropTypes.bool.isRequired,
     updateProcess: PropTypes.bool.isRequired,
     onEdit: PropTypes.func.isRequired,
     onDone: PropTypes.func.isRequired,
     onRevert: PropTypes.func.isRequired,
+};
+
+ButtonsPanel.defaultProps = {
+    rowId: undefined,
+    isRowEditable: false,
 };
 
 function UpdateProcessIcon() {
@@ -73,7 +78,7 @@ function EditButton(props) {
     return (
         <IconButton
             aria-label="delete"
-            size={16}
+            size="small"
             onClick={() => onEdit(rowId)}
         >
             <EditIcon />

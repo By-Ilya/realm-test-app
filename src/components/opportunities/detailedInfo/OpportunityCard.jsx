@@ -123,7 +123,7 @@ function Details(props) {
     } = props;
     return (
         <Grid container className={classes.innerContainer} spacing={2}>
-            <Grid item={2} className={classes.leftInfo}>
+            <Grid item className={classes.leftInfo}>
                 <CommonText text={`Owner: ${owner}`} />
                 <CommonText text={`Type: ${type || ''}`} />
                 <CommonText text={`Stage: ${stage}`} />
@@ -131,7 +131,7 @@ function Details(props) {
                 <CommonText text={`Amount: ${valueAsUSD(amount)}`} />
             </Grid>
 
-            <Grid item={2} className={classes.rightInfo}>
+            <Grid item className={classes.rightInfo}>
                 <CommonText text={`EM: ${engagementManager || '-'}`} />
                 <CommonText text={`PS region: ${psRegion}`} />
                 <CommonText text={`Services: ${valueAsUSD(services)}`} />

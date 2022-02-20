@@ -44,10 +44,14 @@ export default function ProfileMobileMenu(props) {
 }
 
 ProfileMobileMenu.propTypes = {
-    mobileMoreAnchorEl: PropTypes.object.isRequired,
+    mobileMoreAnchorEl: PropTypes.object,
     mobileMenuId: PropTypes.string.isRequired,
     isMobileMenuOpen: PropTypes.bool.isRequired,
     onMobileMenuClose: PropTypes.func.isRequired,
     onProfileMenuOpen: PropTypes.func.isRequired,
     profile: PropTypes.object.isRequired,
+};
+
+ProfileMobileMenu.defaultProps = {
+    mobileMoreAnchorEl: null,
 };

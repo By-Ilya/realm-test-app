@@ -1,8 +1,6 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 
-import { AuthContext } from 'context/AuthContext';
-import { OpportunityContext } from 'context/OpportunityContext';
 import EditableTable from 'components/opportunities/customTable/EditableTable';
 
 import { generateOppInfoTableData } from 'components/opportunities/tableData';

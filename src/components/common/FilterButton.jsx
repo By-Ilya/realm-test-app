@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import uuid from 'react-uuid';
 import PropTypes from 'prop-types';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -51,6 +52,7 @@ export default function FilterButton(props) {
                     <form className={formContainer}>
                         {filtersObject.map((obj) => (
                             <FilterOption
+                                key={uuid()}
                                 classes={{ formControl: classes.formControl }}
                                 label={obj.label}
                                 currentValue={obj.currentValue}
@@ -95,8 +97,8 @@ function FilterOption(props) {
                 input={<Input id="demo-dialog-native" />}
             >
                 {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
-                {showEmptyValue && <option value="" />}
-                {values.map((v) => <option value={v}>{v}</option>)}
+                {showEmptyValue && <option key={uuid()} value="" />}
+                {values.map((v) => <option key={uuid()} value={v}>{v}</option>)}
             </Select>
         </FormControl>
     );
@@ -114,7 +116,7 @@ FilterButton.propTypes = {
 FilterOption.propTypes = {
     classes: PropTypes.object.isRequired,
     label: PropTypes.string,
-    currentValue: PropTypes.string.isRequired,
+    currentValue: PropTypes.string,
     values: PropTypes.array.isRequired,
     setValue: PropTypes.func,
     showEmptyValue: PropTypes.bool,
@@ -122,6 +124,7 @@ FilterOption.propTypes = {
 
 FilterOption.defaultProps = {
     label: '',
+    currentValue: '',
     setValue: () => {},
     showEmptyValue: true,
 };

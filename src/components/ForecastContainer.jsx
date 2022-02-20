@@ -4,6 +4,7 @@ import React, {
     useEffect,
     useMemo,
 } from 'react';
+import uuid from 'react-uuid';
 import { makeStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import Grid from '@material-ui/core/Grid';
@@ -155,6 +156,7 @@ function ForecastTableHeader(props) {
 
     const groupColumnComponent = (
         <TableCell
+            key={uuid()}
             rowSpan={2}
             align="left"
             className={classes.actionsHeaderStyle}
@@ -180,6 +182,7 @@ function ForecastTableHeader(props) {
             if (subColumns && subColumns.length) {
                 localFirstRowHeader.push((
                     <TableCell
+                        key={uuid()}
                         colSpan={subColumns.length}
                         align="center"
                         className={classes.headerStyle}
@@ -192,6 +195,7 @@ function ForecastTableHeader(props) {
                     const fullColumnName = `${field}${subColumn.field}`;
                     localSecondRowHeader.push((
                         <TableCell
+                            key={uuid()}
                             align="left"
                             className={classes.headerStyle}
                             style={additionActionsProps.clickableStyle}
@@ -210,6 +214,7 @@ function ForecastTableHeader(props) {
 
             localFirstRowHeader.push((
                 <TableCell
+                    key={uuid()}
                     rowSpan={2}
                     className={classes.headerStyle}
                     style={additionActionsProps.clickableStyle}
@@ -351,7 +356,7 @@ export default function ForecastContainer(props) {
 
     return (
         <Grid container className={classes.container}>
-            <Grid item xs="12">
+            <Grid item xs={12}>
                 <Paper className={classes.paper}>
                     {loadProcessing
                         ? (<CircularProgress />)

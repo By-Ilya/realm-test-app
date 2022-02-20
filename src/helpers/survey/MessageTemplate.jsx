@@ -20,13 +20,13 @@ function generateSpecificUrlParams(name, email, projectId) {
 		`ProjectID=${encodeURIComponent(projectId)}`;
 }
 
-function generateCustSurveyLink(custName, custEmail, projectId) {
-    return `${SURVEY_LINKS.cust}${generateSpecificUrlParams(
-        custName,
-        custEmail,
-        projectId,
-    )}`;
-}
+// function generateCustSurveyLink(custName, custEmail, projectId) {
+//     return `${SURVEY_LINKS.cust}${generateSpecificUrlParams(
+//         custName,
+//         custEmail,
+//         projectId,
+//     )}`;
+// }
 
 function generateCeSurveyLink(ceName, ceEmail, projectId) {
     return `${SURVEY_LINKS.ce}${generateSpecificUrlParams(

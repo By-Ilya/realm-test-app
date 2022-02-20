@@ -1,4 +1,5 @@
 import React from 'react';
+import uuid from 'react-uuid';
 import PropTypes from 'prop-types';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
@@ -12,7 +13,7 @@ export default function TableHeader(props) {
             <TableRow>
                 <TableCell align="left" />
                 {columns.map((column) => (
-                    <TableCell align="left">
+                    <TableCell key={uuid()} align="left">
                         <b>{column.title}</b>
                     </TableCell>
                 ))}

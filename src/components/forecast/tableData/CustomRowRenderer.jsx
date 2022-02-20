@@ -1,4 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
+import uuid from 'react-uuid';
 import { makeStyles } from '@material-ui/core';
 import { RowType } from 'components/forecast/tableData/RowType';
 import Tooltip from '@material-ui/core/Tooltip';
@@ -11,6 +12,7 @@ const useStyles = makeStyles(() => ({
         whiteSpace: 'nowrap',
         overflow: 'hidden',
         textOverflow: 'ellipsis',
+        fontSize: '14px',
     },
     clickableButton: {
         width: '112px',
@@ -30,6 +32,12 @@ const useStyles = makeStyles(() => ({
     },
     highlightedTextInput: {
         background: 'yellow',
+    },
+    inputStyles: {
+        paddingTop: '8px',
+        paddingBottom: '8px',
+        fontSize: '14px',
+        fontWeight: '550',
     },
 }));
 
@@ -60,13 +68,13 @@ const CustomRowRenderer = React.forwardRef((props, ref) => {
     let row = null;
     switch (rowType) {
         case RowType.SINGLE_ROW_DATA:
-            row = (<SingleRow singleRowData={data} />);
+            row = (<SingleRow key={uuid()} singleRowData={data} />);
             break;
         case RowType.MULTI_ROW_DATA:
-            row = (<MultiRow multiRowData={data} />);
+            row = (<MultiRow key={uuid()} multiRowData={data} />);
             break;
         case RowType.JUDGEMENT_DATA:
-            row = <JudgementRow ref={ref} judgementData={data} />;
+            row = (<JudgementRow key={uuid()} ref={ref} judgementData={data} />);
             break;
         default:
             break;
@@ -77,7 +85,11 @@ const CustomRowRenderer = React.forwardRef((props, ref) => {
 
 CustomRowRenderer.propTypes = {
     rowType: PropTypes.number.isRequired,
-    data: PropTypes.object.isRequired,
+    data: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.array,
+        PropTypes.object,
+    ]).isRequired,
 };
 
 function SingleRow(props) {
@@ -91,6 +103,7 @@ function SingleRow(props) {
     if (changeFilterArgs === undefined) {
         return (
             <DataWithTooltipWrapper
+                key={uuid()}
                 tooltipText={valueToRender}
                 dataElem={valueToRender}
             />
@@ -118,6 +131,7 @@ function SingleRow(props) {
 
     return (
         <DataWithTooltipWrapper
+            key={uuid()}
             tooltipText={valueToRender}
             dataElem={dataElem}
         />
@@ -125,19 +139,27 @@ function SingleRow(props) {
 }
 
 SingleRow.propTypes = {
-    singleRowData: PropTypes.object.isRequired,
+    singleRowData: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.array,
+        PropTypes.object,
+    ]).isRequired,
 };
 
 function MultiRow(props) {
     const { multiRowData } = props;
 
     return multiRowData.map((rowData) => (
-        <SingleRow singleRowData={rowData} />
+        <SingleRow key={uuid()} singleRowData={rowData} />
     ));
 }
 
 MultiRow.propTypes = {
-    multiRowData: PropTypes.array.isRequired,
+    multiRowData: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.array,
+        PropTypes.object,
+    ]).isRequired,
 };
 
 const JudgementRow = React.forwardRef((props, ref) => {
@@ -148,7 +170,7 @@ const JudgementRow = React.forwardRef((props, ref) => {
 
     const [textFieldValue, setTextFieldValue] = useState(valueToRender);
 
-    const isHighlighted = () => (textFieldValue != thresholdValue);
+    const isHighlighted = () => (textFieldValue !== thresholdValue);
 
     const handleOnChangeTextField = (event) => {
         const newValue = parseFloat(event.target.value || 0);
@@ -161,9 +183,15 @@ const JudgementRow = React.forwardRef((props, ref) => {
 
     return (
         <TextField
+            key={uuid()}
             type="number"
             size="small"
             variant="outlined"
+            InputProps={{
+                classes: {
+                    input: classes.inputStyles,
+                },
+            }}
             label=""
             inputRef={ref}
             value={textFieldValue}
@@ -174,7 +202,11 @@ const JudgementRow = React.forwardRef((props, ref) => {
 });
 
 JudgementRow.propTypes = {
-    judgementData: PropTypes.object.isRequired,
+    judgementData: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.array,
+        PropTypes.object,
+    ]).isRequired,
 };
 
 function DataWithTooltipWrapper(props) {
@@ -207,7 +239,7 @@ function DataWithTooltipWrapper(props) {
     }, [childElemRef]);
 
     const childElem = (
-        <div ref={childElemRef} className={classes.cellStyle}>
+        <div key={uuid()} ref={childElemRef} className={classes.cellStyle}>
             {dataElem}
         </div>
     );
@@ -215,7 +247,7 @@ function DataWithTooltipWrapper(props) {
     if (isTooltipHidden) return childElem;
 
     return (
-        <Tooltip title={tooltipText} placement="center">
+        <Tooltip key={uuid()} title={tooltipText} placement="bottom">
             {childElem}
         </Tooltip>
     );
@@ -223,7 +255,10 @@ function DataWithTooltipWrapper(props) {
 
 DataWithTooltipWrapper.propTypes = {
     tooltipText: PropTypes.string.isRequired,
-    dataElem: PropTypes.object.isRequired,
+    dataElem: PropTypes.oneOfType([
+        PropTypes.element,
+        PropTypes.string,
+    ]).isRequired,
 };
 
 export default CustomRowRenderer;

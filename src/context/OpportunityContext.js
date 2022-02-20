@@ -1,4 +1,5 @@
 import React from 'react';
+import uuid from 'react-uuid';
 
 import { AuthContext } from 'context/AuthContext';
 
@@ -30,7 +31,7 @@ const generateServicesSummaryJSX = (lineItems) => {
         const itOrdered = Object.keys(summaryMap).sort();
         return (itOrdered.map((item) => (
             // eslint-disable-next-line react/jsx-filename-extension
-            <div>{`${summaryMap[item]}x ${consCodeToProductAbbv(item)}`}</div>
+            <div key={uuid()}>{`${summaryMap[item]}x ${consCodeToProductAbbv(item)}`}</div>
         )));
     }
     return null;
