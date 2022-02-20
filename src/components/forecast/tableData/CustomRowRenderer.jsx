@@ -148,7 +148,7 @@ const JudgementRow = React.forwardRef((props, ref) => {
 
     const [textFieldValue, setTextFieldValue] = useState(valueToRender);
 
-    const isHighlighted = () => (textFieldValue > thresholdValue);
+    const isHighlighted = () => (textFieldValue != thresholdValue);
 
     const handleOnChangeTextField = (event) => {
         const newValue = parseFloat(event.target.value || 0);
