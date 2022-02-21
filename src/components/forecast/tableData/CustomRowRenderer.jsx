@@ -183,7 +183,6 @@ const JudgementRow = React.forwardRef((props, ref) => {
 
     return (
         <TextField
-            key={uuid()}
             type="number"
             size="small"
             variant="outlined"
