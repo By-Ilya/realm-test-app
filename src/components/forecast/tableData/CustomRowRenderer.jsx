@@ -74,7 +74,7 @@ const CustomRowRenderer = React.forwardRef((props, ref) => {
             row = (<MultiRow key={uuid()} multiRowData={data} />);
             break;
         case RowType.JUDGEMENT_DATA:
-            row = (<JudgementRow key={uuid()} ref={ref} judgementData={data} />);
+            row = (<JudgementRow ref={ref} judgementData={data} />);
             break;
         default:
             break;
