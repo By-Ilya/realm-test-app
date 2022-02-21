@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect, useMemo } from 'react';
 import uuid from 'react-uuid';
 import { makeStyles } from '@material-ui/core';
 import { RowType } from 'components/forecast/tableData/RowType';
@@ -165,6 +165,8 @@ MultiRow.propTypes = {
 const JudgementRow = React.forwardRef((props, ref) => {
     const classes = useStyles();
 
+    const textFieldKey = useMemo(() => uuid(), []);
+
     const { judgementData } = props;
     const { valueToRender, thresholdValue } = judgementData;
 
@@ -183,7 +185,7 @@ const JudgementRow = React.forwardRef((props, ref) => {
 
     return (
         <TextField
-            key={uuid()}
+            key={textFieldKey}
             type="number"
             size="small"
             variant="outlined"
