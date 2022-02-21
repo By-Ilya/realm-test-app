@@ -15,7 +15,7 @@ function formatNumberValue(value) {
 
 function makeValueToRender(levelName, value) {
     return (levelName !== undefined)
-        ? `${levelName}: ${(value && formatNumberValue(value)) || '–'}`
+        ? `${levelName}: ${formatNumberValue(value) || '–'}`
         : `${(value && formatNumberValue(value)) || 0}`;
 }
 
