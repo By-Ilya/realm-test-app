@@ -6,6 +6,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import TextField from '@material-ui/core/TextField';
 import { PropTypes } from 'prop-types';
 import { ForecastContext } from 'context/ForecastContext';
+import { numberK } from 'helpers/misc'
 
 const useStyles = makeStyles(() => ({
     cellStyle: {
@@ -170,10 +171,10 @@ const JudgementRow = React.forwardRef((props, ref) => {
 
     const [textFieldValue, setTextFieldValue] = useState(valueToRender);
 
-    const isHighlighted = () => (textFieldValue !== thresholdValue);
+    const isHighlighted = () => (textFieldValue !== numberK(thresholdValue));
 
     const handleOnChangeTextField = (event) => {
-        const newValue = parseFloat(event.target.value || thresholdValue);
+        const newValue = parseFloat(event.target.value || numberK(thresholdValue));
         setTextFieldValue(newValue);
     };
 

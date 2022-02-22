@@ -16,6 +16,27 @@ const generateSFLink = (id) => {
     return `${SALESFORCE_URL}/${id}`;
 }
 
+const numberK = (x) => {
+    var n = x / 1000;
+    var digits = 2;
+    
+    var negative = false;
+    if (digits === undefined) {
+        digits = 0;
+    }
+    if (n < 0) {
+        negative = true;
+        n = n * -1;
+    }
+    var multiplicator = Math.pow(10, digits);
+    n = parseFloat((n * multiplicator).toFixed(11));
+    n = (Math.round(n) / multiplicator).toFixed(digits);
+    if (negative) {
+        n = (n * -1).toFixed(digits);
+    }
+    return parseFloat(n);
+}
+
 
 const consCodesMap = {
 	"CONS-FOUND": "AF",
@@ -90,5 +111,5 @@ const consCodeToProductAbbv = (code) => {
 }
 
 module.exports = {
-    valueAsUSD, generateSFLink,consCodeToProductAbbv
+    valueAsUSD, generateSFLink, consCodeToProductAbbv, numberK
 };

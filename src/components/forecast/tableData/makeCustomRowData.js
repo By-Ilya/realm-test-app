@@ -1,4 +1,5 @@
 import { RowType } from 'components/forecast/tableData/RowType';
+import { numberK } from 'helpers/misc'
 
 const FORMAT_OPTIONS = { minimumFractionDigits: 2 };
 
@@ -54,7 +55,7 @@ export function makeJudgementData({ value, thresholdValue }) {
     return {
         rowType: RowType.JUDGEMENT_DATA,
         data: {
-            valueToRender: value,
+            valueToRender: numberK(value),
             thresholdValue,
         },
     };

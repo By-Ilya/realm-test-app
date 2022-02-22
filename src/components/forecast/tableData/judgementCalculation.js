@@ -1,5 +1,6 @@
 import { makeJudgementData } from 'components/forecast/tableData/makeCustomRowData';
 import { isArray } from 'components/helpers/isArray';
+import { numberK } from 'helpers/misc'
 
 export function calculateJudgementFromSum({
     judgementValue = 0,
@@ -28,6 +29,8 @@ export function calculateJudgementFromSum({
             }
         }
     });
+
+    judgementData.data.valueToRender = numberK(judgementData.data.valueToRender);
 
     return judgementData;
 }
