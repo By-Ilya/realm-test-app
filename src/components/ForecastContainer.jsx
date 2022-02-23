@@ -339,12 +339,12 @@ export default function ForecastContainer(props) {
         judgementRefs.forEach((inputRef, fieldName) => {
             if (fieldName === 'name') return;
             if (fieldName.startsWith('month')) {
-                const fieldValue = parseFloat(inputRef?.current?.value) ?? 0;
+                const fieldValue = parseFloat(inputRef?.current?.value)*1000 ?? 0;
                 const { month, monthObj } = parseMonthFieldToObject(fieldName, fieldValue);
                 fieldsToSave[month] = { ...(fieldsToSave[month] ?? {}), ...monthObj };
                 return;
             }
-            fieldsToSave[fieldName] = parseFloat(inputRef?.current?.value) ?? 0;
+            fieldsToSave[fieldName] = parseFloat(inputRef?.current?.value)*1000 ?? 0;
         });
         const notesToSave = textFieldRef.current.value ?? '';
 

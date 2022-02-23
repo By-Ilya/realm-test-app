@@ -1,4 +1,9 @@
-import React, { useContext, useState, useEffect, useMemo } from 'react';
+import React, {
+    useContext,
+    useState,
+    useEffect,
+    useMemo,
+} from 'react';
 import uuid from 'react-uuid';
 import { makeStyles } from '@material-ui/core';
 import { RowType } from 'components/forecast/tableData/RowType';
@@ -6,6 +11,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import TextField from '@material-ui/core/TextField';
 import { PropTypes } from 'prop-types';
 import { ForecastContext } from 'context/ForecastContext';
+import { numberK } from 'helpers/misc';
 
 const useStyles = makeStyles(() => ({
     cellStyle: {
@@ -74,7 +80,7 @@ const CustomRowRenderer = React.forwardRef((props, ref) => {
             row = (<MultiRow key={uuid()} multiRowData={data} />);
             break;
         case RowType.JUDGEMENT_DATA:
-            row = (<JudgementRow key={uuid()} ref={ref} judgementData={data} />);
+            row = (<JudgementRow ref={ref} judgementData={data} />);
             break;
         default:
             break;
@@ -172,10 +178,10 @@ const JudgementRow = React.forwardRef((props, ref) => {
 
     const [textFieldValue, setTextFieldValue] = useState(valueToRender);
 
-    const isHighlighted = () => (textFieldValue !== thresholdValue);
+    const isHighlighted = () => (textFieldValue !== numberK(thresholdValue));
 
     const handleOnChangeTextField = (event) => {
-        const newValue = parseFloat(event.target.value || 0);
+        const newValue = parseFloat(event.target.value || numberK(thresholdValue));
         setTextFieldValue(newValue);
     };
 
