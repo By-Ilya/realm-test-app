@@ -1,7 +1,6 @@
 {
-    "collection": "requests",
     "database": "ebrief",
-    "id": "613705bc82a365309f940d52",
+    "collection": "requests",
     "roles": [
         {
             "name": "default",
@@ -12,6 +11,5 @@
             "search": true,
             "additional_fields": {}
         }
-    ],
-    "schema": {}
+    ]
 }

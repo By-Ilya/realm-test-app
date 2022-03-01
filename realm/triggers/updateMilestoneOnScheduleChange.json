@@ -1,5 +1,4 @@
 {
-    "id": "613705bc82a365309f940df4",
     "name": "updateMilestoneOnScheduleChange",
     "type": "DATABASE",
     "config": {
@@ -18,6 +17,12 @@
         "full_document_before_change": false,
         "unordered": false
     },
-    "function_name": "updateMilestoneScheduledUndelivered",
-    "disabled": false
+    "disabled": false,
+    "event_processors": {
+        "FUNCTION": {
+            "config": {
+                "function_name": "updateMilestoneScheduledUndelivered"
+            }
+        }
+    }
 }

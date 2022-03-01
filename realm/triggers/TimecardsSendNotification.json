@@ -1,0 +1,15 @@
+{
+    "name": "TimecardsSendNotification",
+    "type": "SCHEDULED",
+    "config": {
+        "schedule": "0 16 28-31 * *"
+    },
+    "disabled": false,
+    "event_processors": {
+        "FUNCTION": {
+            "config": {
+                "function_name": "timecardNotifyEOM"
+            }
+        }
+    }
+}

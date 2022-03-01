@@ -1,10 +1,15 @@
 {
-    "id": "613705bc82a365309f940df1",
     "name": "projectStatsGenerateAndSave",
     "type": "SCHEDULED",
     "config": {
         "schedule": "0 3/24 * * *"
     },
-    "function_name": "projectStatsGenerateAndSave",
-    "disabled": false
+    "disabled": false,
+    "event_processors": {
+        "FUNCTION": {
+            "config": {
+                "function_name": "projectStatsGenerateAndSave"
+            }
+        }
+    }
 }

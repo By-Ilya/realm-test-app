@@ -1,7 +1,6 @@
 {
-    "collection": "schedule",
     "database": "shf",
-    "id": "613705bc82a365309f940d5d",
+    "collection": "schedule",
     "roles": [
         {
             "name": "default",
@@ -12,76 +11,5 @@
             "search": true,
             "additional_fields": {}
         }
-    ],
-    "schema": {
-        "properties": {
-            "SystemModstamp": {
-                "bsonType": "date"
-            },
-            "_id": {
-                "bsonType": "object",
-                "properties": {
-                    "id": {
-                        "bsonType": "string"
-                    },
-                    "ms_id": {
-                        "bsonType": "string"
-                    }
-                }
-            },
-            "actual": {
-                "bsonType": "object",
-                "properties": {
-                    "days": {
-                        "bsonType": "double"
-                    },
-                    "hours": {
-                        "bsonType": "double"
-                    },
-                    "revenue": {
-                        "bsonType": "double"
-                    }
-                }
-            },
-            "billable": {
-                "bsonType": "bool"
-            },
-            "estimated": {
-                "bsonType": "object",
-                "properties": {
-                    "days": {
-                        "bsonType": "double"
-                    },
-                    "hours": {
-                        "bsonType": "double"
-                    },
-                    "revenue": {
-                        "bsonType": "double"
-                    }
-                }
-            },
-            "isDeleted": {
-                "bsonType": "bool"
-            },
-            "milestoneId": {
-                "bsonType": "string"
-            },
-            "name": {
-                "bsonType": "string"
-            },
-            "projectId": {
-                "bsonType": "string"
-            },
-            "resource": {
-                "bsonType": "string"
-            },
-            "role": {
-                "bsonType": "string"
-            },
-            "week": {
-                "bsonType": "date"
-            }
-        },
-        "title": "schedule"
-    }
+    ]
 }

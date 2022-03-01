@@ -79,14 +79,24 @@ exports = async function(arg){
   
   //delivered
   var res = await col_schedule.aggregate([
-    {$match:{"milestoneId":arg,"week":{$gte:soq,$lt:today}}},
+    {$match:{billable:true,"milestoneId":arg,"week":{$gte:soq,$lt:today}}},
+    // Hack to circumvent the bug in FF that leads to duplicate EVAs
+    {$sort:{SystemModstamp:-1}},
+    {$group:{_id:{week:"$week",ass_id:"$assignment._id"}, root:{$first:"$$ROOT"}}},
+    {$replaceRoot: { newRoot: "$root" } },
+    // ---
     {$group:{_id:null, revenue:{$sum:"$actual.revenue"}}},
   ]).toArray();
   var delivered_qtd = (res.length > 0) ? Math.ceil(res[0].revenue) : 0;
   
   //scheduled
   res = await col_schedule.aggregate([
-    {$match:{"milestoneId":arg,"week":{$gte:month,$lt:mplus_3}}},
+    {$match:{billable:true,"milestoneId":arg,"week":{$gte:month,$lt:mplus_3}}},
+    // Hack to circumvent the bug in FF that leads to duplicate EVAs
+    {$sort:{SystemModstamp:-1}},
+    {$group:{_id:{week:"$week",ass_id:"$assignment._id"}, root:{$first:"$$ROOT"}}},
+    {$replaceRoot: { newRoot: "$root" } },
+    // ---
     {$addFields: {
       "m_group": {
                $switch: {

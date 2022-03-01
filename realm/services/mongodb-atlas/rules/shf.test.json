@@ -1,7 +1,6 @@
 {
-    "collection": "test",
     "database": "shf",
-    "id": "613705bc82a365309f940d5e",
+    "collection": "test",
     "roles": [
         {
             "name": "default",
@@ -12,6 +11,5 @@
             "search": true,
             "additional_fields": {}
         }
-    ],
-    "schema": {}
+    ]
 }

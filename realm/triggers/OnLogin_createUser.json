@@ -1,5 +1,4 @@
 {
-    "id": "613705bc82a365309f940dea",
     "name": "OnLogin_createUser",
     "type": "AUTHENTICATION",
     "config": {
@@ -8,6 +7,12 @@
             "oauth2-google"
         ]
     },
-    "function_name": "createUser",
-    "disabled": false
+    "disabled": false,
+    "event_processors": {
+        "FUNCTION": {
+            "config": {
+                "function_name": "createUser"
+            }
+        }
+    }
 }

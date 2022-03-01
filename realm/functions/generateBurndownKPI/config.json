@@ -1,6 +1,5 @@
 {
     "can_evaluate": {},
-    "id": "613705bc82a365309f940dcf",
     "name": "generateBurndownKPI",
     "private": true,
     "run_as_system": true

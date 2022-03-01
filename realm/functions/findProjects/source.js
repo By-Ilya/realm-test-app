@@ -1,4 +1,4 @@
-exports = async function findProjects({filter, sort, count_only}) {
+exports = async function findProjects({filter, sort, count_only, id_check}) {
   // function getSoQ() {
   //   var today = new Date(),
   //   month = today.getMonth(),
@@ -43,7 +43,6 @@ exports = async function findProjects({filter, sort, count_only}) {
     matchData = {...matchData, "$or" : [
                                   {owner : {$in : names}},
                                   {project_manager: {$in : names}},
-                                  {ps_ops_resource: {$in : names}},
                                   {'opportunity.engagement_manager': {$in : names}},
                                   {'future_assignments_dates.resource_email': active_user_filter.email}
                                 ]};
@@ -102,6 +101,11 @@ exports = async function findProjects({filter, sort, count_only}) {
     {$match: matchData}
   );
   
+  if (id_check) {
+      agg_pipeline.push(
+        {$match: {_id: id_check}}
+      );
+  } else
   if (!count_only) {
     const {field, order} = sort;
     const biasedLimit = limit + 1;

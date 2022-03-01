@@ -1,7 +1,6 @@
 {
     "field_name": "psprojectsData",
     "function_name": "findProjects",
-    "id": "613705bc82a365309f940dfb",
     "input_type": {
         "bsonType": "object",
         "properties": {
