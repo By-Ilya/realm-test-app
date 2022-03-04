@@ -1,10 +1,15 @@
 {
-    "id": "613705bc82a365309f940df6",
     "name": "weeklyRevFcst",
     "type": "SCHEDULED",
     "config": {
         "schedule": "0 0 * * 0"
     },
-    "function_name": "forecastGenerateAndSave",
-    "disabled": false
+    "disabled": false,
+    "event_processors": {
+        "FUNCTION": {
+            "config": {
+                "function_name": "forecastGenerateAndSave"
+            }
+        }
+    }
 }

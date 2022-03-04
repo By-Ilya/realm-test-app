@@ -45,8 +45,8 @@
   
 //   return;
 // };
-exports = function({origin}={origin:null}){
+exports = async function({origin}={origin:null}){
   var col_requests = context.services.get("mongodb-atlas").db("sync").collection("requests");
-  col_requests.insertOne({status:"New",origin,ts:{created:new Date()}})
-  return {queued:true};
+  const result = await col_requests.insertOne({status:"New",origin,ts:{created:new Date()}})
+  return {queued:true, request_id: result.insertedId};
 }

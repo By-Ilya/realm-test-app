@@ -1,5 +1,4 @@
 {
-    "id": "613705bc82a365309f940df5",
     "name": "updateProjectFutureAssignments",
     "type": "DATABASE",
     "config": {
@@ -17,6 +16,12 @@
         "full_document_before_change": false,
         "unordered": false
     },
-    "function_name": "updateProjectFutureAssignments",
-    "disabled": false
+    "disabled": false,
+    "event_processors": {
+        "FUNCTION": {
+            "config": {
+                "function_name": "updateProjectFutureAssignments"
+            }
+        }
+    }
 }

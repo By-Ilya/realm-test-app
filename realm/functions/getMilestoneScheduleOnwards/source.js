@@ -34,9 +34,14 @@ exports = async function(arg){
     {$match:{$or:[{"actual.hours":{$gt:0}},{"actual.revenue":{$gt:0}}]}},
     {$match:{role:{$ne:"Project Manager"}}},
     {$sort:{"week":1}},
+    // Hack to circumvent the bug in FF that leads to duplicate EVAs
+    {$sort:{SystemModstamp:-1}},
+    {$group:{_id:{week:"$week",ass_id:"$assignment._id"}, root:{$first:"$$ROOT"}}},
+    {$replaceRoot: { newRoot: "$root" } },
+    // ---
     {$group:{_id:"$week","week":{$first:"$week"},hours:{$sum:"$actual.hours"}, 
       hours_nonbillable:{$sum:{ $cond: [ "$billable", 0, "$actual.hours" ] }},
-      revenue:{$sum:"$actual.revenue"}, resources: {$addToSet: "$resource"}}},
+      revenue:{$sum:{ $cond: [ "$billable","$actual.revenue", 0]}}, resources: {$addToSet: "$resource"}}},
     {$sort:{"week":-1}},
     {$limit:3},
     {$sort:{"week":1}}
@@ -47,9 +52,14 @@ exports = async function(arg){
     {$match:{$or:[{"estimated.hours":{$gt:0}},{"estimated.revenue":{$gt:0}}], "actual.hours":0}},
     {$match:{role:{$ne:"Project Manager"}}},
     {$sort:{"week":1}},
+    // Hack to circumvent the bug in FF that leads to duplicate EVAs
+    {$sort:{SystemModstamp:-1}},
+    {$group:{_id:{week:"$week",ass_id:"$assignment._id"}, root:{$first:"$$ROOT"}}},
+    {$replaceRoot: { newRoot: "$root" } },
+    // ---
     {$group:{_id:"$week","week":{$first:"$week"},hours:{$sum:"$estimated.hours"}, 
       hours_nonbillable:{$sum:{ $cond: [ "$billable", 0, "$estimated.hours" ] }},
-      revenue:{$sum:"$estimated.revenue"}, resources: {$addToSet: {$concat:["$resource","*"]}},
+      revenue:{$sum:{ $cond: [ "$billable","$estimated.revenue", 0]}}, resources: {$addToSet: {$concat:["$resource","*"]}},
     }},
     {$sort:{"week":1}}
   ]).toArray();
@@ -59,9 +69,14 @@ exports = async function(arg){
     {$match:{$or:[{"estimated.hours":{$gt:0}},{"estimated.revenue":{$gt:0}}]}},
     {$match:{role:{$ne:"Project Manager"}}},
     {$sort:{"week":1}},
+    // Hack to circumvent the bug in FF that leads to duplicate EVAs
+    {$sort:{SystemModstamp:-1}},
+    {$group:{_id:{week:"$week",ass_id:"$assignment._id"}, root:{$first:"$$ROOT"}}},
+    {$replaceRoot: { newRoot: "$root" } },
+    // ---
     {$group:{_id:"$week","week":{$first:"$week"},hours:{$sum:"$estimated.hours"}, 
       hours_nonbillable:{$sum:{ $cond: [ "$billable", 0, "$estimated.hours" ] }},
-      revenue:{$sum:"$estimated.revenue"}, resources: {$addToSet: "$resource"}}},
+      revenue:{$sum:{ $cond: [ "$billable", "$estimated.revenue", 0]}}, resources: {$addToSet: "$resource"}}},
     {$sort:{"week":1}},
     {$limit:7}
   ]).toArray();

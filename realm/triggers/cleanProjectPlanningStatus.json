@@ -1,10 +1,15 @@
 {
-    "id": "613705bc82a365309f940ded",
     "name": "cleanProjectPlanningStatus",
     "type": "SCHEDULED",
     "config": {
         "schedule": "0 0 1 * *"
     },
-    "function_name": "cleanProjectPlanningStatus",
-    "disabled": false
+    "disabled": false,
+    "event_processors": {
+        "FUNCTION": {
+            "config": {
+                "function_name": "cleanProjectPlanningStatus"
+            }
+        }
+    }
 }

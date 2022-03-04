@@ -208,19 +208,29 @@ exports = async function(arg){
         }, {
           '$match': {
             'week': {$gte:soq,$lt:mplus_3}
+          }},
+          {
+          '$match': {
+            'billable': true
           }
-        }
+        },
+        // Hack to circumvent the bug in FF that leads to duplicate EVAs
+       {$sort:{SystemModstamp:-1}},
+       {$group:{_id:{week:"$week",ass_id:"$assignment._id"}, root:{$first:"$$ROOT"}}},
+       {$replaceRoot: { newRoot: "$root" } },
+       // ---
       ]
     }
   }, {
     '$unwind': {
       'path': '$schedule'
     }
-  }, 
+  },
   {$addFields: {
       "m_group": {
                $switch: {
                   branches: [
+                     { case: { $lt: [ "$schedule.week", month ] }, then: -1 },
                      { case: { $lt: [ "$schedule.week", mplus_1 ] }, then: 0 },
                      { case: { $lt: [ "$schedule.week", mplus_2 ] }, then: 1 },
                      { case: { $lt: [ "$schedule.week", mplus_3 ] }, then: 2 }
@@ -328,7 +338,7 @@ exports = async function(arg){
     let details = getOrInitMapDetails(details_map, doc._id.pid);
     
     switch (doc._id.m) {
-      case 0: details.m0_ml += doc.scheduled; break;
+      case 0: details.m0_ml += doc.scheduled + doc.delivered; break;
       case 1: details.m1_ml += doc.scheduled; break;
       case 2: details.m2_ml += doc.scheduled; break;
     }

@@ -1,10 +1,15 @@
 {
-    "id": "613705bc82a365309f940df3",
     "name": "salesforceSync",
     "type": "SCHEDULED",
     "config": {
         "schedule": "0 */3 * * *"
     },
-    "function_name": "requestSync",
-    "disabled": false
+    "disabled": false,
+    "event_processors": {
+        "FUNCTION": {
+            "config": {
+                "function_name": "requestSync"
+            }
+        }
+    }
 }

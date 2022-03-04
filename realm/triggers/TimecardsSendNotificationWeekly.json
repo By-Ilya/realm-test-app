@@ -1,0 +1,15 @@
+{
+    "name": "TimecardsSendNotificationWeekly",
+    "type": "SCHEDULED",
+    "config": {
+        "schedule": "0 16 * * FRI"
+    },
+    "disabled": false,
+    "event_processors": {
+        "FUNCTION": {
+            "config": {
+                "function_name": "timecardNotifyEOW"
+            }
+        }
+    }
+}

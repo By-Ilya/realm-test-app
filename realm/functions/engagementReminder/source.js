@@ -77,7 +77,7 @@ exports = async function(arg){
 		  <br/><br/>
 		  This is an automated reminder for project ${proj.name}.
 		  <br/><br/>
-		  This project has an upcoming assignment in ${DAYS_TO_START} days. This assignment has been created more than ${DAYS_SINCE_CREATED} days ago and we didn't have any engagements in the meantime.
+		  This project has an upcoming assignment in ${DAYS_TO_START} days. This assignment has been created more than ${DAYS_SINCE_CREATED} days ago and we haven't had any engagements in the meantime.
 		  <br/>
 		  If you haven't already, I highly recommend engaging the customer (${proj.account}) to confirm their readiness.
 		  <br/> <br/>

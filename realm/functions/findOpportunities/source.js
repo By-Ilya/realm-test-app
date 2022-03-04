@@ -66,8 +66,8 @@ exports = async function findOpportunities({filter, sort, count_only}) {
       const thisQEndMonth = getCurrentQuartalMonth(month);
       const thisQStartMonth = getPreviousQuartalMonth(thisQEndMonth);
       
-      const thisQStartDate = new Date(year, thisQStartMonth, 1);
-      const thisQEndDate = new Date(year, thisQEndMonth, 1);
+      const thisQStartDate = new Date(thisQStartMonth <= month ? year : year - 1, thisQStartMonth, 1);
+      const thisQEndDate = new Date(thisQEndMonth >= month ? year : year + 1, thisQEndMonth, 1);
       
       matchData = {
         ...matchData,
@@ -81,8 +81,8 @@ exports = async function findOpportunities({filter, sort, count_only}) {
       const nextQStartMonth = getCurrentQuartalMonth(month);
       const nextQEndMonth = getNextQuartalMonth(nextQStartMonth);
       
-      const nextQStartDate = new Date(year, nextQStartMonth, 1);
-      const nextQEndDate = new Date(year, nextQEndMonth, 1);
+      const nextQStartDate = new Date(nextQStartMonth >= month ? year : year + 1, nextQStartMonth, 1);
+      const nextQEndDate = new Date(nextQEndMonth >= month ? year : year + 1, nextQEndMonth, 1);
       
       matchData = {
         ...matchData,

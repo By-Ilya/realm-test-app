@@ -1,9 +1,8 @@
 {
-    "id": "613705bb82a365309f940d1e",
     "name": "mongodb-atlas",
     "type": "mongodb-atlas",
     "config": {
-        "clusterName": "shadowforce-dev",
+        "clusterName": "normxg-rev-fcst",
         "readPreference": "primary",
         "wireProtocolEnabled": false
     },

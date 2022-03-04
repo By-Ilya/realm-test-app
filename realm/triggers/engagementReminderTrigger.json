@@ -1,10 +1,15 @@
 {
-    "id": "613705bc82a365309f940def",
     "name": "engagementReminderTrigger",
     "type": "SCHEDULED",
     "config": {
         "schedule": "0 13 * * *"
     },
-    "function_name": "engagementReminder",
-    "disabled": false
+    "disabled": false,
+    "event_processors": {
+        "FUNCTION": {
+            "config": {
+                "function_name": "engagementReminder"
+            }
+        }
+    }
 }
