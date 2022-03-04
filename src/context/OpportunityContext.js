@@ -1,5 +1,4 @@
 import React from 'react';
-import uuid from 'react-uuid';
 
 import { AuthContext } from 'context/AuthContext';
 
@@ -29,9 +28,12 @@ const generateServicesSummaryJSX = (lineItems) => {
         });
 
         const itOrdered = Object.keys(summaryMap).sort();
-        return (itOrdered.map((item) => (
-            // eslint-disable-next-line react/jsx-filename-extension
-            <div key={uuid()}>{`${summaryMap[item]}x ${consCodeToProductAbbv(item)}`}</div>
+        return (itOrdered.map((item, index) => (
+            /* eslint-disable react/jsx-filename-extension */
+            /* eslint-disable react/no-array-index-key */
+            <div key={`${index}_${item}`}>{`${summaryMap[item]}x ${consCodeToProductAbbv(item)}`}</div>
+            /* eslint-enable react/jsx-filename-extension */
+            /* eslint-enable react/no-array-index-key */
         )));
     }
     return null;

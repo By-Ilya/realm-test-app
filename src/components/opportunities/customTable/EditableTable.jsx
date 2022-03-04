@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import uuid from 'react-uuid';
 import { makeStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import Table from '@material-ui/core/Table';
@@ -116,10 +115,11 @@ export default function EditableTable(props) {
                     columns={columns}
                 />
                 <TableBody>
-                    {rows.map((row) => {
+                    {rows.map((row, index) => {
                         const { tableKey, editable } = row;
                         return (
-                            <TableRow key={uuid()}>
+                            // eslint-disable-next-line react/no-array-index-key
+                            <TableRow key={`${index}_${tableKey}`}>
                                 <ButtonsPanel
                                     rowId={tableKey}
                                     isRowEditable={editable}

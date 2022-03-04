@@ -12,8 +12,9 @@ export default function TableHeader(props) {
         <TableHead>
             <TableRow>
                 <TableCell align="left" />
-                {columns.map((column) => (
-                    <TableCell key={uuid()} align="left">
+                {columns.map((column, index) => (
+                    // eslint-disable-next-line react/no-array-index-key
+                    <TableCell key={`${index}_${column.title}`} align="left">
                         <b>{column.title}</b>
                     </TableCell>
                 ))}

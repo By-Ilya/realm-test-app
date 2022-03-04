@@ -154,9 +154,10 @@ function ForecastTableHeader(props) {
         additionActionsProps.onColumnClick(fullColumnName);
     };
 
+    const groupColumnElemKey = useMemo(() => uuid(), []);
     const groupColumnComponent = (
         <TableCell
-            key={uuid()}
+            key={groupColumnElemKey}
             rowSpan={2}
             align="left"
             className={classes.actionsHeaderStyle}
@@ -182,7 +183,7 @@ function ForecastTableHeader(props) {
             if (subColumns && subColumns.length) {
                 localFirstRowHeader.push((
                     <TableCell
-                        key={uuid()}
+                        key={field}
                         colSpan={subColumns.length}
                         align="center"
                         className={classes.headerStyle}
@@ -195,7 +196,7 @@ function ForecastTableHeader(props) {
                     const fullColumnName = `${field}${subColumn.field}`;
                     localSecondRowHeader.push((
                         <TableCell
-                            key={uuid()}
+                            key={fullColumnName}
                             align="left"
                             className={classes.headerStyle}
                             style={additionActionsProps.clickableStyle}
@@ -214,7 +215,7 @@ function ForecastTableHeader(props) {
 
             localFirstRowHeader.push((
                 <TableCell
-                    key={uuid()}
+                    key={field}
                     rowSpan={2}
                     className={classes.headerStyle}
                     style={additionActionsProps.clickableStyle}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import uuid from 'react-uuid';
 import PropTypes from 'prop-types';
 import Button from '@material-ui/core/Button';
@@ -50,9 +50,10 @@ export default function FilterButton(props) {
 
                 <DialogContent>
                     <form className={formContainer}>
-                        {filtersObject.map((obj) => (
+                        {filtersObject.map((obj, index) => (
                             <FilterOption
-                                key={uuid()}
+                                // eslint-disable-next-line react/no-array-index-key
+                                key={`${obj.label}_${index}`}
                                 classes={{ formControl: classes.formControl }}
                                 label={obj.label}
                                 currentValue={obj.currentValue}
@@ -87,6 +88,8 @@ function FilterOption(props) {
 
     const { formControl } = classes;
 
+    const emptyValueElemKey = useMemo(() => uuid(), []);
+
     return (
         <FormControl className={formControl}>
             <InputLabel htmlFor="demo-dialog-native">{label}</InputLabel>
@@ -97,8 +100,9 @@ function FilterOption(props) {
                 input={<Input id="demo-dialog-native" />}
             >
                 {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
-                {showEmptyValue && <option key={uuid()} value="" />}
-                {values.map((v) => <option key={uuid()} value={v}>{v}</option>)}
+                {showEmptyValue && <option key={emptyValueElemKey} value="" />}
+                {/* eslint-disable-next-line react/no-array-index-key */}
+                {values.map((v, index) => <option key={`${v}_${index}`} value={v}>{v}</option>)}
             </Select>
         </FormControl>
     );

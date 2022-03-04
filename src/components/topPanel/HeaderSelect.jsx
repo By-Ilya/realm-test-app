@@ -53,9 +53,10 @@ export default function HeaderSelect(props) {
                         },
                     }}
                 >
-                    {allValues.map((value) => (
+                    {allValues.map((value, index) => (
                         <MenuItem
-                            key={uuid()}
+                            // eslint-disable-next-line react/no-array-index-key
+                            key={`${index}_${value}`}
                             value={value}
                         >
                             {value}

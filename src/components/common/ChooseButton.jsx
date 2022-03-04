@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import uuid from 'react-uuid';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import Dialog from '@material-ui/core/Dialog';
@@ -26,11 +25,12 @@ function isChecked(value, uncheckedValues) {
 
 function renderCheckboxValues(props) {
     const { allValues, uncheckedValues, onChange } = props;
-    return allValues.map((value) => {
+    return allValues.map((value, index) => {
         const checked = isChecked(value, uncheckedValues);
         return (
             <FormControlLabel
-                key={uuid()}
+                // eslint-disable-next-line react/no-array-index-key
+                key={`${index}_${value}`}
                 control={(
                     <Checkbox
                         checked={checked}
